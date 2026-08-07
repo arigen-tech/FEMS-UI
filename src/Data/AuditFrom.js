@@ -1,0 +1,479 @@
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { API_HOST , DOCUMENTHEADER_API} from "../API/apiConfig";
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/solid";
+import Popup from "../Components/Popup";
+import LoadingComponent from "../Components/LoadingComponent";
+import AutoTranslate from '../i18n/AutoTranslate';
+import { useLanguage } from '../i18n/LanguageContext';
+import apiClient from "../API/apiClient";
+
+
+const AuditForm = () => {
+  // Get language context
+  const {
+    currentLanguage,
+    defaultLanguage,
+    translationStatus,
+    isTranslationNeeded,
+    availableLanguages,
+    changeLanguage,
+    translate,
+    preloadTranslationsForTerms
+  } = useLanguage();
+
+  // State for translated placeholders
+  const [translatedPlaceholders, setTranslatedPlaceholders] = useState({
+    search: 'Search...',
+    show: 'Show:',
+    branch: 'Branch:',
+    department: 'Department:',
+  });
+
+  // Component state
+  const [forms, setForms] = useState([]);
+  const [branchData, setBranchData] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [popupMessage, setPopupMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedForm, setSelectedForm] = useState(null);
+  const [actionType, setActionType] = useState("");
+
+  const token = localStorage.getItem("tokenKey");
+
+  // Debug log
+  useEffect(() => {
+    console.log('🔍 AuditForm Component - Language Status:', {
+      currentLanguage,
+      defaultLanguage,
+      isTranslationNeeded: isTranslationNeeded(),
+      translationStatus,
+      availableLanguagesCount: availableLanguages.length,
+      pathname: window.location.pathname
+    });
+  }, [currentLanguage, defaultLanguage, translationStatus, isTranslationNeeded, availableLanguages]);
+
+  // Function to translate placeholder text
+  const translatePlaceholder = useCallback(async (text) => {
+    if (isTranslationNeeded()) {
+      try {
+        return await translate(text);
+      } catch (error) {
+        console.error('Error translating placeholder:', error);
+        return text;
+      }
+    }
+    return text;
+  }, [isTranslationNeeded, translate]);
+
+  // Update placeholders when language changes - optimized
+  useEffect(() => {
+    const updatePlaceholders = async () => {
+      // Don't translate if English
+      if (!isTranslationNeeded()) {
+        setTranslatedPlaceholders({
+          search: 'Search...',
+          show: 'Show:',
+          branch: 'Branch:',
+          department: 'Department:',
+        });
+        return;
+      }
+
+      // Only update if language changed
+      const searchPlaceholder = await translatePlaceholder('Search...');
+      const showPlaceholder = await translatePlaceholder('Show:');
+      const branchPlaceholder = await translatePlaceholder('Branch:');
+      const departmentPlaceholder = await translatePlaceholder('Department:');
+
+      setTranslatedPlaceholders({
+        search: searchPlaceholder,
+        show: showPlaceholder,
+        branch: branchPlaceholder,
+        department: departmentPlaceholder,
+      });
+    };
+    
+    updatePlaceholders();
+  }, [currentLanguage, translatePlaceholder, isTranslationNeeded]);
+
+  // Fetch branches + forms
+  useEffect(() => {
+    fetchBranches();
+    fetchForms();
+  }, []);
+
+  // Fetch departments on branch select
+  useEffect(() => {
+    if (selectedBranch) {
+      fetchDepartments(selectedBranch);
+    } else {
+      setDepartmentData([]);
+    }
+  }, [selectedBranch]);
+
+  const fetchBranches = async () => {
+    try {
+      const response = await apiClient.get(`${API_HOST}/branchmaster/findActiveRole`);
+      setBranchData(response.data);
+      console.log('✅ Branches loaded');
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+    }
+  };
+
+  const fetchDepartments = async (branchId) => {
+    try {
+      const response = await apiClient.get(`${API_HOST}/DepartmentMaster/findByBranch/${branchId}`);
+      setDepartmentData(response.data);
+      console.log('✅ Departments loaded');
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  const fetchForms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient.get(`${DOCUMENTHEADER_API}/getAllDocumentsAuditLog`);
+      
+      // Map the API response to match component expectations
+      const mappedForms = response.data.map(log => ({
+        id: log.logId,
+        name: log.formName || <AutoTranslate>N/A</AutoTranslate>,
+        type: log.activity,
+        createdOn: log.createdAt,
+        createdBy: {
+          name: log.employeeName
+        },
+        status: log.status,
+        branch: {
+          id: log.branchId
+        },
+        department: {
+          id: log.departmentId
+        },
+        originalData: log
+      }));
+      
+      setForms(mappedForms);
+      console.log('✅ Audit forms loaded');
+    } catch (error) {
+      showPopup("Error fetching audit forms.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show popup
+  const showPopup = (message, type = "info") => {
+    setPopupMessage({
+      message,
+      type,
+      onClose: () => setPopupMessage(null),
+    });
+  };
+
+  // Modal confirm action
+  const handleAction = (form, type) => {
+    setSelectedForm(form);
+    setActionType(type);
+    setModalVisible(true);
+  };
+
+  const confirmAction = async () => {
+    try {
+      await apiClient.put(
+        `${DOCUMENTHEADER_API}/auditlog/${selectedForm.id}/${actionType}`);
+      showPopup(`Form ${actionType} successfully!`, "success");
+      fetchForms();
+    } catch (error) {
+      showPopup("Error performing action.", "error");
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  // Filtering
+  const filteredForms = forms.filter((form) => {
+    if (selectedBranch && String(form.branch?.id) !== String(selectedBranch)) return false;
+    if (selectedDepartment && String(form.department?.id) !== String(selectedDepartment)) return false;
+
+    const searchFields = {
+      name: form.name?.toLowerCase() || "",
+      type: form.type?.toLowerCase() || "",
+      status: form.status?.toLowerCase() || "",
+      createdBy: form.createdBy?.name?.toLowerCase() || "",
+      createdOn: form.createdOn ? formatDate(form.createdOn).toLowerCase() : "",
+    };
+
+    const lowerSearch = searchTerm.toLowerCase();
+    return Object.values(searchFields).some((v) => v.includes(lowerSearch));
+  });
+
+  // Pagination
+  const totalItems = filteredForms.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedForms = filteredForms.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const getPageNumbers = () => {
+    const maxPageNumbers = 5;
+    const start = Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const end = Math.min(start + maxPageNumbers - 1, totalPages);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  if (isLoading) return <LoadingComponent />;
+
+  return (
+    <div className="px-2-">
+    <div className="title">
+        <h1><AutoTranslate>Audit Forms</AutoTranslate></h1>
+      </div>
+
+      <div className="card">
+        {/* Filters */}
+        <div className="grid grid-col-4 mb-4">
+          {/* Items Per Page */}
+          <div className="form-group ">
+            <label>
+              <AutoTranslate>Show:</AutoTranslate>
+            </label>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Branch Filter */}
+          <div className="form-group ">
+            <label>
+              <AutoTranslate>Branch</AutoTranslate>
+            </label>
+            <select
+              value={selectedBranch}
+              onChange={(e) => {
+                setSelectedBranch(e.target.value);
+                setSelectedDepartment("");
+                setCurrentPage(1);
+              }}
+            >
+              <option value=""><AutoTranslate>All</AutoTranslate></option>
+              {branchData.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Department Filter */}
+          <div className="form-group ">
+            <label>
+              <AutoTranslate>Department</AutoTranslate>
+            </label>
+            <select
+              value={selectedDepartment}
+              onChange={(e) => {
+                setSelectedDepartment(e.target.value);
+                setCurrentPage(1);
+              }}
+              disabled={!selectedBranch}
+            >
+              <option value=""><AutoTranslate>All</AutoTranslate></option>
+              {departmentData.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Search */}
+          <div className="form-group ">
+          <label>
+              <AutoTranslate>Search</AutoTranslate>
+            </label>
+            <input
+              type="text"
+              placeholder={translatedPlaceholders.search}
+              className="searchIcon"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="table-wrapper">
+          <table className="">
+            <thead>
+              <tr>
+                <th><AutoTranslate>SN</AutoTranslate></th>
+                <th><AutoTranslate>Form Name</AutoTranslate></th>
+                <th><AutoTranslate>Action Name</AutoTranslate></th>
+                <th><AutoTranslate>Action Date & Time</AutoTranslate></th>
+                <th><AutoTranslate>Employee</AutoTranslate></th>
+                <th><AutoTranslate>Status</AutoTranslate></th>
+                <th><AutoTranslate>IP Address</AutoTranslate></th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedForms.length > 0 ? (
+                paginatedForms.map((form, i) => (
+                  <tr key={form.id}>
+                    <td>{i + 1 + (currentPage - 1) * itemsPerPage}</td>
+                    <td title={form.name}>{form.name}</td>
+                    <td>{form.type}</td>
+                    <td>{formatDate(form.createdOn)}</td>
+                    <td>{form.createdBy?.name}</td>
+                    <td>
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        form.status === 'Success' ? 'bg-green-100 text-green-800' : 
+                        form.status === 'Failure' ? 'bg-red-100 text-red-800' : 
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        <AutoTranslate>{form.status}</AutoTranslate>
+                      </span>
+                    </td>
+                    <td>{form.originalData?.ipAddress}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="border p-2 text-center">
+                    <AutoTranslate>No audit logs found.</AutoTranslate>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Controls */}
+          <div className="paginationWp">
+            <div className="items">
+              <div className="paginationText">
+                <span className="text-sm text-gray-700">
+                  <AutoTranslate>
+                    {`Showing ${totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0
+                      } to ${Math.min(currentPage * itemsPerPage, totalItems)} of ${totalItems} entries.`}
+                  </AutoTranslate>
+                </span>
+                {/* Page Count Info */}
+                <span className="text-sm text-gray-700 mx-2">
+                  (<AutoTranslate>Pages</AutoTranslate> {totalPages})
+                </span>
+              </div>
+            </div>
+            <div className="items">
+              <div className="paginationBtn">
+                {/* Previous Button */}
+                <button title={`${currentPage === 1 || totalPages === 0 ? "End" : "Previous"}`}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1 || totalPages === 0}
+                  className={`${currentPage === 1 || totalPages === 0 ? "cursor-not-allowed" : ""}`}
+                >
+                  {/* <ArrowLeftIcon className="inline h-4 w-4 mr-2 mb-1" /> */}
+                  {/* <AutoTranslate>Previous</AutoTranslate> */}
+                  <IoIosArrowBack />
+                </button>
+
+                {/* Page Number Buttons */}
+                {totalPages > 0 && getPageNumbers().map((page) => (
+                  <button key={page} onClick={() => setCurrentPage(page)} className={`${currentPage === page ? "active" : ""}`}>
+                    {page}
+                  </button>
+                ))}
+
+                {/* Next Button */}
+                <button title={`${currentPage === totalPages || totalPages === 0 ? "End" : "Next"}`}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={`${currentPage === totalPages || totalPages === 0 ? "cursor-not-allowed" : ""}`}
+                >
+                  {/* <AutoTranslate>Next</AutoTranslate> */}
+                  {/* <ArrowRightIcon className="inline h-4 w-4 ml-2 mb-1" /> */}
+                  <IoIosArrowForward />
+                </button>
+              </div>
+            </div>
+          </div>
+
+        {/* Modal */}
+        {modalVisible && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold mb-4">
+                <AutoTranslate>Confirm Action</AutoTranslate>
+              </h2>
+              <p className="mb-4">
+                <AutoTranslate>Are you sure you want to</AutoTranslate>{" "}
+                <strong className="capitalize">{actionType}</strong>{" "}
+                <AutoTranslate>the audit log for</AutoTranslate>{" "}
+                <strong>{selectedForm?.name}</strong>?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setModalVisible(false)}
+                  className="btn-cancel"
+                >
+                  <AutoTranslate>Cancel</AutoTranslate>
+                </button>
+                <button
+                  onClick={confirmAction}
+                  className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+                >
+                  <AutoTranslate>Confirm</AutoTranslate>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Popup */}
+        {popupMessage && (
+          <Popup
+            message={popupMessage.message}
+            type={popupMessage.type}
+            onClose={popupMessage.onClose}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AuditForm;

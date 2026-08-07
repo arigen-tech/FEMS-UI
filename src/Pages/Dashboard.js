@@ -1,0 +1,1179 @@
+import React, { useState, useEffect, useMemo } from "react";
+import { API_HOST, SYSTEM_ADMIN, BRANCH_ADMIN, DEPARTMENT_ADMIN, USER, BRANCH_API, EMPLOYEE_API, DOCUMENTHEADER_API } from "../API/apiConfig";
+import apiClient from "../API/apiClient";
+import lodingIcon from "../Assets/icons/loader.gif";
+import chartIcon from "../Assets/icons/chart-icon.svg";
+import lineChartIcon from "../Assets/icons/line-chart-icon.svg";
+import fileTypesIcon from "../Assets/icons/file-types-icon.svg";
+import statusIcon from "../Assets/icons/status-icon.svg";
+import { FaCodeBranch } from "react-icons/fa6";
+import { TbCategoryFilled } from "react-icons/tb";
+import { PiFilesFill } from "react-icons/pi";
+import { MdPendingActions } from "react-icons/md";
+import { BsTrash3Fill } from "react-icons/bs";
+import { IoDocuments } from "react-icons/io5";
+import { HiDocumentArrowUp } from "react-icons/hi2";
+import { Icon } from "@iconify/react";
+
+
+import { FcDepartment } from "react-icons/fc";
+import { RiFunctionAddFill } from "react-icons/ri";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  PieChart,
+  Cell,
+  Pie,
+} from "recharts";
+import { useNavigate, Link } from "react-router-dom";
+import { GiFiles } from "react-icons/gi";
+import { FaUsers } from "react-icons/fa";
+import {
+  CalendarDaysIcon,
+  ComputerDesktopIcon,
+  DocumentCheckIcon,
+  TrashIcon,
+  DocumentMinusIcon,
+  DocumentIcon,
+  KeyIcon,
+  ShoppingCartIcon,
+  UserCircleIcon,
+  UsersIcon,
+  UserGroupIcon
+} from "@heroicons/react/24/solid";
+import { IoDocumentLock } from "react-icons/io5";
+import { FaUserClock } from "react-icons/fa6";
+import Layout from "../Components/Layout";
+import axios from 'axios';
+import AutoTranslate from '../i18n/AutoTranslate';
+import { useLanguage } from '../i18n/LanguageContext';
+
+function Dashboard() {
+  const [chartData, setChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
+  const [topOffice, setTopOffice] = useState([]);
+  const [branchesId, setBranchsId] = useState(null);
+  const [departmentId, setDepartmentId] = useState(null);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [isGrLoading, setIsGrLoading] = useState(true);
+  const [isBarChartLoading, setIsBarChartLoading] = useState(true);
+  const [, setIsGraphChartLoading] = useState(true);
+  const [selectedLineStatus, setSelectedLineStatus] = useState("all");
+  const [branches, setBranches] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState('all');
+  const [isBranchLoading, setIsBranchLoading] = useState(false);
+
+  const [showYearPicker, setShowYearPicker] = useState(false);
+
+  const [stats, setStats] = useState({
+    branchUser: 0,
+    totalUser: 0,
+    totalDocument: 0,
+    pendingDocument: 0,
+    storageUsed: 0,
+    totalBranches: 0,
+    totalDepartment: 0,
+    totalFilesType: 0,
+    totalRoles: 0,
+    documentType: 0,
+    annualYear: 0,
+    totalCategories: 0,
+    totalApprovedDocuments: 0,
+    totalRejectedDocuments: 0,
+    totalPendingDocuments: 0,
+    totalApprovedDocumentsById: 0,
+    totalRejectedDocumentsById: 0,
+    totalPendingDocumentsById: 0,
+    totalDocumentsById: 0,
+    totalNullEmployeeType: 0,
+    totalApprovedStatusDocById: 0,
+    totalRejectedStatusDocById: 0,
+    departmentCountForBranch: 0,
+    nullRoleEmployeeCountForBranch: 0,
+    departmentUser: 0,
+    nullRoleEmployeeCountForDepartment: 0,
+    totalDocumentsByDepartmentId: 0,
+    totalPendingDocumentsByDepartmentId: 0,
+    totalApprovedStatusDocByDepartmentId: 0,
+    totalRejectedStatusDocByDepartmentId: 0,
+    totalUserApplications: 0,
+    totalTemplate: 0,
+    trashTotalDoc: 0,
+    trashTotalDocByEmpId: 0,
+    trashTotalDocByBranch: 0,
+    trashTotalDocByDepartment: 0,
+    totalLanguages: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
+  const [employeesStatusData, setEmployeesStatusData] = useState([]);
+  const [topTenFileType, setTopTenFileType] = useState([]);
+
+  // Language context
+  const { isTranslationNeeded } = useLanguage();
+
+  useEffect(() => {
+    fetchUserDetails();
+    fetchEmployeesStatus();
+    fetchTopTenFileType();
+  }, []);
+
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.dateInput')) {
+        setShowYearPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const fetchEmployeesStatus = async () => {
+    try {
+
+      const response = await apiClient.get(`${EMPLOYEE_API}/status-count-by-year`);
+
+      setEmployeesStatusData(response.data);
+    } catch (error) {
+      console.error("Error fetching employees status:", error);
+    }
+  };
+
+  const fetchTopTenFileType = async () => {
+    try {
+
+      const response = await apiClient.get(`${DOCUMENTHEADER_API}/top-file-types`);
+
+      setTopTenFileType(response.data);
+    } catch (error) {
+      console.error("Error fetching TopTenFileType:", error);
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    try {
+      const userId = localStorage.getItem("id");
+      if (!userId) {
+        throw new Error("User ID is missing in localStorage");
+      }
+
+      const response = await apiClient.get(
+        `${API_HOST}/employee/findById/${userId}`);
+
+
+      const employeeData = response.data;
+
+      if (employeeData.branch && employeeData.branch.id) {
+        const branchId = employeeData.branch.id;
+        setBranchsId(branchId);
+      } else {
+        setBranchsId(null);
+      }
+
+      if (employeeData.department) {
+        const departmentId = employeeData.department.id;
+        setDepartmentId(departmentId);
+      } else {
+        setDepartmentId(null);
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching user details:",
+        error.response?.data || error.message
+      );
+      setBranchsId(null);
+      setDepartmentId(null);
+    }
+  };
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === SYSTEM_ADMIN) {
+      fetchBranches();
+    }
+  }, []);
+
+  const fetchBranches = async () => {
+    setIsBranchLoading(true);
+    try {
+
+      const response = await apiClient.get(`${BRANCH_API}/findActiveRole`);
+
+      setBranches(response.data);
+    } catch (error) {
+      console.error('Error fetching branches:', error);
+    } finally {
+      setIsBranchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        setLoading(true);
+
+        const employeeId = localStorage.getItem("id");
+
+        if (!employeeId) {
+          throw new Error("Employee ID missing.");
+        }
+
+        const dashboardUrl = `${API_HOST}/api/dashboard/getAllCount/${employeeId}`;
+
+        const response = await apiClient.get(dashboardUrl, {
+          params: { employeeId },
+        });
+
+        setStats(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+        const isUnauthorized =
+          error.response?.status === 401 ||
+          error.message === "Unauthorized: Token or Employee ID missing.";
+        if (isUnauthorized) {
+          navigate("/");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardStats();
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchMonthlySummary = async () => {
+      try {
+        setIsGrLoading(true);
+
+        const employeeId = localStorage.getItem("id");
+        const role = localStorage.getItem("role");
+
+        if (!employeeId) {
+          throw new Error("Employee ID missing.");
+        }
+
+        const baseUrl = `${API_HOST}/api/documents`;
+        const startDate = `${selectedYear}-01-01 00:00:00`;
+        const endDate = `${selectedYear}-12-31 23:59:59`;
+
+        let summaryUrl = `${baseUrl}/document/summary/by/${employeeId}`;
+
+        switch (role) {
+          case SYSTEM_ADMIN:
+            summaryUrl = `${baseUrl}/monthly-total`;
+            break;
+          case BRANCH_ADMIN:
+            summaryUrl = `${baseUrl}/branch/${branchesId}`;
+            break;
+          case DEPARTMENT_ADMIN:
+            summaryUrl = departmentId
+              ? `${baseUrl}/department/${departmentId}`
+              : `${baseUrl}/branch/${branchesId}`;
+            break;
+          case USER:
+            summaryUrl = `${baseUrl}/document/summary/by/${employeeId}`;
+            break;
+          default:
+            throw new Error("Invalid role.");
+        }
+
+        const response = await apiClient.get(summaryUrl, {
+          params: { startDate, endDate },
+        });
+
+        const {
+          months,
+          approvedDocuments,
+          rejectedDocuments,
+          pendingDocuments,
+        } = response.data;
+
+        const mappedData = months.map((month, index) => ({
+          name: month,
+          ApprovedDocuments: approvedDocuments[index],
+          RejectedDocuments: rejectedDocuments[index],
+          PendingDocuments: pendingDocuments[index],
+        }));
+
+        setChartData(mappedData);
+      } catch (error) {
+        console.error("Error fetching monthly summary:", error);
+        const isUnauthorized =
+          error.response?.status === 401 ||
+          error.message === "Unauthorized: Token or Employee ID missing.";
+        if (isUnauthorized) {
+          navigate("/");
+        }
+      } finally {
+        setIsGrLoading(false);
+      }
+    };
+
+    fetchMonthlySummary();
+  }, [navigate, selectedYear, branchesId, departmentId]);
+
+  useEffect(() => {
+    const fetchBarChartData = async () => {
+      try {
+        setIsBarChartLoading(true);
+
+        const employeeId = localStorage.getItem("id");
+        const role = localStorage.getItem("role");
+
+        if (!employeeId) {
+          throw new Error("Employee ID missing.");
+        }
+
+        const baseUrl = `${API_HOST}/api/documents`;
+        const startDate = `${selectedYear}-01-01 00:00:00`;
+        const endDate = `${selectedYear}-12-31 23:59:59`;
+
+        let summaryUrl = `${baseUrl}/document/summary/by/${employeeId}`;
+
+        if (selectedBranch === 'all') {
+          switch (role) {
+            case SYSTEM_ADMIN:
+              summaryUrl = `${baseUrl}/monthly-total`;
+              break;
+            case BRANCH_ADMIN:
+              summaryUrl = `${baseUrl}/branch/${branchesId}`;
+              break;
+            case DEPARTMENT_ADMIN:
+              summaryUrl = departmentId
+                ? `${baseUrl}/department/${departmentId}`
+                : `${baseUrl}/branch/${branchesId}`;
+              break;
+            case USER:
+              summaryUrl = `${baseUrl}/document/summary/by/${employeeId}`;
+              break;
+            default:
+              throw new Error("Invalid role.");
+          }
+        } else {
+          summaryUrl = `${baseUrl}/branch/${selectedBranch}`;
+        }
+
+        const response = await apiClient.get(summaryUrl, {
+          params: { startDate, endDate },
+        });
+
+        const {
+          months,
+          approvedDocuments,
+          rejectedDocuments,
+          pendingDocuments,
+        } = response.data;
+
+        const mappedData = months.map((month, index) => ({
+          name: month,
+          ApprovedDocuments: approvedDocuments[index],
+          RejectedDocuments: rejectedDocuments[index],
+          PendingDocuments: pendingDocuments[index],
+        }));
+
+        setBarChartData(mappedData);
+      } catch (error) {
+        console.error("Error fetching bar chart data:", error);
+        const isUnauthorized =
+          error.response?.status === 401 ||
+          error.message === "Unauthorized: Token or Employee ID missing.";
+        if (isUnauthorized) {
+          navigate("/");
+        }
+      } finally {
+        setIsBarChartLoading(false);
+      }
+    };
+
+    fetchBarChartData();
+  }, [navigate, selectedYear, branchesId, departmentId, selectedBranch]);
+
+  useEffect(() => {
+    const fetchTopBranchSummary = async () => {
+      try {
+        setIsGraphChartLoading(true);
+
+        const employeeId = localStorage.getItem("id");
+
+        if (!employeeId) {
+          throw new Error("Employee ID missing.");
+        }
+
+        const baseUrl = `${API_HOST}/api/documents`;
+        const startDate = `${selectedYear}-01-01 00:00:00`;
+        const endDate = `${selectedYear}-12-31 23:59:59`;
+
+        const response = await apiClient.get(
+          `${baseUrl}/top-branches-summary`,
+          {
+            params: { startDate, endDate },
+          }
+        );
+
+        const {
+          branches,
+          approvedDocuments,
+          rejectedDocuments,
+          pendingDocuments,
+        } = response.data;
+
+        let mappedData = branches.map((branch, index) => ({
+          name: branch,
+          ApprovedDocuments: approvedDocuments[index],
+          RejectedDocuments: rejectedDocuments[index],
+          PendingDocuments: pendingDocuments[index],
+        }));
+
+        if (selectedLineStatus === "approved") {
+          mappedData = mappedData.map(d => ({
+            name: d.name,
+            ApprovedDocuments: d.ApprovedDocuments,
+          }));
+        } else if (selectedLineStatus === "rejected") {
+          mappedData = mappedData.map(d => ({
+            name: d.name,
+            RejectedDocuments: d.RejectedDocuments,
+          }));
+        } else if (selectedLineStatus === "pending") {
+          mappedData = mappedData.map(d => ({
+            name: d.name,
+            PendingDocuments: d.PendingDocuments,
+          }));
+        }
+        setTopOffice(mappedData);
+      } catch (error) {
+        console.error("Error fetching top branch summary:", error);
+        const isUnauthorized =
+          error.response?.status === 401 ||
+          error.message === "Unauthorized: Token or Employee ID missing.";
+        if (isUnauthorized) {
+          navigate("/");
+        }
+      } finally {
+        setIsGraphChartLoading(false);
+      }
+    };
+
+    if (selectedBranch === "top10" || selectedBranch === "all") {
+      fetchTopBranchSummary();
+    }
+  }, [navigate, selectedYear, selectedBranch, selectedLineStatus]);
+
+  function StatBlock({ title, value, Icon }) {
+    return (
+      <div className="card">
+        <div>
+          <Icon />
+          <h3>
+            <AutoTranslate>{title}</AutoTranslate>
+          </h3>
+
+        </div>
+        <div>
+          {loading ? (
+            <span><img src={lodingIcon} alt="loading..." /></span>
+          ) : (
+            <p>{value}</p>
+          )}
+        </div>
+
+      </div>
+    );
+  }
+
+  const role = localStorage.getItem("role");
+  const totalApprovedDocuments = chartData.reduce(
+    (acc, curr) => acc + curr.ApprovedDocuments,
+    0
+  );
+  const totalRejectedDocuments = chartData.reduce(
+    (acc, curr) => acc + curr.RejectedDocuments,
+    0
+  );
+  const totalPendingDocuments = chartData.reduce(
+    (acc, curr) => acc + curr.PendingDocuments,
+    0
+  );
+  const COLORS = ["#82ca9d", "#FF0000", "#f0ad4e"];
+
+  const yearData = useMemo(() => {
+    return employeesStatusData.find((item) => item.year === Number(selectedYear));
+  }, [employeesStatusData, selectedYear]);
+
+  const pieChartData = useMemo(() => {
+    if (!yearData) return [];
+
+    return [
+      { name: "Active", value: yearData.activeCount },
+      { name: "Inactive", value: yearData.inactiveCount },
+      { name: "Pending", value: yearData.pendingCount },
+    ];
+  }, [yearData]);
+
+  const chartsData = topTenFileType
+    .filter(item => item.year === selectedYear)
+    .map(item => ({
+      name: item.fileType,
+      FileCount: item.fileCount
+    }));
+
+  const totalDocsbyBranch = (stats.totalRejectedStatusDocById + stats.totalApprovedStatusDocById + stats.totalPendingDocumentsById);
+  const totalDocsbyDep = (stats.totalRejectedStatusDocByDepartmentId + stats.totalApprovedStatusDocByDepartmentId + stats.totalPendingDocumentsByDepartmentId);
+  const totalDocsbyUser = (stats.rejectedDocsbyid + stats.approvedDocsbyid + stats.pendingDocsbyid);
+
+  const SkeletonBox = () => (
+    <div className="loading bg-gray-200 animate-pulse rounded-lg h-[300px] w-full">
+      <span><img src={lodingIcon} alt="loading..." /></span>
+    </div>
+  );
+
+
+  const legendItems = [
+    { name: "Active", color: COLORS[0] },
+    { name: "Inactive", color: COLORS[1] },
+    { name: "Pending", color: COLORS[2] },
+  ];
+
+  return (
+    <Layout>
+      <div className="flex flex-col min-h-full w-full bg-slate-100">
+        <div className="title">
+          <h1><AutoTranslate>Dashboard</AutoTranslate></h1>
+        </div>
+
+        <div className="dashboardGrid">
+          {role === SYSTEM_ADMIN && (
+            <>
+              <Link to="/users">
+                <div className="gridItems">
+                  <StatBlock title="Total Users" value={stats.totalUser} Icon={UserGroupIcon} />
+                </div>
+              </Link>
+
+              <Link to="/userRoleAssing">
+                <div className="gridItems pending">
+                  <StatBlock title="Total Pending Users" value={stats.totalNullEmployeeType} Icon={FaUserClock} />
+                </div>
+              </Link>
+
+              <Link to="/create-branch">
+                <div className="gridItems">
+                  <StatBlock title="Total Branches" value={stats.totalBranches} Icon={FaCodeBranch} />
+                </div>
+              </Link>
+
+              <Link to="/create-department">
+                <div className="gridItems">
+                  <StatBlock title="Total Departments" value={stats.totalDepartment} Icon={FcDepartment} />
+                </div>
+              </Link>
+
+              <Link to="/create-role">
+                <div className="gridItems">
+                  <StatBlock title="Total Roles" value={stats.totalRoles} Icon={RiFunctionAddFill} />
+                </div>
+              </Link>
+
+              <Link to="/create-category">
+                <div className="gridItems">
+                  <StatBlock title="Total Categories" value={stats.totalCategories} Icon={TbCategoryFilled} />
+                </div>
+              </Link>
+
+              <Link to="/create-fileType">
+                <div className="gridItems">
+                  <StatBlock title="Total Files Types" value={stats.totalFilesType} Icon={PiFilesFill} />
+                </div>
+              </Link>
+
+              <div className="gridItems">
+                <StatBlock title="Total Documents" value={stats.totalDocument} Icon={IoDocuments} />
+              </div>
+
+              <Link to="/approve-documents">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending Documents" value={stats.totalPendingDocuments} Icon={MdPendingActions} />
+                </div>
+              </Link>
+
+              <Link to="/total-approved">
+                <div className="gridItems approved">
+                  <StatBlock title="Approved Documents" value={stats.totalApprovedDocuments} Icon={DocumentCheckIcon} />
+                </div>
+              </Link>
+
+              <Link to="/total-rejected">
+                <div className="gridItems rejected">
+                  <StatBlock title="Rejected Documents" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
+                </div>
+              </Link>
+
+              <Link to="/trash-documents">
+                <div className="gridItems rejected">
+                  <StatBlock title="Trash Documents" value={stats.trashTotalDoc} Icon={BsTrash3Fill} />
+                </div>
+              </Link>
+            </>
+          )}
+
+          {role === BRANCH_ADMIN && (
+            <>
+              <Link to="/branchusers">
+                <div className="gridItems">
+                  <StatBlock title="Branch Users" value={stats.branchUser} Icon={UserGroupIcon} />
+                </div>
+              </Link>
+
+              <Link to="/userRoleAssing">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending Users" value={stats.nullRoleEmployeeCountForBranch} Icon={FaUserClock} />
+                </div>
+              </Link>
+
+              <Link to="/create-departments">
+                <div className="gridItems">
+                  <StatBlock title="Total Departments" value={stats.departmentCountForBranch} Icon={FcDepartment} />
+                </div>
+              </Link>
+
+              <div className="gridItems">
+                <StatBlock title="Total Documents" value={totalDocsbyBranch} Icon={IoDocuments} />
+              </div>
+
+              <Link to="/approve-documents">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending Documents" value={stats.totalPendingDocumentsById} Icon={MdPendingActions} />
+                </div>
+              </Link>
+
+              <Link to="/total-approved">
+                <div className="gridItems approved">
+                  <StatBlock title="Approved Documents" value={stats.totalApprovedStatusDocById} Icon={DocumentCheckIcon} />
+                </div>
+              </Link>
+
+              <Link to="/total-rejected">
+                <div className="gridItems rejected">
+                  <StatBlock title="Rejected Documents" value={stats.totalRejectedStatusDocById} Icon={DocumentMinusIcon} />
+                </div>
+              </Link>
+
+              <Link to="/trash-documents">
+                <div className="gridItems rejected">
+                  <StatBlock title="Trash Documents" value={stats.trashTotalDocByBranch} Icon={BsTrash3Fill} />
+                </div>
+              </Link>
+            </>
+          )}
+
+          {role === DEPARTMENT_ADMIN && (
+            <>
+              <Link to="/Departmentusers">
+                <div className="gridItems">
+                  <StatBlock title="Department Users" value={stats.departmentUser} Icon={UserGroupIcon} />
+                </div>
+              </Link>
+
+              <Link to="/PendingRole">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending Users" value={stats.nullRoleEmployeeCountForDepartment} Icon={FaUserClock} />
+                </div>
+              </Link>
+
+              <div className="gridItems">
+                <StatBlock title="Total Documents" value={totalDocsbyDep} Icon={IoDocuments} />
+              </div>
+
+              <Link to="/approve-documents">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending Documents" value={stats.totalPendingDocumentsByDepartmentId} Icon={MdPendingActions} />
+                </div>
+              </Link>
+
+              <Link to="/total-approved">
+                <div className="gridItems approved">
+                  <StatBlock title="Approved Documents" value={stats.totalApprovedStatusDocByDepartmentId} Icon={DocumentCheckIcon} />
+                </div>
+              </Link>
+
+              <Link to="/total-rejected">
+                <div className="gridItems rejected">
+                  <StatBlock title="Rejected Documents" value={stats.totalRejectedStatusDocByDepartmentId} Icon={DocumentMinusIcon} />
+                </div>
+              </Link>
+
+              <Link to="/trash-documents">
+                <div className="gridItems rejected">
+                  <StatBlock title="Trash Documents" value={stats.trashTotalDocByDepartment} Icon={BsTrash3Fill} />
+                </div>
+              </Link>
+            </>
+          )}
+
+          {role === USER && (
+            <>
+              <div className="gridItems">
+                <StatBlock title="Total Uploaded Doc" value={totalDocsbyUser} Icon={HiDocumentArrowUp} />
+              </div>
+
+              <Link to="/all-documents">
+                <div className="gridItems pending">
+                  <StatBlock title="Pending For Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
+                </div>
+              </Link>
+
+              <Link to="/approvedDocs">
+                <div className="gridItems approved">
+                  <StatBlock title="Approved Documents" value={stats.approvedDocsbyid} Icon={DocumentCheckIcon} />
+                </div>
+              </Link>
+
+              <Link to="/rejectedDocs">
+                <div className="gridItems rejected">
+                  <StatBlock title="Rejected Documents" value={stats.rejectedDocsbyid} Icon={DocumentMinusIcon} />
+                </div>
+              </Link>
+            </>
+          )}
+        </div>
+
+        <div className="grid grid-col-4">
+          <div className="dateInput">
+            <label>
+              <AutoTranslate>Select Year:</AutoTranslate>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                readOnly
+                placeholder="YYYY"
+                value={selectedYear || ""}
+                onClick={() => setShowYearPicker(prev => !prev)}
+                className="w-full border border-gray-300 rounded px-3 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer pr-8"
+              />
+              <span
+  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-indigo-600 cursor-pointer"
+  onClick={() => setShowYearPicker(prev => !prev)}
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+</span>
+
+              {showYearPicker && (
+                <div className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-3 w-56">
+                  <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                    {years.map((year) => (
+                      <button
+                        key={year}
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setShowYearPicker(false);
+                        }}
+                        className={`px-2 py-1.5 rounded text-sm font-medium transition-colors
+                  ${selectedYear === year
+                            ? "bg-indigo-600 text-white"
+                            : "hover:bg-indigo-50 text-gray-700"
+                          }`}
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+
+
+        <div className="chartGrid">
+          {/* Bar Chart */}
+          <div className="card forBarChart">
+            <div className="chartTitle mb-4">
+              <h3>
+                <span className="icon"><img src={chartIcon} alt="icon" /></span>
+                <AutoTranslate>Monthly Documents Status {selectedYear}</AutoTranslate>
+                {/* 📊 */}
+              </h3>
+              {role === SYSTEM_ADMIN && (
+                <div className="items-center gap-2">
+                  <div className="relative">
+                    <select
+                      value={selectedBranch}
+                      onChange={(e) => setSelectedBranch(e.target.value)}
+                      disabled={isBranchLoading}
+                      className="appearance-none hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 min-w-[150px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="all" className="font-medium">
+                        🌐 <AutoTranslate>All Branches</AutoTranslate>
+                      </option>
+                      {branches.map((branch) => (
+                        <option key={branch.id} value={branch.id} className="font-medium">
+                          🏢 {branch.name}
+                        </option>
+                      ))}
+                      <option value="top10">
+                        <AutoTranslate>Top 10 Branches</AutoTranslate>
+                      </option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    {isBranchLoading && (
+                      <div className="absolute inset-y-0 right-8 flex items-center pr-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {isBarChartLoading ? (
+              <SkeletonBox />
+            ) : (
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barChartData} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={70}
+                      interval={0}
+                      tick={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                      tickLine={{ stroke: '#4a5568' }}
+                      axisLine={{ stroke: '#4a5568', strokeWidth: 2 }}
+                    />
+                    <YAxis
+                      tick={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                      tickLine={{ stroke: '#4a5568' }}
+                      axisLine={{ stroke: '#4a5568', strokeWidth: 2 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '2px solid #2d3748',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{
+                        paddingTop: '10px',
+                        fontWeight: 'bold'
+                      }}
+                      iconSize={12}
+                      iconType="circle"
+                    />
+                    <Bar
+                      dataKey="RejectedDocuments"
+                      fill="#FF0000"
+                      name={<AutoTranslate>Rejected Documents</AutoTranslate>}
+                      radius={[4, 4, 0, 0]}
+                      barSize={20}
+                    />
+                    <Bar
+                      dataKey="ApprovedDocuments"
+                      fill="#82ca9d"
+                      name={<AutoTranslate>Approved Documents</AutoTranslate>}
+                      radius={[4, 4, 0, 0]}
+                      barSize={20}
+                    />
+                    <Bar
+                      dataKey="PendingDocuments"
+                      fill="#f0ad4e"
+                      name={<AutoTranslate>Pending Documents</AutoTranslate>}
+                      radius={[4, 4, 0, 0]}
+                      barSize={20}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          {/* Line Chart */}
+          <div className="card forLineChart">
+            <div className="flex items-center justify-between mb-3">
+              <h3>
+                <span className="icon"><img src={lineChartIcon} alt="icon" /></span>
+                <AutoTranslate>Top 10 Office {selectedYear}</AutoTranslate>
+                {/* 📈  */}
+              </h3>
+              <select
+                value={selectedLineStatus}
+                onChange={e => setSelectedLineStatus(e.target.value)}
+                className="ml-4 border border-gray-300 rounded px-2 py-1 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                style={{ minWidth: 120 }}
+              >
+                <option value="all"><AutoTranslate>All Status</AutoTranslate></option>
+                <option value="pending"><AutoTranslate>Pending</AutoTranslate></option>
+                <option value="approved"><AutoTranslate>Approved</AutoTranslate></option>
+                <option value="rejected"><AutoTranslate>Rejected</AutoTranslate></option>
+              </select>
+            </div>
+            {isGrLoading ? (
+              <SkeletonBox />
+            ) : (
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={topOffice} margin={{ top: 10, right: 30, left: 20, bottom: 30 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={70}
+                      interval={0}
+                      tick={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                      tickLine={{ stroke: '#4a5568' }}
+                      axisLine={{ stroke: '#4a5568', strokeWidth: 2 }}
+                    />
+                    <YAxis
+                      tick={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                      tickLine={{ stroke: '#4a5568' }}
+                      axisLine={{ stroke: '#4a5568', strokeWidth: 2 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '2px solid #2d3748',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{
+                        paddingTop: '10px',
+                        fontWeight: 'bold'
+                      }}
+                      iconSize={12}
+                      iconType="circle"
+                    />
+                    {(selectedLineStatus === "all" || selectedLineStatus === "approved") && (
+                      <Line
+                        type="monotone"
+                        dataKey="ApprovedDocuments"
+                        stroke="#82ca9d"
+                        strokeWidth={3}
+                        dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
+                        activeDot={{ r: 8, strokeWidth: 0 }}
+                        name={<AutoTranslate>Approved Documents</AutoTranslate>}
+                      />
+                    )}
+                    {(selectedLineStatus === "all" || selectedLineStatus === "rejected") && (
+                      <Line
+                        type="monotone"
+                        dataKey="RejectedDocuments"
+                        stroke="#FF0000"
+                        strokeWidth={3}
+                        dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
+                        activeDot={{ r: 8, strokeWidth: 0 }}
+                        name={<AutoTranslate>Rejected Documents</AutoTranslate>}
+                      />
+                    )}
+                    {(selectedLineStatus === "all" || selectedLineStatus === "pending") && (
+                      <Line
+                        type="monotone"
+                        dataKey="PendingDocuments"
+                        stroke="#f0ad4e"
+                        strokeWidth={3}
+                        dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
+                        activeDot={{ r: 8, strokeWidth: 0 }}
+                        name={<AutoTranslate>Pending Documents</AutoTranslate>}
+                      />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          {/* Polar Chart */}
+          <div className="card">
+            <h3>
+              <span className="icon"><img src={fileTypesIcon} alt="icon" /></span>
+              <AutoTranslate>Top 10 File Types {selectedYear}</AutoTranslate>
+              {/* 🌀  */}
+            </h3>
+            {isGrLoading ? (
+              <SkeletonBox />
+            ) : (
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart
+                    outerRadius="70%"
+                    data={chartsData}
+                    margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+                  >
+                    <PolarGrid stroke="#e0e0e0" />
+                    <PolarAngleAxis
+                      dataKey="name"
+                      tick={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                    />
+                    <PolarRadiusAxis
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        fill: '#4a5568'
+                      }}
+                    />
+                    <Radar
+                      name={<AutoTranslate>File Count</AutoTranslate>}
+                      dataKey="FileCount"
+                      stroke="#3182ce"
+                      fill="#3182ce"
+                      fillOpacity={0.6}
+                      strokeWidth={2}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '2px solid #2d3748',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{
+                        paddingTop: '10px',
+                        fontWeight: 'bold'
+                      }}
+                      iconSize={12}
+                      iconType="circle"
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          {/* Pie Chart */}
+          <div className="card">
+            <h3>
+              <span className="icon"><img src={statusIcon} alt="icon" /></span>
+              <AutoTranslate>Users Status {selectedYear}</AutoTranslate>
+              {/* 🎯  */}
+            </h3>
+
+            {isGrLoading ? (
+              <SkeletonBox />
+            ) : pieChartData.every(item => item.value === 0) ? (
+              <p className="text-gray-500">
+                <AutoTranslate>No data available for {selectedYear}</AutoTranslate>
+              </p>
+            ) : (
+              <>
+                <div style={{ width: "100%", height: "270px" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                      <Pie
+                        data={pieChartData.filter(item => item.value > 0)}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={90}
+                        innerRadius={40}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        labelLine={false}
+                      >
+                        {pieChartData
+                          .filter((entry) => entry.value > 0)
+                          .map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                              stroke="#fff"
+                              strokeWidth={2}
+                            />
+                          ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => [`${value} users`, <AutoTranslate>Count</AutoTranslate>]}
+                        contentStyle={{
+                          backgroundColor: "#fff",
+                          border: "2px solid #2d3748",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                          fontWeight: "bold",
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="forPieChart">
+                  {legendItems.map((item) => (
+                    <div key={item.name} className="gridItems flex items-center space-x-2">
+                      {/* <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div> */}
+                      <span style={{ color: item.color }}>
+                        <AutoTranslate>{item.name}</AutoTranslate>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+export default Dashboard;

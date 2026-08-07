@@ -1,0 +1,705 @@
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
+import { IoDocumentText, IoArchiveSharp } from "react-icons/io5";
+import { HiUsers } from "react-icons/hi2";
+import { GoOrganization } from "react-icons/go";
+import { GrDocumentConfig } from "react-icons/gr";
+import { TbReportSearch, TbReport } from "react-icons/tb";
+import { MdEditDocument } from "react-icons/md";
+import { HiDocumentSearch } from "react-icons/hi";
+import { RiUserSettingsFill } from "react-icons/ri";
+
+
+import {
+  InboxIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  UserGroupIcon,
+  BuildingOfficeIcon,
+  DocumentTextIcon,
+  DocumentArrowUpIcon,
+  DocumentCheckIcon,
+  DocumentChartBarIcon,
+  DocumentMinusIcon,
+  DocumentMagnifyingGlassIcon,
+  DocumentIcon,
+  KeyIcon,
+  CalendarDaysIcon,
+  UserPlusIcon,
+  ComputerDesktopIcon,
+  UserCircleIcon,
+  ShoppingCartIcon,
+  IdentificationIcon,
+  ClockIcon
+} from "@heroicons/react/24/solid";
+import { SiArchiveofourown } from "react-icons/si";
+import {
+  RiFileUserFill,
+  RiInboxUnarchiveFill,
+  RiMenuSearchLine,
+  RiInboxArchiveFill,
+  RiArchiveStackFill,
+} from "react-icons/ri";
+import { IoDocumentLock } from "react-icons/io5";
+import { AiOutlineFileSearch } from "react-icons/ai";
+import { MdAdfScanner } from "react-icons/md";
+import { FaUserClock } from "react-icons/fa6";
+import { GiFiles } from "react-icons/gi";
+import logo from "../Assets/aridocsLogo.png";
+import {
+  API_HOST,
+  SYSTEM_ADMIN,
+  BRANCH_ADMIN,
+  DEPARTMENT_ADMIN,
+  USER,
+} from "../API/apiConfig";
+import { UserIcon } from "lucide-react";
+import { getRequest } from "../API/apiHelper";
+import apiClient from "../API/apiClient";
+import AutoTranslate from "../i18n/AutoTranslate";
+import { useLanguage } from "../i18n/LanguageContext";
+import { getFallbackTranslation, translateText, translationCache } from "../i18n/autoTranslator";
+
+function Sidebar({ roleChanged }) {
+  const location = useLocation();
+  const { currentLanguage } = useLanguage();
+  const [loading, setLoading] = useState(false);
+  const [menuData, setMenuData] = useState([]);
+  const [openMenus, setOpenMenus] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchPlaceholder, setSearchPlaceholder] = useState("Search Menu...");
+  const [translationDictionary, setTranslationDictionary] = useState({});
+
+  const sidebarRef = useRef(null);
+
+  const rolesId = localStorage.getItem("currRoleId");
+  const role = localStorage.getItem("role");
+
+  const cacheKey = `menuCache-${rolesId}`;
+
+  // Update search placeholder when language changes
+  useEffect(() => {
+    const placeholders = {
+      'en': 'Search Menu...',
+      'hi': 'मेनू खोजें...',
+      'or': 'ମେନୁ ଖୋଜନ୍ତୁ...',
+      'mr': 'मेनू शोध...'
+    };
+    setSearchPlaceholder(placeholders[currentLanguage] || "Search Menu...");
+  }, [currentLanguage]);
+
+  // Load translation dictionary for search
+  useEffect(() => {
+    const loadTranslationDictionary = () => {
+      try {
+        // Get all cached translations from localStorage
+        const cached = localStorage.getItem('translationCache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          setTranslationDictionary(parsed);
+        }
+      } catch (error) {
+        console.error("Error loading translation dictionary:", error);
+      }
+    };
+
+    loadTranslationDictionary();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() !== "") {
+      const expandAllMatching = (items, state = {}) => {
+        items.forEach((item) => {
+          if (searchInAllLanguages(item, searchTerm)) {
+            state[item.appId] = true;
+          }
+          if (item.children?.length > 0) {
+            expandAllMatching(item.children, state);
+          }
+        });
+        return state;
+      };
+
+      setOpenMenus(expandAllMatching(menuData));
+    }
+  }, [searchTerm]);
+
+
+  // Function to search in all languages
+  const searchInAllLanguages = useCallback((menuItem, term) => {
+    if (!term.trim()) return true;
+
+    const searchTermLower = term.toLowerCase();
+    const menuName = menuItem.name;
+
+    // Check English name
+    if (menuName.toLowerCase().includes(searchTermLower)) {
+      return true;
+    }
+
+    // Check all languages in translation dictionary
+    const languages = ['hi', 'or', 'mr'];
+    for (const lang of languages) {
+      const cacheKey = `${menuName}_${lang}`;
+      const translatedText = translationDictionary[cacheKey];
+
+      if (translatedText && translatedText.toLowerCase().includes(searchTermLower)) {
+        return true;
+      }
+    }
+
+    // Check fallback translations
+    for (const lang of languages) {
+      const fallbackTranslation = getFallbackTranslation(menuName, lang);
+      if (fallbackTranslation && fallbackTranslation.toLowerCase().includes(searchTermLower)) {
+        return true;
+      }
+    }
+
+    // Check children recursively
+    if (menuItem.children && menuItem.children.length > 0) {
+      return menuItem.children.some(child => searchInAllLanguages(child, term));
+    }
+
+    return false;
+  }, [translationDictionary]);
+
+  // Recursive function to restore open state for ALL levels
+  const buildOpenMenuState = (items) => {
+    const state = {};
+
+    const traverse = (menuItems) => {
+      menuItems.forEach((item) => {
+        if (item.children && item.children.length > 0) {
+          const storedState = localStorage.getItem(`menu-${item.appId}-open`);
+          state[item.appId] = storedState
+            ? JSON.parse(storedState)
+            : false;
+
+          traverse(item.children);
+        }
+      });
+    };
+
+    traverse(items);
+    return state;
+  };
+
+
+  // Fetch menu data
+  const fetchMenuData = async () => {
+    setLoading(true);
+    try {
+      // Call API using apiClient
+      const response = await apiClient.get(`/dynamic-sidebar/getAllUrlByRoles/${rolesId}`);
+      const data = response.data;
+
+      if (data?.status === 200 && Array.isArray(data.response)) {
+        setMenuData(data.response);
+        sessionStorage.setItem(cacheKey, JSON.stringify(data.response));
+
+        // Initialize open menus
+        const buildOpenMenuState = (items, state = {}) => {
+          items.forEach((item) => {
+            if (item.children?.length > 0) {
+              const storedState = localStorage.getItem(`menu-${item.appId}-open`);
+              state[item.appId] = storedState ? JSON.parse(storedState) : false;
+
+              // Recursive call for sub-children
+              buildOpenMenuState(item.children, state);
+            }
+          });
+          return state;
+        };
+
+        const initialOpenMenus = buildOpenMenuState(data.response);
+        setOpenMenus(initialOpenMenus);
+
+
+
+        // Build allowed URLs
+        const extractUrls = (items) => {
+          let urls = [];
+          for (const item of items) {
+            if (item.url && item.url !== "#") {
+              urls.push(item.url);
+            }
+            if (item.children?.length > 0) {
+              urls.push(...extractUrls(item.children));
+            }
+          }
+          return urls;
+        };
+        const allowedUrls = extractUrls(data.response);
+        sessionStorage.setItem("allowedUrls", JSON.stringify(allowedUrls));
+
+        // Preload translations for all menu items
+        preloadMenuTranslations(data.response);
+      } else {
+        console.error("Unexpected API response format:", data);
+        setMenuData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching menu data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  // Preload translations for menu items
+  const preloadMenuTranslations = async (menuItems) => {
+    try {
+      const languages = ['hi', 'or', 'mr'];
+      const allMenuTexts = [];
+
+      const extractMenuTexts = (items) => {
+        for (const item of items) {
+          if (item.name) {
+            allMenuTexts.push(item.name);
+          }
+          if (item.children && item.children.length > 0) {
+            extractMenuTexts(item.children);
+          }
+        }
+      };
+
+      extractMenuTexts(menuItems);
+
+      // Remove duplicates
+      const uniqueTexts = [...new Set(allMenuTexts)];
+
+      // Preload translations for each language
+      for (const lang of languages) {
+        if (lang !== 'en') {
+          for (const text of uniqueTexts) {
+            // Trigger translation to cache it
+            translateText(text, lang);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error preloading menu translations:", error);
+    }
+  };
+
+  // On mount / rolesId or roleChanged change
+  useEffect(() => {
+    let canceled = false;
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached && !roleChanged && !canceled) {
+      try {
+        const parsed = JSON.parse(cached);
+        setMenuData(parsed);
+        const initialOpenMenus = buildOpenMenuState(parsed);
+        setOpenMenus(initialOpenMenus);
+
+        setLoading(false);
+
+        // Preload translations
+        preloadMenuTranslations(parsed);
+
+        return () => (canceled = true);
+      } catch (err) {
+        console.warn("Menu cache parse failed, refetching", err);
+      }
+    }
+
+    fetchMenuData();
+
+    return () => {
+      canceled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roleChanged, rolesId]);
+
+  // Persist scroll position
+  useEffect(() => {
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+
+    const handleScroll = () => {
+      try {
+        sessionStorage.setItem("sidebarScroll", String(sidebar.scrollTop || 0));
+      } catch (e) { }
+    };
+
+    sidebar.addEventListener("scroll", handleScroll);
+    return () => sidebar.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Restore scroll after menuData is present
+  useEffect(() => {
+    if (!sidebarRef.current) return;
+    if (loading) return;
+    if (!menuData || menuData.length === 0) return;
+
+    const saved = sessionStorage.getItem("sidebarScroll");
+    if (saved) {
+      requestAnimationFrame(() => {
+        try {
+          sidebarRef.current.scrollTop = parseInt(saved, 10) || 0;
+        } catch (e) { }
+      });
+    }
+  }, [loading, menuData]);
+
+  // Counts state
+  const [counts, setCounts] = useState(() => {
+    const savedCounts = sessionStorage.getItem("counts");
+    return savedCounts
+      ? JSON.parse(savedCounts)
+      : {
+        totalUser: 0,
+        branchUser: 0,
+        totalDocument: 0,
+        pendingDocument: 0,
+        storageUsed: 0,
+        totalBranches: 0,
+        totalDepartment: 0,
+        totalRoles: 0,
+        totalFilesType: 0,
+        documentType: 0,
+        annualYear: 0,
+        totalNullEmployeeType: 0,
+        totalCategories: 0,
+        totalApprovedDocuments: 0,
+        totalRejectedDocuments: 0,
+        totalPendingDocuments: 0,
+        totalApprovedDocumentsById: 0,
+        totalRejectedDocumentsById: 0,
+        totalPendingDocumentsById: 0,
+        totalDocumentsById: 0,
+        totalApprovedStatusDocById: 0,
+        totalRejectedStatusDocById: 0,
+        departmentCountForBranch: 0,
+        nullRoleEmployeeCountForBranch: 0,
+        departmentUser: 0,
+        rejectedDocsbyid: 0,
+        approvedDocsbyid: 0,
+        pendingDocsbyid: 0,
+        createdByCount: 0,
+        nullRoleEmployeeCountForDepartment: 0,
+        totalDocumentsByDepartmentId: 0,
+        totalPendingDocumentsByDepartmentId: 0,
+        totalApprovedStatusDocByDepartmentId: 0,
+        totalRejectedStatusDocByDepartmentId: 0,
+        totalUserApplications: 0,
+        totalTemplate: 0,
+        trashTotalDoc: 0,
+        trashTotalDocByEmpId: 0,
+        trashTotalDocByBranch: 0,
+        trashTotalDocByDepartment: 0,
+        totalLanguage: 0,
+      };
+  });
+
+  // Fetch counts
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const employeeId = localStorage.getItem("id");
+
+        if (!employeeId) {
+          throw new Error("Employee ID not found in local storage.");
+        }
+
+
+        const response = await apiClient.get(`${API_HOST}/api/dashboard/getAllCount/${employeeId}`);
+
+        setCounts(response.data);
+        sessionStorage.setItem("counts", JSON.stringify(response.data));
+      } catch (error) {
+        console.error("Error fetching dashboard counts:", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
+  // Menu toggle handler
+  const handleMenuToggle = (appId) => {
+    const newState = !openMenus[appId];
+    setOpenMenus((prev) => ({ ...prev, [appId]: newState }));
+    localStorage.setItem(`menu-${appId}-open`, JSON.stringify(newState));
+  };
+
+  // Active link style
+  const isActive = (path) =>
+    location.pathname === path
+      ? ""
+      : "";
+
+  // Icon mapping - Returns null if icon not found
+  const getIconComponent = (name) => {
+    const iconMap = {
+      Dashboard: MdDashboard,
+      "Archival Dashboard": SiArchiveofourown,
+      Users: HiUsers,
+      "Pending Users": FaUserClock,
+      "Manage Users Roles": UserPlusIcon,
+      "Generate I'D Card": IdentificationIcon,
+      Organisation: GoOrganization,
+      Branch: KeyIcon,
+      Department: ComputerDesktopIcon,
+      Role: UserCircleIcon,
+      Category: ShoppingCartIcon,
+      Years: CalendarDaysIcon,
+      "Manage User Applications": UserIcon,
+      "Template Masters": UserIcon,
+      "Add Form Reports": UserIcon,
+      "Audit Form": UserIcon,
+      "assign applications": UserIcon,
+      "Role Rights": UserIcon,
+      "Files Types": GiFiles,
+      Document: IoDocumentText,
+      "Pending Approvals": IoDocumentLock,
+      "Approved Document": DocumentCheckIcon,
+      "Rejected Document": DocumentMinusIcon,
+      "Search Documents": DocumentMagnifyingGlassIcon,
+      "File Compare": DocumentMagnifyingGlassIcon,
+      "Search Documents By QR Codes": DocumentTextIcon,
+      "Report Section": DocumentChartBarIcon,
+      "Document Report": DocumentTextIcon,
+      "User Report": RiFileUserFill,
+      "O C R": AiOutlineFileSearch,
+      "Search OCR": RiMenuSearchLine,
+      "Archive Section": RiArchiveStackFill,
+      "Download Archive Data": RiInboxArchiveFill,
+      "Upload Archive Data": RiInboxUnarchiveFill,
+      "Archival Policy": ClockIcon,
+      "Scan Document": MdAdfScanner,
+      "Upload Document": DocumentArrowUpIcon,
+      "Main Dashboard": MdDashboard,
+      Archival: IoArchiveSharp,
+      "Audit & Reports": TbReportSearch,
+      "OCR & Search": HiDocumentSearch,
+      "Document Reports": MdEditDocument,
+      "Control And Workflow": GrDocumentConfig,
+      Access: IoDocumentLock,
+      Rights: RiUserSettingsFill,
+      "User Reports": TbReport,
+    };
+
+    return iconMap[name] || null; // Return null if icon not found
+  };
+
+  // Get count for menu item
+  const getCountForMenuItem = (url) => {
+    const currentRole = localStorage.getItem("role");
+
+    const countMap = {
+      "/users": counts.totalUser,
+      "/userRoleAssing": currentRole === SYSTEM_ADMIN ? counts.totalNullEmployeeType : counts.nullRoleEmployeeCountForBranch,
+      "/manageUserRole": currentRole === SYSTEM_ADMIN ? counts.totalUser - counts.totalNullEmployeeType : counts.branchUser - counts.nullRoleEmployeeCountForBranch,
+      "/create-branch": counts.totalBranches,
+      "/create-department": counts.totalDepartment,
+      "/create-role": counts.totalRoles,
+      "/create-category": counts.totalCategories,
+      "/create-year": counts.annualYear,
+      "/ManageUserApplications": counts.totalUserApplications,
+      "/TemplateMasters": counts.totalTemplate,
+      "/create-fileType": counts.totalFilesType,
+      "/LanguageMaster": counts.totalLanguage,
+      "/approve-documents":
+        currentRole === SYSTEM_ADMIN
+          ? counts.totalPendingDocuments
+          : currentRole === BRANCH_ADMIN
+            ? counts.totalPendingDocumentsById
+            : currentRole === DEPARTMENT_ADMIN
+              ? counts.totalPendingDocumentsByDepartmentId
+              : counts.pendingDocsbyid,
+
+      "/trash-documents":
+        currentRole === SYSTEM_ADMIN
+          ? counts.trashTotalDoc
+          : currentRole === BRANCH_ADMIN
+            ? counts.trashTotalDocByBranch
+            : currentRole === DEPARTMENT_ADMIN
+              ? counts.trashTotalDocByDepartment
+              : 0,
+
+      "/all-documents": currentRole === USER ? counts.pendingDocsbyid : 0,
+      "/total-approved":
+        currentRole === SYSTEM_ADMIN
+          ? counts.totalApprovedDocuments
+          : currentRole === BRANCH_ADMIN
+            ? counts.totalApprovedStatusDocById
+            : currentRole === DEPARTMENT_ADMIN
+              ? counts.totalApprovedStatusDocByDepartmentId
+              : 0,
+
+      "/approvedDocs": currentRole === USER ? counts.approvedDocsbyid : 0,
+      "/total-rejected":
+        currentRole === SYSTEM_ADMIN
+          ? counts.totalRejectedDocuments
+          : currentRole === BRANCH_ADMIN
+            ? counts.totalRejectedStatusDocById
+            : currentRole === DEPARTMENT_ADMIN
+              ? counts.totalRejectedStatusDocByDepartmentId
+              : counts.rejectedDocsbyid,
+      "/rejectedDocs": currentRole === USER ? counts.rejectedDocsbyid : 0,
+      "/branchusers": counts.branchUser,
+      "/Departmentusers": counts.departmentUser,
+    };
+
+    return countMap[url] || 0;
+  };
+
+  
+
+  // Sidebar Link component with null check
+  const SidebarLink = ({ to, icon: Icon, text, count }) => {
+    // If Icon is null or undefined, render without icon
+    const bgClass = {
+      Pending: "pendingBg",
+      Approved: "approvedBg",
+      Rejected: "rejectedBg",
+      Trash: "trashBg",
+    }[text] || "";
+    if (!Icon) {
+      return (
+        <NavLink
+          to={to}
+          onClick={() => {
+            try {
+              if (sidebarRef.current) sessionStorage.setItem("sidebarScroll", String(sidebarRef.current.scrollTop || 0));
+            } catch (e) { }
+          }}
+          className={`commonNavLink ${isActive(to)}`}
+        >
+          <div className="flex items-center">
+            <span>
+              <AutoTranslate>{text}</AutoTranslate>
+            </span>
+          </div>
+          {/* {count > 0 && (<span className="count">{count}</span>)} */}
+          {count > 0 && (<span className={`count ${bgClass}`}>{count}</span>)}
+        </NavLink>
+      );
+    }
+
+    // Render with icon
+    return (
+      <NavLink
+        to={to}
+        onClick={() => {
+          try {
+            if (sidebarRef.current) sessionStorage.setItem("sidebarScroll", String(sidebarRef.current.scrollTop || 0));
+          } catch (e) { }
+        }}
+        className={`commonNavLink ${isActive(to)}`}
+      >
+        <div className="flex items-center">
+          <Icon className="menu-icon" />
+          <span>
+            <AutoTranslate>{text}</AutoTranslate>
+          </span>
+        </div>
+        {count > 0 && (<span className="count">{count}</span>)}
+      </NavLink>
+    );
+  };
+
+  // Render menu items with multilingual search
+  const renderMenuItems = (items) => {
+    // Filter items based on multilingual search
+    const filteredItems = items.filter((item) =>
+      searchInAllLanguages(item, searchTerm)
+    );
+
+    const sortedItems = [...filteredItems].sort((a, b) => a.serialNo - b.serialNo);
+
+    return sortedItems.map((item) => {
+      const IconComponent = getIconComponent(item.name);
+      const hasChildren = item.children && item.children.length > 0;
+      const isOpen = openMenus[item.appId] || false;
+
+      if (hasChildren) {
+        // Check if parent or any child should be shown
+        const shouldShowParent = searchTerm.trim() === '' || searchInAllLanguages(item, searchTerm);
+
+        if (!shouldShowParent) return null;
+
+        return (
+          <div className="dropdownNav" key={item.appId}>
+            <button onClick={() => handleMenuToggle(item.appId)} className="btnDropdown">
+              <div className="">
+                {IconComponent ? (
+                  <IconComponent />
+                ) : (
+                  <div className="w-4 h-4 mr-2" /> // Empty placeholder for spacing
+                )}
+                <AutoTranslate>{item.name}</AutoTranslate>
+              </div>
+              {isOpen ? (
+                <ChevronDownIcon className="arrowIcon arrowDown" />
+              ) : (
+                <ChevronRightIcon className="arrowIcon" />
+              )}
+            </button>
+            {isOpen && <div className="dropdownSubMenu">{renderMenuItems(item.children)}</div>}
+          </div>
+        );
+      } else {
+        // Only show leaf items that match search
+        if (searchTerm.trim() !== '' && !searchInAllLanguages(item, searchTerm)) {
+          return null;
+        }
+
+        return (
+          <SidebarLink
+            key={item.appId}
+            to={item.url}
+            icon={IconComponent}
+            text={item.name}
+            count={getCountForMenuItem(item.url)}
+          />
+        );
+      }
+    });
+  };
+
+  // Handle search input change
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  return (
+    <div
+      ref={sidebarRef}
+      className="max-h-[100%] overflow-y-auto print:max-h-none print:overflow-auto h-screen flex flex-col justify-between bg-blue-verticle text-white transition-all duration-300 overflow-hidden hover:overflow-y-auto custom-scrollbar hover-scrollbar"
+    >
+      <div className="sideBarMenu">
+        <div className="logo">
+          <img src={logo} alt="DMS" />
+        </div>
+        <div className="main-navbar">
+          <div className="searchBox mb-2">
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              name="name"
+              value={searchTerm}
+              onChange={handleInputChange}
+              maxLength={30}
+              className="border outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-400"
+            />
+          </div>
+
+          <nav className="">
+            {loading ? (
+              <div className="text-center py-4">
+                <AutoTranslate>Loading menu...</AutoTranslate>
+              </div>
+            ) : (
+              renderMenuItems(menuData)
+            )}
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Sidebar;

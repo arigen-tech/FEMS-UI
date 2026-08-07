@@ -1,0 +1,1639 @@
+import React, { useState, useEffect, useMemo } from "react";
+import axios from "axios";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import { MdOutlineClose } from "react-icons/md";
+import {
+  MagnifyingGlassIcon,
+  EyeIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon,
+  ArrowDownTrayIcon,
+  QrCodeIcon,
+  ArrowPathIcon,
+  DocumentIcon,
+  XMarkIcon,
+  PrinterIcon,
+  TrashIcon,
+  CheckIcon,
+  ShareIcon,
+  ClockIcon,
+  UserGroupIcon,
+  UserIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/solid";
+import { API_HOST, DOCUMENTHEADER_API } from "../API/apiConfig";
+import apiClient from "../API/apiClient";
+import FilePreviewModal from "../Components/FilePreviewModal";
+import LoadingComponent from "../Components/LoadingComponent";
+import Popup from "../Components/Popup";
+import AutoTranslate from '../i18n/AutoTranslate';
+import { useLanguage } from '../i18n/LanguageContext';
+
+const SharedDocs = () => {
+  const {
+    currentLanguage,
+    defaultLanguage,
+    translationStatus,
+    isTranslationNeeded,
+    availableLanguages,
+    changeLanguage,
+    translate,
+    preloadTranslationsForTerms
+  } = useLanguage();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [documents, setDocuments] = useState([]);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const [highlightedDocId, setHighlightedDocId] = useState(null);
+  const [blobUrl, setBlobUrl] = useState("");
+  const [contentType, setContentType] = useState("");
+  const [selectedDocFile, setSelectedDocFiles] = useState(null);
+  const [searchFileTerm, setSearchFileTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+  const [openingFileIndex, setOpeningFileIndex] = useState(null);
+  const [openingFiles, setOpeningFiles] = useState(null);
+
+  // State for viewing shares
+  const [viewSharesModalVisible, setViewSharesModalVisible] = useState(false);
+  const [selectedDocShares, setSelectedDocShares] = useState([]);
+  const [revokeShareModalVisible, setRevokeShareModalVisible] = useState(false);
+  const [shareToRevoke, setShareToRevoke] = useState(null);
+  const [revokeReason, setRevokeReason] = useState("");
+
+  // State for share info tooltip
+  const [shareInfoVisible, setShareInfoVisible] = useState(false);
+  const [selectedDocShareInfo, setSelectedDocShareInfo] = useState(null);
+  const [shareInfoPosition, setShareInfoPosition] = useState({ x: 0, y: 0 });
+
+  // State for sharing documents
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [documentToShare, setDocumentToShare] = useState(null);
+  const [shareRecipients, setShareRecipients] = useState([]);
+  const [availableEmployees, setAvailableEmployees] = useState([]);
+  const [shareEndTime, setShareEndTime] = useState("");
+  const [loadingEmployees, setLoadingEmployees] = useState(false);
+  const [sharingDocument, setSharingDocument] = useState(false);
+  const [selectedFileIds, setSelectedFileIds] = useState([]);
+
+  const [popupMessage, setPopupMessage] = useState(null);
+
+  const token = localStorage.getItem("tokenKey");
+  const UserId = localStorage.getItem("id");
+  const role = localStorage.getItem("role");
+
+  // Get current date-time in format for datetime-local input (YYYY-MM-DDTHH:mm)
+  const getCurrentDateTimeLocal = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Get minimum future datetime (current datetime)
+  const getMinDateTime = () => {
+    return getCurrentDateTimeLocal();
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "--";
+    try {
+      const date = new Date(dateString);
+      const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      };
+      return date.toLocaleString("en-GB", options).replace(",", "");
+    } catch (error) {
+      return "--";
+    }
+  };
+
+  const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return "--";
+    try {
+      const date = new Date(dateTimeString);
+      const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      return date.toLocaleString("en-GB", options);
+    } catch (error) {
+      return "--";
+    }
+  };
+
+  const formatDateArray = (dateArray) => {
+    if (!dateArray || !Array.isArray(dateArray) || dateArray.length < 7) return "--";
+    try {
+      // Assuming format: [year, month, day, hour, minute, second, nanosecond]
+      const [year, month, day, hour, minute, second] = dateArray;
+      const date = new Date(year, month - 1, day, hour, minute, second);
+      return date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "--";
+    }
+  };
+
+  // Calculate filtered documents
+  const filteredDocuments = useMemo(() => {
+    if (!documents) return [];
+
+    return documents.filter((doc) =>
+      Object.entries(doc).some(([key, value]) => {
+        if (key === "documentHeader" && value?.categoryMaster) {
+          return value.categoryMaster.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        if (key === "sharedByName" && value) {
+          return value.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        if (key === "documentHeader" && value) {
+          return (
+            value.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            value.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            value.fileNo?.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        if (key === "sharedFileNames" && Array.isArray(value)) {
+          return value.some((fileName) =>
+            fileName.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        if (key === "sharedDate") {
+          const date = formatDateArray(value).toLowerCase();
+          return date.includes(searchTerm.toLowerCase());
+        }
+        if (key === "documentName" && value) {
+          return value.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        return false;
+      })
+    )
+      .sort((a, b) => {
+        const dateA = a.sharedDate ? new Date(...a.sharedDate) : new Date(0);
+        const dateB = b.sharedDate ? new Date(...b.sharedDate) : new Date(0);
+        return dateB - dateA;
+      });
+  }, [documents, searchTerm]);
+
+  // Calculate pagination values
+  const paginationValues = useMemo(() => {
+    const totalItems = filteredDocuments.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const paginatedDocuments = filteredDocuments.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+
+    return { totalItems, totalPages, paginatedDocuments };
+  }, [filteredDocuments, currentPage, itemsPerPage]);
+
+  const { totalItems, totalPages, paginatedDocuments } = paginationValues;
+
+  const getPageNumbers = () => {
+    const maxPageNumbers = 5;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+    return Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    );
+  };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const notificationDocId = searchParams.get('docId');
+
+    if (notificationDocId && documents?.length > 0) {
+      const highlightId = parseInt(notificationDocId);
+      setHighlightedDocId(highlightId);
+      const pageForDocument = findPageForDocument(highlightId);
+      setCurrentPage(pageForDocument);
+    }
+  }, [location.search, documents, itemsPerPage]);
+
+  const findPageForDocument = (documentId) => {
+    const documentIndex = filteredDocuments.findIndex(doc => doc.documentHeader?.id === documentId);
+    if (documentIndex !== -1) {
+      return Math.ceil((documentIndex + 1) / itemsPerPage);
+    }
+    return 1;
+  };
+
+  useEffect(() => {
+    fetchSharedDocuments();
+  }, []);
+
+  const fetchSharedDocuments = async () => {
+    try {
+      setLoading(true);
+
+      const response = await apiClient.get(`${API_HOST}/document-share/shared-with-me`);
+
+      // The response is already an array of share records
+      const sharedRecords = Array.isArray(response.data) ? response.data : [];
+      console.log("Shared records:", sharedRecords);
+
+      // Group by document header to show unique documents
+      const groupedByDocument = sharedRecords.reduce((acc, share) => {
+        const docHeaderId = share.documentHeader?.id;
+
+        if (!docHeaderId) return acc;
+
+        if (!acc[docHeaderId]) {
+          // First share for this document
+          acc[docHeaderId] = {
+            id: docHeaderId,
+            documentHeader: share.documentHeader,
+            shares: [share], // Store all share records for this document
+            sharedByName: share.sharedByName,
+            sharedDate: share.sharedDate,
+            documentName: share.documentName,
+            documentHeaderName: share.documentHeaderName,
+            shareIds: share.shareIds ? [share.shareIds].flat() : [share.id],
+            sharedFileNames: share.sharedFileNames,
+            totalSharesCount: 1, // Count of distinct share records
+            totalFilesShared: share.totalFilesShared || 0,
+            // Collect all unique shared files across all shares
+            allSharedFileNames: [...share.sharedFileNames],
+            allShareRecords: [share] // Store all share records
+          };
+        } else {
+          // Add this share to existing document
+          acc[docHeaderId].shares.push(share);
+          acc[docHeaderId].allShareRecords.push(share);
+          acc[docHeaderId].totalSharesCount += 1;
+
+          // Add share IDs
+          if (share.shareIds) {
+            acc[docHeaderId].shareIds = [...new Set([...acc[docHeaderId].shareIds, ...share.shareIds])];
+          } else {
+            acc[docHeaderId].shareIds = [...new Set([...acc[docHeaderId].shareIds, share.id])];
+          }
+
+          // Add shared file names
+          acc[docHeaderId].sharedFileNames = [
+            ...new Set([...acc[docHeaderId].sharedFileNames, ...share.sharedFileNames])
+          ];
+
+          // Keep track of all shared files
+          acc[docHeaderId].allSharedFileNames = [
+            ...new Set([...acc[docHeaderId].allSharedFileNames, ...share.sharedFileNames])
+          ];
+
+          // Sum total files shared
+          acc[docHeaderId].totalFilesShared += share.totalFilesShared || 0;
+
+          // Keep the most recent share date
+          const currentDate = acc[docHeaderId].sharedDate;
+          const newDate = share.sharedDate;
+          if (newDate && (!currentDate ||
+            (Array.isArray(newDate) && Array.isArray(currentDate) &&
+              new Date(...newDate) > new Date(...currentDate)))) {
+            acc[docHeaderId].sharedDate = newDate;
+            acc[docHeaderId].sharedByName = share.sharedByName;
+          }
+        }
+
+        return acc;
+      }, {});
+
+      // Convert to array
+      const uniqueDocuments = Object.values(groupedByDocument);
+      console.log("Grouped documents:", uniqueDocuments);
+      setDocuments(uniqueDocuments);
+
+    } catch (error) {
+      console.error("Error fetching shared documents:", error);
+      setError("Failed to fetch shared documents. Please try again.");
+      showPopup('Failed to fetch shared documents. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDocumentShares = async (documentHeaderId) => {
+    try {
+      const response = await apiClient.get(`${API_HOST}/document-share/document/${documentHeaderId}/shares`);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching document shares:', error);
+      return [];
+    }
+  };
+
+  const fetchDepartmentEmployees = async () => {
+    try {
+      setLoadingEmployees(true);
+
+      // Call the API endpoint that returns employees in current user's branch and department
+      const response = await apiClient.get(`${API_HOST}/employee/current/branch-department`);
+
+      const employees = response?.data?.response || [];
+
+      if (!Array.isArray(employees)) {
+        console.error('Invalid response format:', response.data);
+        showPopup('Invalid response format from server', 'error');
+        setAvailableEmployees([]);
+        return;
+      }
+
+      // ✅ Filter out current user & inactive employees
+      const filteredEmployees = employees.filter(emp =>
+        emp.id !== parseInt(UserId) && emp.active === true
+      );
+
+      setAvailableEmployees(filteredEmployees);
+
+    } catch (error) {
+      console.error('Error fetching department employees:', error);
+
+      let errorMessage = 'Failed to load department employees';
+      if (error.response?.status === 404) {
+        errorMessage = 'API endpoint not found. Please check the URL.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'Authentication failed. Please login again.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      showPopup(errorMessage, 'error');
+      setAvailableEmployees([]);
+    } finally {
+      setLoadingEmployees(false);
+    }
+  };
+
+  const showPopup = (message, type = 'info') => {
+    setPopupMessage({
+      message,
+      type,
+      onClose: () => {
+        setPopupMessage(null);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (selectedDoc) {
+      setLoadingFiles(true);
+      setTimeout(() => {
+        setLoadingFiles(false);
+      }, 300);
+    }
+  }, [selectedDoc]);
+
+  const openFile = async (file) => {
+    try {
+      setOpeningFiles(true);
+      const encodedPath = file.path.split("/").map(encodeURIComponent).join("/");
+      const fileUrl = `${API_HOST}/api/documents/download/${encodedPath}`;
+
+      const response = await apiClient.get(fileUrl, {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], { type: response.headers["content-type"] });
+      const url = URL.createObjectURL(blob);
+
+      setBlobUrl(url);
+      setContentType(response.headers["content-type"]);
+      setSearchFileTerm("");
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("❌ Error fetching file:", error);
+      alert("Failed to fetch or preview the file.");
+    } finally {
+      setOpeningFiles(false);
+    }
+  };
+
+  const handleDownload = async (file) => {
+    if (!selectedDoc) return;
+
+    const branch = selectedDoc.documentHeader?.employee?.branch?.name?.replace(/ /g, "_") || "unknown";
+    const department = selectedDoc.documentHeader?.employee?.department?.name?.replace(/ /g, "_") || "unknown";
+    const year = file.yearMaster?.name?.replace(/ /g, "_") || "unknown";
+    const category = selectedDoc.documentHeader?.categoryMaster?.name?.replace(/ /g, "_") || "unknown";
+    const version = file.version;
+    const fileName = file.docName.replace(/ /g, "_");
+
+    const fileUrl = `${API_HOST}/api/documents/download/${encodeURIComponent(
+      branch
+    )}/${encodeURIComponent(department)}/${encodeURIComponent(
+      year
+    )}/${encodeURIComponent(category)}/${encodeURIComponent(
+      version
+    )}/${encodeURIComponent(fileName)}`;
+
+    try {
+      const response = await apiClient.get(fileUrl, {
+        responseType: "blob",
+      });
+
+      const downloadBlob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(downloadBlob);
+      link.download = file.docName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      showPopup('Failed to download file. Please try again!', 'error');
+    }
+  };
+
+  const filteredDocFiles = useMemo(() => {
+    if (!selectedDoc || !selectedDoc.documentHeader?.documentDetails) return [];
+
+    // Filter files that are actually shared (based on allSharedFileNames)
+    const sharedFileNames = selectedDoc.allSharedFileNames || selectedDoc.sharedFileNames || [];
+    const allFiles = selectedDoc.documentHeader.documentDetails || [];
+
+    const sharedFiles = allFiles.filter(file =>
+      sharedFileNames.includes(file.docName)
+    );
+
+    // Apply search filter
+    return sharedFiles.filter((file) => {
+      const name = file.docName.toLowerCase();
+      const version = String(file.version).toLowerCase();
+      const term = searchFileTerm.toLowerCase();
+      return name.includes(term) || version.includes(term);
+    });
+  }, [selectedDoc, searchFileTerm]);
+
+  const fetchQRCode = async (documentId) => {
+    try {
+
+      const apiUrl = `/api/documents/documents/download/qr/${documentId}`;
+
+      const response = await apiClient.get(apiUrl, { responseType: "blob" });
+
+      const qrCodeBlob = response.data;
+
+      if (!qrCodeBlob.type.includes("image/png")) {
+        throw new Error(<AutoTranslate>Received data is not a valid image</AutoTranslate>);
+      }
+
+      const qrCodeUrl = window.URL.createObjectURL(qrCodeBlob);
+      setQrCodeUrl(qrCodeUrl);
+    } catch (error) {
+      setError(<AutoTranslate>Error displaying QR Code:</AutoTranslate> + error.message);
+    }
+  };
+
+
+  const downloadQRCode = async () => {
+    try {
+      const response = await apiClient.get(
+        `/api/documents/documents/download/qr/${selectedDoc.id}`,
+        { responseType: "blob" }
+      );
+
+      const qrCodeUrl = window.URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = qrCodeUrl;
+      link.download = `QR_Code_${selectedDoc.id}.png`;
+      link.click();
+
+      window.URL.revokeObjectURL(qrCodeUrl);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePrintReport = async (id) => {
+    if (!id) return;
+
+    try {
+      const response = await fetch(`http://localhost:8443/api/reports/document/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to download PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `document_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      showPopup('Error printing report: ' + error.message, 'error');
+    }
+  };
+
+  const openModal = async (doc) => {
+    setSelectedDoc(doc);
+    setIsOpen(true);
+    fetchQRCode(doc.id);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setSelectedDoc(null);
+    setQrCodeUrl(null);
+  };
+
+  const handleViewShares = async (doc) => {
+    try {
+      const shares = await fetchDocumentShares(doc.id);
+      setSelectedDocShares(shares);
+      setViewSharesModalVisible(true);
+    } catch (error) {
+      console.error('Error fetching shares:', error);
+      showPopup('Failed to load shares', 'error');
+    }
+  };
+
+  const handleShowShareInfo = (doc, event) => {
+    setSelectedDocShareInfo(doc);
+    setShareInfoPosition({
+      x: event.clientX,
+      y: event.clientY
+    });
+    setShareInfoVisible(true);
+
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      setShareInfoVisible(false);
+    }, 5000);
+  };
+
+  const handleRevokeShare = (share) => {
+    setShareToRevoke(share);
+    setRevokeReason("");
+    setRevokeShareModalVisible(true);
+  };
+
+  const confirmRevokeShare = async () => {
+    if (!shareToRevoke) return;
+
+    try {
+      const revokeRequest = {
+        shareId: shareToRevoke.id,
+        reason: revokeReason
+      };
+
+      const response = await apiClient.post(
+        `${API_HOST}/document-share/revoke`,
+        revokeRequest,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        showPopup('Share revoked successfully!', 'success');
+        setRevokeShareModalVisible(false);
+        setShareToRevoke(null);
+        setRevokeReason("");
+
+        // Refresh the shares list
+        if (selectedDoc) {
+          const updatedShares = await fetchDocumentShares(selectedDoc.id);
+          setSelectedDocShares(updatedShares);
+        }
+
+        // Refresh documents list
+        fetchSharedDocuments();
+      } else {
+        showPopup(response.data.message || 'Failed to revoke share', 'error');
+      }
+    } catch (error) {
+      console.error('Error revoking share:', error);
+      showPopup('Failed to revoke share. Please try again.', 'error');
+    }
+  };
+
+  // ==================== Document Sharing Functions ====================
+
+  const handleShareDocument = (doc) => {
+    setDocumentToShare(doc);
+    setShareModalVisible(true);
+    setShareRecipients([]);
+    setShareEndTime("");
+
+    // Auto-select all shared file IDs for this document
+    if (doc.allSharedFileNames && doc.documentHeader?.documentDetails) {
+      const sharedFiles = doc.documentHeader.documentDetails.filter(file =>
+        doc.allSharedFileNames.includes(file.docName)
+      );
+      setSelectedFileIds(sharedFiles.map(file => file.id));
+    } else {
+      setSelectedFileIds([]);
+    }
+
+    fetchDepartmentEmployees();
+  };
+
+  const handleShareSubmit = async () => {
+    if (!documentToShare || shareRecipients.length === 0) {
+      showPopup('Please select at least one recipient', 'warning');
+      return;
+    }
+
+    if (selectedFileIds.length === 0) {
+      showPopup('No files selected to share', 'warning');
+      return;
+    }
+
+    setSharingDocument(true);
+
+    try {
+      // Prepare share request - sending specific file IDs
+      const shareRequest = {
+        documentHeaderId: documentToShare.id,
+        documentDetailIds: selectedFileIds,
+        recipientIds: shareRecipients,
+        endTime: shareEndTime ? new Date(shareEndTime).toISOString() : null
+      };
+
+      const response = await apiClient.post(
+        `${API_HOST}/document-share/share`,
+        shareRequest,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        const shareResponse = response.data.response;
+
+        // Show success message
+        if (shareResponse.totalFilesShared > 0) {
+          showPopup(`Successfully shared ${shareResponse.totalFilesShared} file(s)!`, 'success');
+        } else {
+          showPopup('Document shared successfully!', 'success');
+        }
+
+        setShareModalVisible(false);
+        setDocumentToShare(null);
+        setShareRecipients([]);
+        setShareEndTime("");
+        setSelectedFileIds([]);
+
+        // Refresh the documents list
+        fetchSharedDocuments();
+      } else {
+        showPopup(response.data.message || 'Failed to share document', 'error');
+      }
+    } catch (error) {
+      console.error('Error sharing document:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to share document. Please try again.';
+      showPopup(errorMessage, 'error');
+    } finally {
+      setSharingDocument(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingComponent />;
+  }
+
+  return (
+    <div className="px-1-">
+      <div className="title">
+        <h1><AutoTranslate>Shared Documents</AutoTranslate></h1>
+      </div>
+
+      {popupMessage && (
+        <Popup
+          message={popupMessage.message}
+          type={popupMessage.type}
+          onClose={popupMessage.onClose}
+        />
+      )}
+
+      <div className="card">
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+
+        <div className="data-search-wrapper">
+          <div className="form-group flex items-center gap-4">
+            <label
+              htmlFor="itemsPerPage"
+            >
+              <AutoTranslate>Show:</AutoTranslate>
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="searchIcon"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="table-wrapper">
+          <table className="">
+            <thead>
+              <tr>
+                <th className="text-center">
+                  <AutoTranslate>SN</AutoTranslate>
+                </th>
+                <th>
+                  <AutoTranslate>File No</AutoTranslate>
+                </th>
+                <th>
+                  <AutoTranslate>Title</AutoTranslate>
+                </th>
+                <th>
+                  <AutoTranslate>Subject</AutoTranslate>
+                </th>
+                <th>
+                  <AutoTranslate>Shared By</AutoTranslate>
+                </th>
+                <th>
+                  <AutoTranslate>Shared Files</AutoTranslate>
+                </th>
+                <th className="text-center">
+                  <AutoTranslate>Actions</AutoTranslate>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedDocuments.length > 0 ? (
+                paginatedDocuments.map((doc, index) => {
+                  const isHighlighted = doc.id === highlightedDocId;
+                  const sharedFilesCount = doc.allSharedFileNames?.length || doc.totalFilesShared || 0;
+                  const totalShares = doc.totalSharesCount || 1;
+                  const documentHeader = doc.documentHeader || {};
+                  const sharedByName = doc.sharedByName || doc.shares?.[0]?.sharedByName || "N/A";
+                  const sharedDate = doc.sharedDate || doc.shares?.[0]?.sharedDate;
+
+                  return (
+                    <tr
+                      key={doc.id}
+                      className={isHighlighted ? 'bg-yellow-100' : ''}
+                    >
+                      <td className="text-center">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </td>
+                      <td>{documentHeader.fileNo || "N/A"}</td>
+                      <td>{documentHeader.title || "N/A"}</td>
+                      <td>{documentHeader.subject || "N/A"}</td>
+                      <td>
+                        <div className="flex flex-col">
+                          <span>{sharedByName}</span>
+                          <span className="text-xs text-gray-500">
+                            {formatDateArray(sharedDate)}
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 text-xs font-medium mr-2">
+                              {sharedFilesCount}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              file{sharedFilesCount !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                          {totalShares > 1 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 ml-2">
+                              {totalShares} share{totalShares !== 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="text-center">
+                        <div className="btn-center">
+                          <button
+                            onClick={() => openModal(doc)}
+                            title={`View details for ${documentHeader.title || "this document"}`}
+                            className="viewBtn">
+                            <EyeIcon />
+                          </button>
+                          <button
+                            onClick={(e) => handleShowShareInfo(doc, e)}
+                            title="Show share information"
+                            className="viewBtn">
+                            <InformationCircleIcon style={{ width: "22px", height: "22px" }} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="7" className="border p-4 text-center text-gray-500">
+                    <AutoTranslate>No shared documents found.</AutoTranslate>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {/* Pagination Controls */}
+        <div className="paginationWp">
+          <div className="items">
+            <div className="paginationText">
+              <span className="text-sm text-gray-700">
+                <AutoTranslate>
+                  {`Showing ${totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0
+                    } to ${Math.min(currentPage * itemsPerPage, totalItems)} of ${totalItems} entries.`}
+                </AutoTranslate>
+              </span>
+              {/* Page Count Info */}
+              <span className="text-sm text-gray-700 mx-2">
+                (<AutoTranslate>Pages</AutoTranslate> {totalPages})
+              </span>
+            </div>
+          </div>
+          <div className="items">
+            <div className="paginationBtn">
+              {/* Previous Button */}
+              <button title={`${currentPage === 1 || totalPages === 0 ? "End" : "Previous"}`}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1 || totalPages === 0}
+                className={`${currentPage === 1 || totalPages === 0 ? "cursor-not-allowed" : ""}`}>
+                <IoIosArrowBack />
+              </button>
+              {/* Page Number Buttons */}
+              {totalPages > 0 && getPageNumbers().map((page) => (
+                <button key={page} onClick={() => setCurrentPage(page)} className={`${currentPage === page ? "active" : ""}`}>
+                  {page}
+                </button>
+              ))}
+              {/* Next Button */}
+              <button title={`${currentPage === totalPages || totalPages === 0 ? "End" : "Next"}`}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className={`${currentPage === totalPages || totalPages === 0 ? "cursor-not-allowed" : ""}`}>
+                <IoIosArrowForward />
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Share Info Tooltip */}
+        {shareInfoVisible && selectedDocShareInfo && (
+          <div
+            className="fixed z-[9985] bg-white border border-gray-300 rounded-lg shadow-xl p-3 max-w-sm"
+            style={{
+              width: "300px",
+              left: `${shareInfoPosition.x - 130}px`,
+              top: `${shareInfoPosition.y + 15}px`,
+              transform: 'translateX(-50%)'
+            }}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="font-semibold text-gray-800">
+                <AutoTranslate>Share Information</AutoTranslate>
+              </h3>
+              <button
+                onClick={() => setShareInfoVisible(false)}
+                className="closeBtnSm"
+              >
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600"><AutoTranslate>Total Shares:</AutoTranslate></span>
+                <span className="font-medium">{selectedDocShareInfo.totalSharesCount || 1}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600"><AutoTranslate>Shared Files:</AutoTranslate></span>
+                <span className="font-medium">{selectedDocShareInfo.allSharedFileNames?.length || selectedDocShareInfo.totalFilesShared || 0}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600"><AutoTranslate>Shared By:</AutoTranslate></span>
+                <span className="font-medium">{selectedDocShareInfo.sharedByName || "N/A"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600"><AutoTranslate>Last Shared:</AutoTranslate></span>
+                <span className="font-medium">{formatDateArray(selectedDocShareInfo.sharedDate)}</span>
+              </div>
+
+              {selectedDocShareInfo.shares && selectedDocShareInfo.shares.length > 1 && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <h4 className="font-medium text-gray-700 mb-1">
+                    <AutoTranslate>Share Details:</AutoTranslate>
+                  </h4>
+                  <div className="max-h-40 overflow-y-auto">
+                    {selectedDocShareInfo.shares.slice(0, 3).map((share, idx) => (
+                      <div key={idx} className="text-xs mb-1 p-1 bg-gray-50 rounded">
+                        <div className="flex justify-between">
+                          <span>Share {idx + 1}:</span>
+                          <span className="font-medium">{share.sharedFileNames?.length || 0} files</span>
+                        </div>
+                        <div className="text-gray-500">
+                          {formatDateArray(share.sharedDate)}
+                        </div>
+                      </div>
+                    ))}
+                    {selectedDocShareInfo.shares.length > 3 && (
+                      <div className="text-xs text-gray-500 text-center">
+                        + {selectedDocShareInfo.shares.length - 3} more shares
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-3 flex justify-end">
+              <button
+                onClick={() => handleViewShares(selectedDocShareInfo)}
+                className="btn-light-blue-sm text-xs- px-2- py-1- bg-purple-100- text-purple-700- rounded- hover:bg-purple-200-">
+                <AutoTranslate>View All Shares</AutoTranslate>
+              </button>
+            </div>
+          </div>
+        )}
+
+        <FilePreviewModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onDownload={handleDownload}
+          fileType={contentType}
+          fileUrl={blobUrl}
+          fileName={selectedDocFile?.docName}
+          fileData={selectedDocFile}
+        />
+
+        {/* Document Details Modal */}
+        {isOpen && selectedDoc && (
+          <div className="overlayModal">
+            <div className="document-modal">
+              {/* Header */}
+              <div className="modal-header">
+                <div className="modal-title">
+                  <div className="bg-indigo-600 text-white rounded-lg p-2">
+                    <span className="text-lg font-bold">D</span>
+                    <span className="text-lg font-bold">MS</span>
+                  </div>
+                  <h2><AutoTranslate>Document Details</AutoTranslate></h2>
+                </div>
+                <div className="headerRight">
+                  {/* Print Button */}
+                  <button className="printBtn no-print-" onClick={() => handlePrintReport(selectedDoc?.id)} title="Print">
+                    <PrinterIcon className="h-6 w-6" />
+                  </button>
+                  {/* Close Button */}
+                  <button className="closeBtn" onClick={closeModal} title="Close">
+                    <MdOutlineClose />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal body Content */}
+              <div className="modal-body">
+                <div className="bodyScroller print:overflow-visible print:max-h-none">
+
+                  <div className="top-section">
+                    <div className="info-card">
+                      <div className="info-grid">
+                        {[
+                          { label: "Branch", value: selectedDoc.documentHeader?.employee?.branch?.name || selectedDoc.documentHeader?.branchName },
+                          { label: "Department", value: selectedDoc.documentHeader?.employee?.department?.name || selectedDoc.documentHeader?.departmentName },
+                          { label: "File No.", value: selectedDoc.documentHeader?.fileNo },
+                          { label: "Title", value: selectedDoc.documentHeader?.title },
+                          { label: "Subject", value: selectedDoc.documentHeader?.subject },
+                          { label: "Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Status", value: selectedDoc.documentHeader?.approvalStatus },
+                          { label: "Shared By", value: selectedDoc.sharedByName },
+                          { label: "Shared Date", value: formatDateArray(selectedDoc.sharedDate) },
+                          { label: "Total Files Shared", value: selectedDoc.allSharedFileNames?.length || selectedDoc.totalFilesShared },
+                          { label: "Total Shares", value: selectedDoc.totalSharesCount || 1 },
+                        ].map((item, idx) => (
+                          <p key={idx} className="text-md text-gray-700">
+                            <AutoTranslate>{item.label}</AutoTranslate> <AutoTranslate>{item.value || "N/A"}</AutoTranslate>
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="qr-card">
+                      <h2 className="mb-4"><AutoTranslate>QR Code:</AutoTranslate></h2>
+                      {selectedDoc?.documentHeader?.qrPath ? (
+                        <>
+                          <div className="imgWp">
+                            <img src={qrCodeUrl} alt="QR Code" />
+                          </div>
+                          <button
+                            onClick={downloadQRCode}
+                            className="mt-4 flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                          >
+                            <ArrowDownTrayIcon className="h-4 w-4" />
+                            <AutoTranslate>Download QR</AutoTranslate>
+                          </button>
+                        </>
+                      ) : (
+                        <div className="text-center text-gray-500 py-8">
+                          <QrCodeIcon className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+                          <p><AutoTranslate>No QR code available</AutoTranslate></p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Shared Files Section */}
+                  <div className="mt-8">
+                    <div className="attachedWp relative">
+                      <h2 className="mb-0">
+                        <AutoTranslate>Shared Files</AutoTranslate>
+                        <span className="text-sm font-normal text-gray-600">
+                          <AutoTranslate>Showing</AutoTranslate> {selectedDoc.allSharedFileNames?.length || 0} <AutoTranslate>shared files</AutoTranslate>
+                        </span>
+                      </h2>
+                      <div className="flex items-center gap-4">
+                        <div className="form-group">
+                          <input
+                            type="text"
+                            placeholder="Search files..."
+                            value={searchFileTerm}
+                            onChange={(e) => setSearchFileTerm(e.target.value)}
+                            className="searchIcon"
+                          />
+                        </div>
+                        <button
+                          onClick={() => handleViewShares(selectedDoc)}
+                          className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200"
+                          title="View shared access"
+                        >
+                          <ShareIcon className="h-5 w-5" />
+                          <AutoTranslate>View Shares</AutoTranslate>
+                        </button>
+                        <button
+                          onClick={() => handleShareDocument(selectedDoc)}
+                          className="btn-primary flex items-center gap-2"
+                          title="Share document with others"
+                        >
+                          <ShareIcon className="h-5 w-5" />
+                          <AutoTranslate>Share</AutoTranslate>
+                        </button>
+                      </div>
+                    </div>
+
+                    {loadingFiles ? (
+                      <div className="flex justify-center items-center py-12">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        <span className="ml-3 text-gray-600">
+                          <AutoTranslate>Loading files...</AutoTranslate>
+                        </span>
+                      </div>
+                    ) : selectedDoc && filteredDocFiles.length > 0 ? (
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        {/* Desktop View Table Header */}
+                        <div className="hidden md:grid grid-cols-[30fr_10fr_10fr_10fr_15fr_15fr_20fr_10fr] bg-gray-50 text-gray-600 font-medium text-sm px-6 py-3 gap-2">
+                          <span className="text-left">
+                            <AutoTranslate>File Name</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Year</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Version</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Status</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Action By</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Action Date</AutoTranslate>
+                          </span>
+                          <span className="text-center">
+                            <AutoTranslate>Reason</AutoTranslate>
+                          </span>
+                          <span className="text-center no-print">
+                            <AutoTranslate>View</AutoTranslate>
+                          </span>
+                        </div>
+
+                        <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+                          {filteredDocFiles.map((file, index) => (
+                            <div key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                              {/* Desktop View */}
+                              <div className="hidden md:grid grid-cols-[30fr_10fr_10fr_10fr_15fr_15fr_20fr_10fr] items-center px-6 py-4 text-sm gap-2">
+                                <div className="text-left text-gray-800 break-words flex items-center">
+                                  <strong>{index + 1}.</strong> {file.docName}
+                                </div>
+                                <div className="text-center text-gray-700">{file.yearMaster?.name || "--"}</div>
+                                <div className="text-center text-gray-700">{file.version}</div>
+                                <div className="text-center">
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
+                                      file.status === "REJECTED" ? "bg-red-100 text-red-800" :
+                                        "bg-yellow-100 text-yellow-800"}`}
+                                  >
+                                    {file.status || <AutoTranslate>PENDING</AutoTranslate>}
+                                  </span>
+                                </div>
+                                <div className="text-center text-gray-700">{file.approvedBy || "--"}</div>
+                                <div className="text-center text-gray-700">{formatDate(file.approvedOn)}</div>
+                                <div className="text-center text-gray-700 break-words">{file.rejectionReason || "--"}</div>
+                                <div className="flex justify-center no-print">
+                                  <button
+                                    onClick={() => {
+                                      setOpeningFileIndex(index);
+                                      setSelectedDocFiles(file);
+                                      openFile(file).finally(() => setOpeningFileIndex(null));
+                                    }}
+                                    disabled={openingFileIndex !== null}
+                                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
+                                      ${openingFileIndex === index ?
+                                        "bg-indigo-400 cursor-not-allowed" :
+                                        "bg-indigo-600 hover:bg-indigo-700"} text-white`}
+                                  >
+                                    {openingFileIndex === index ? (
+                                      <>
+                                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                                        <AutoTranslate>
+                                          {file.ltoArchived && !file.restored ? "Restoring..." : "Opening..."}
+                                        </AutoTranslate>
+                                      </>
+                                    ) : (
+                                      <>
+                                        {file.ltoArchived && !file.restored ? (
+                                          <ArrowPathIcon className="h-3 w-3" />
+                                        ) : (
+                                          <EyeIcon className="h-3 w-3" />
+                                        )}
+                                        <AutoTranslate>
+                                          {file.ltoArchived && !file.restored ? "Restore" : "View"}
+                                        </AutoTranslate>
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Mobile View */}
+                              <div className="md:hidden p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div className="text-left text-gray-800 break-words flex-1">
+                                    <strong>{index + 1}.</strong> {file.docName}
+                                  </div>
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2
+                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
+                                      file.status === "REJECTED" ? "bg-red-100 text-red-800" :
+                                        "bg-yellow-100 text-yellow-800"}`}
+                                  >
+                                    {file.status || <AutoTranslate>PENDING</AutoTranslate>}
+                                  </span>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 text-sm mt-3">
+                                  <div>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                                    <p className="text-gray-700">{file.yearMaster?.name || "--"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Version</AutoTranslate></p>
+                                    <p className="text-gray-700">{file.version}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Action By</AutoTranslate></p>
+                                    <p className="text-gray-700">{file.approvedBy || "--"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Action Date</AutoTranslate></p>
+                                    <p className="text-gray-700">{formatDate(file.approvedOn)}</p>
+                                  </div>
+                                  <div className="col-span-2">
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Reason</AutoTranslate></p>
+                                    <p className="text-gray-700 break-words">{file.rejectionReason || "--"}</p>
+                                  </div>
+                                </div>
+
+                                <div className="mt-3">
+                                  <button
+                                    onClick={() => {
+                                      setOpeningFileIndex(index);
+                                      setSelectedDocFiles(file);
+                                      openFile(file).finally(() => setOpeningFileIndex(null));
+                                    }}
+                                    disabled={openingFileIndex !== null}
+                                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
+                                      ${openingFileIndex === index ?
+                                        "bg-indigo-400 cursor-not-allowed" :
+                                        "bg-indigo-600 hover:bg-indigo-700"} text-white`}
+                                  >
+                                    {openingFileIndex === index ? (
+                                      <>
+                                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                                        <AutoTranslate>
+                                          {file.ltoArchived && !file.restored ? "Restoring..." : "Opening..."}
+                                        </AutoTranslate>
+                                      </>
+                                    ) : (
+                                      <>
+                                        {file.ltoArchived && !file.restored ? (
+                                          <ArrowPathIcon className="h-3 w-3" />
+                                        ) : (
+                                          <EyeIcon className="h-3 w-3" />
+                                        )}
+                                        <AutoTranslate>
+                                          {file.ltoArchived && !file.restored ? "Restore" : "View File"}
+                                        </AutoTranslate>
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 border border-dashed border-gray-300 rounded-lg">
+                        <DocumentIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                        <p className="text-gray-500">
+                          <AutoTranslate>No shared files found</AutoTranslate>
+                        </p>
+                        {searchFileTerm && (
+                          <p className="text-sm text-gray-400 mt-1">
+                            <AutoTranslate>Try adjusting your search term</AutoTranslate>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Share Document Modal */}
+        {shareModalVisible && (
+          <>
+            <div className="overlayModal">
+              <div className="document-modal modal-sm">
+                {/* Header */}
+                <div className="modal-header">
+                  <div className="modal-title">
+                    <h2><AutoTranslate>Share Document</AutoTranslate></h2>
+                  </div>
+                </div>
+
+                {/* Modal body Content */}
+                <div className="modal-body">
+                  <div className="bodyScroller print:overflow-visible print:max-h-none">
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-2">
+                        <AutoTranslate>Document:</AutoTranslate> {documentToShare?.documentHeader?.title}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <AutoTranslate>Selected {selectedFileIds.length} shared file(s) to share with employees in your department.</AutoTranslate>
+                      </p>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <AutoTranslate>Select Employees</AutoTranslate>
+                      </label>
+                      {loadingEmployees ? (
+                        <div className="flex items-center">
+                          <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin text-blue-600" />
+                          <AutoTranslate>Loading employees...</AutoTranslate>
+                        </div>
+                      ) : (
+                        <div className="max-h-48 overflow-y-auto border rounded-lg p-2">
+                          {availableEmployees.length === 0 ? (
+                            <p className="text-sm text-gray-500">
+                              <AutoTranslate>No other employees in this department</AutoTranslate>
+                            </p>
+                          ) : (
+                            availableEmployees.map(emp => (
+                              <div key={emp.id} className="flex items-center mb-2">
+                                <input
+                                  type="checkbox"
+                                  id={`emp-${emp.id}`}
+                                  checked={shareRecipients.includes(emp.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setShareRecipients([...shareRecipients, emp.id]);
+                                    } else {
+                                      setShareRecipients(shareRecipients.filter(id => id !== emp.id));
+                                    }
+                                  }}
+                                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                />
+                                <label htmlFor={`emp-${emp.id}`} className="ml-2 text-sm text-gray-700">
+                                  {emp.name} ({emp.email})
+                                </label>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <div className="flex items-center">
+                          <ClockIcon className="h-4 w-4 mr-1" />
+                          <AutoTranslate>Expiration Time (Optional)</AutoTranslate>
+                        </div>
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={shareEndTime}
+                        onChange={(e) => setShareEndTime(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min={getMinDateTime()}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        <AutoTranslate>Leave empty for permanent access</AutoTranslate>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-end gap-4">
+                      <button
+                        onClick={() => {
+                          setShareModalVisible(false);
+                          setDocumentToShare(null);
+                          setShareRecipients([]);
+                          setShareEndTime("");
+                          setSelectedFileIds([]);
+                        }}
+                        className="btn-cancel"
+                        disabled={sharingDocument}
+                      >
+                        <AutoTranslate>Cancel</AutoTranslate>
+                      </button>
+                      <button
+                        onClick={handleShareSubmit}
+                        disabled={sharingDocument || shareRecipients.length === 0 || selectedFileIds.length === 0}
+                        className={`px-4 py-2 rounded-md text-white ${(sharingDocument || shareRecipients.length === 0 || selectedFileIds.length === 0)
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700'} transition-colors flex items-center`}
+                      >
+                        {sharingDocument ? (
+                          <>
+                            <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
+                            <AutoTranslate>Sharing...</AutoTranslate>
+                          </>
+                        ) : (
+                          <>
+                            <ShareIcon className="h-4 w-4 mr-2" />
+                            <AutoTranslate>Share {selectedFileIds.length} File(s)</AutoTranslate>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </>
+        )}
+
+        {/* View Shares Modal (Shared Access Details) */}
+        {viewSharesModalVisible && (
+          <div className="overlayModal">
+            <div className="document-modal modal-md">
+              {/* Header */}
+              <div className="modal-header">
+                <div className="modal-title">
+                  <h2><AutoTranslate>Shared Access Details</AutoTranslate></h2>
+                </div>
+                <div className="headerRight">
+                  {/* Close Button */}
+                  <button className="closeBtn" onClick={() => setViewSharesModalVisible(false)} title="Close">
+                    <MdOutlineClose />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal body Content */}
+              <div className="modal-body">
+                <div className="bodyScroller print:overflow-visible print:max-h-none">
+                  {selectedDocShares.length === 0 ? (
+                    <div className="text-center py-8">
+                      <UserGroupIcon className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+                      <p className="text-gray-500">
+                        <AutoTranslate>No shares found for this document</AutoTranslate>
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="table-wrapper">
+                      <table className="">
+                        <thead>
+                          <tr>
+                            <th className="text-center">
+                              <AutoTranslate>SN</AutoTranslate>
+                            </th>
+                            <th>
+                              <AutoTranslate>Shared By</AutoTranslate>
+                            </th>
+                            <th>
+                              <AutoTranslate>Shared To</AutoTranslate>
+                            </th>
+                            <th>
+                              <AutoTranslate>Shared Date</AutoTranslate>
+                            </th>
+                            <th>
+                              <AutoTranslate>Expiration Time</AutoTranslate>
+                            </th>
+                            <th className="text-center">
+                              <AutoTranslate>Files</AutoTranslate>
+                            </th>
+                            <th className="text-center">
+                              <AutoTranslate>Status</AutoTranslate>
+                            </th>
+                            {/* <th>
+                            <AutoTranslate>Actions</AutoTranslate>
+                          </th> */}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedDocShares.map((share, index) => (
+                            <tr key={share.id} className="hover:bg-gray-50">
+                              <td className="text-center">{index + 1}</td>
+                              <td>{share.sharedByName}</td>
+                              <td>{share.sharedToName}</td>
+                              <td>{formatDateArray(share.sharedDate)}</td>
+                              <td>
+                                {share.endTime ? formatDateArray(share.endTime) : "Permanent"}
+                              </td>
+                              <td className="text-center">
+                                <div className="flex items-center justify-center">
+                                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 text-xs font-medium mr-2">
+                                    {share.sharedFileNames?.length || share.totalFilesShared || 0}
+                                  </span>
+                                  <span className="text-sm">
+                                    file{(share.sharedFileNames?.length || share.totalFilesShared || 0) !== 1 ? 's' : ''}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="text-center">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${share.expired || share.isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                                  }`}>
+                                  {share.expired || share.isExpired ? 'Expired' : 'Active'}
+                                </span>
+                              </td>
+                              {/* <td>
+                              {share.sharedByName !== localStorage.getItem("userName") ? (
+                                <span className="text-gray-500 text-sm">
+                                  <AutoTranslate>Shared by others</AutoTranslate>
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleRevokeShare(share)}
+                                  disabled={share.expired || share.isExpired}
+                                  className={`px-3 py-1 rounded text-sm ${
+                                    share.expired || share.isExpired
+                                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                      : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                  }`}
+                                >
+                                  <AutoTranslate>Revoke</AutoTranslate>
+                                </button>
+                              )}
+                            </td> */}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Revoke Share Confirmation Modal */}
+        {revokeShareModalVisible && (
+          <div className="overlayModal">
+            <div className="document-modal modal-sm">
+              {/* Header */}
+              <div className="modal-header">
+                <div className="modal-title">
+                  <h2><AutoTranslate>Revoke Share Access</AutoTranslate></h2>
+                </div>
+              </div>
+
+              {/* Modal body Content */}
+              <div className="modal-body">
+                <div className="bodyScroller print:overflow-visible print:max-h-none">
+                  <div className="mb-4">
+                    <p className="mb-2">
+                      <AutoTranslate>Are you sure you want to revoke access for:</AutoTranslate>
+                    </p>
+                    <p className="font-semibold">{shareToRevoke?.sharedToName}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      <AutoTranslate>Document:</AutoTranslate> {shareToRevoke?.documentName}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <AutoTranslate>Files:</AutoTranslate> {shareToRevoke?.sharedFileNames?.length || shareToRevoke?.totalFilesShared || 0}
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <AutoTranslate>Reason (Optional)</AutoTranslate>
+                    </label>
+                    <textarea
+                      value={revokeReason}
+                      onChange={(e) => setRevokeReason(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows="3"
+                      placeholder="Enter reason for revoking access..."
+                    />
+                  </div>
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={() => {
+                        setRevokeShareModalVisible(false);
+                        setShareToRevoke(null);
+                        setRevokeReason("");
+                      }}
+                      className="btn-cancel"
+                    >
+                      <AutoTranslate>Cancel</AutoTranslate>
+                    </button>
+                    <button
+                      onClick={confirmRevokeShare}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+                    >
+                      <ExclamationTriangleIcon className="h-4 w-4 mr-2" />
+                      <AutoTranslate>Revoke Access</AutoTranslate>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SharedDocs;
