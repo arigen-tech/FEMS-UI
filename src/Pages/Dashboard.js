@@ -539,7 +539,7 @@ function Dashboard() {
   const totalDocsbyUser = (stats.rejectedDocsbyid + stats.approvedDocsbyid + stats.pendingDocsbyid);
 
   const SkeletonBox = () => (
-    <div className="loading bg-gray-200 animate-pulse rounded-lg h-[300px] w-full">
+    <div className="loading bg-gray-200 animate-pulse- rounded-lg h-[300px] w-full">
       <span><img src={lodingIcon} alt="loading..." /></span>
     </div>
   );
@@ -575,13 +575,13 @@ function Dashboard() {
 
               <Link to="/create-branch">
                 <div className="gridItems">
-                  <StatBlock title="Total Branches" value={stats.totalBranches} Icon={FaCodeBranch} />
+                  <StatBlock title="Total Laboratories" value={stats.totalBranches} Icon={FaCodeBranch} />
                 </div>
               </Link>
 
               <Link to="/create-department">
                 <div className="gridItems">
-                  <StatBlock title="Total Departments" value={stats.totalDepartment} Icon={FcDepartment} />
+                  <StatBlock title="Laboratory Divisions" value={stats.totalDepartment} Icon={FcDepartment} />
                 </div>
               </Link>
 
@@ -593,41 +593,41 @@ function Dashboard() {
 
               <Link to="/create-category">
                 <div className="gridItems">
-                  <StatBlock title="Total Categories" value={stats.totalCategories} Icon={TbCategoryFilled} />
+                  <StatBlock title="Evidence Categories" value={stats.totalCategories} Icon={TbCategoryFilled} />
                 </div>
               </Link>
 
               <Link to="/create-fileType">
                 <div className="gridItems">
-                  <StatBlock title="Total Files Types" value={stats.totalFilesType} Icon={PiFilesFill} />
+                  <StatBlock title="Evidence Types" value={stats.totalFilesType} Icon={PiFilesFill} />
                 </div>
               </Link>
 
               <div className="gridItems">
-                <StatBlock title="Total Documents" value={stats.totalDocument} Icon={IoDocuments} />
+                <StatBlock title="Total Evidence" value={stats.totalDocument} Icon={IoDocuments} />
               </div>
 
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Documents" value={stats.totalPendingDocuments} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocuments} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Documents" value={stats.totalApprovedDocuments} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Evidence" value={stats.totalApprovedDocuments} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Documents" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Documents" value={stats.trashTotalDoc} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Evidence" value={stats.trashTotalDoc} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -637,7 +637,7 @@ function Dashboard() {
             <>
               <Link to="/branchusers">
                 <div className="gridItems">
-                  <StatBlock title="Branch Users" value={stats.branchUser} Icon={UserGroupIcon} />
+                  <StatBlock title="Laboratories Users" value={stats.branchUser} Icon={UserGroupIcon} />
                 </div>
               </Link>
 
@@ -649,35 +649,35 @@ function Dashboard() {
 
               <Link to="/create-departments">
                 <div className="gridItems">
-                  <StatBlock title="Total Departments" value={stats.departmentCountForBranch} Icon={FcDepartment} />
+                  <StatBlock title="Laboratory Divisions" value={stats.departmentCountForBranch} Icon={FcDepartment} />
                 </div>
               </Link>
 
               <div className="gridItems">
-                <StatBlock title="Total Documents" value={totalDocsbyBranch} Icon={IoDocuments} />
+                <StatBlock title="Total Evidence" value={totalDocsbyBranch} Icon={IoDocuments} />
               </div>
 
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Documents" value={stats.totalPendingDocumentsById} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocumentsById} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Documents" value={stats.totalApprovedStatusDocById} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Evidence" value={stats.totalApprovedStatusDocById} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Documents" value={stats.totalRejectedStatusDocById} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedStatusDocById} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Documents" value={stats.trashTotalDocByBranch} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Evidence" value={stats.trashTotalDocByBranch} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -687,7 +687,7 @@ function Dashboard() {
             <>
               <Link to="/Departmentusers">
                 <div className="gridItems">
-                  <StatBlock title="Department Users" value={stats.departmentUser} Icon={UserGroupIcon} />
+                  <StatBlock title="Divisions Users" value={stats.departmentUser} Icon={UserGroupIcon} />
                 </div>
               </Link>
 
@@ -698,30 +698,30 @@ function Dashboard() {
               </Link>
 
               <div className="gridItems">
-                <StatBlock title="Total Documents" value={totalDocsbyDep} Icon={IoDocuments} />
+                <StatBlock title="Total Evidence" value={totalDocsbyDep} Icon={IoDocuments} />
               </div>
 
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Documents" value={stats.totalPendingDocumentsByDepartmentId} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocumentsByDepartmentId} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Documents" value={stats.totalApprovedStatusDocByDepartmentId} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Evidence" value={stats.totalApprovedStatusDocByDepartmentId} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Documents" value={stats.totalRejectedStatusDocByDepartmentId} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedStatusDocByDepartmentId} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Documents" value={stats.trashTotalDocByDepartment} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Evidence" value={stats.trashTotalDocByDepartment} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -730,24 +730,24 @@ function Dashboard() {
           {role === USER && (
             <>
               <div className="gridItems">
-                <StatBlock title="Total Uploaded Doc" value={totalDocsbyUser} Icon={HiDocumentArrowUp} />
+                <StatBlock title="Total Uploaded Evidence" value={totalDocsbyUser} Icon={HiDocumentArrowUp} />
               </div>
 
               <Link to="/all-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending For Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Evidence Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/approvedDocs">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Documents" value={stats.approvedDocsbyid} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Evidence" value={stats.approvedDocsbyid} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/rejectedDocs">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Documents" value={stats.rejectedDocsbyid} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Evidence" value={stats.rejectedDocsbyid} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
             </>
@@ -822,7 +822,7 @@ function Dashboard() {
             <div className="chartTitle mb-4">
               <h3>
                 <span className="icon"><img src={chartIcon} alt="icon" /></span>
-                <AutoTranslate>Monthly Documents Status {selectedYear}</AutoTranslate>
+                <AutoTranslate>Monthly Evidence Status {selectedYear}</AutoTranslate>
                 {/* 📊 */}
               </h3>
               {role === SYSTEM_ADMIN && (
@@ -835,7 +835,7 @@ function Dashboard() {
                       className="appearance-none hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 min-w-[150px] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="all" className="font-medium">
-                        🌐 <AutoTranslate>All Branches</AutoTranslate>
+                        🌐 <AutoTranslate>All Laboratories</AutoTranslate>
                       </option>
                       {branches.map((branch) => (
                         <option key={branch.id} value={branch.id} className="font-medium">
@@ -843,7 +843,7 @@ function Dashboard() {
                         </option>
                       ))}
                       <option value="top10">
-                        <AutoTranslate>Top 10 Branches</AutoTranslate>
+                        <AutoTranslate>Top 10 Laboratories</AutoTranslate>
                       </option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -910,21 +910,21 @@ function Dashboard() {
                     <Bar
                       dataKey="RejectedDocuments"
                       fill="#FF0000"
-                      name={<AutoTranslate>Rejected Documents</AutoTranslate>}
+                      name={<AutoTranslate>Rejected Evidence</AutoTranslate>}
                       radius={[4, 4, 0, 0]}
                       barSize={20}
                     />
                     <Bar
                       dataKey="ApprovedDocuments"
                       fill="#82ca9d"
-                      name={<AutoTranslate>Approved Documents</AutoTranslate>}
+                      name={<AutoTranslate>Approved Evidence</AutoTranslate>}
                       radius={[4, 4, 0, 0]}
                       barSize={20}
                     />
                     <Bar
                       dataKey="PendingDocuments"
                       fill="#f0ad4e"
-                      name={<AutoTranslate>Pending Documents</AutoTranslate>}
+                      name={<AutoTranslate>Pending Evidence</AutoTranslate>}
                       radius={[4, 4, 0, 0]}
                       barSize={20}
                     />
@@ -939,7 +939,7 @@ function Dashboard() {
             <div className="flex items-center justify-between mb-3">
               <h3>
                 <span className="icon"><img src={lineChartIcon} alt="icon" /></span>
-                <AutoTranslate>Top 10 Office {selectedYear}</AutoTranslate>
+                <AutoTranslate>Top 10 Laboratories {selectedYear}</AutoTranslate>
                 {/* 📈  */}
               </h3>
               <select
@@ -1008,7 +1008,7 @@ function Dashboard() {
                         strokeWidth={3}
                         dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
                         activeDot={{ r: 8, strokeWidth: 0 }}
-                        name={<AutoTranslate>Approved Documents</AutoTranslate>}
+                        name={<AutoTranslate>Approved Evidence</AutoTranslate>}
                       />
                     )}
                     {(selectedLineStatus === "all" || selectedLineStatus === "rejected") && (
@@ -1019,7 +1019,7 @@ function Dashboard() {
                         strokeWidth={3}
                         dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
                         activeDot={{ r: 8, strokeWidth: 0 }}
-                        name={<AutoTranslate>Rejected Documents</AutoTranslate>}
+                        name={<AutoTranslate>Rejected Evidence</AutoTranslate>}
                       />
                     )}
                     {(selectedLineStatus === "all" || selectedLineStatus === "pending") && (
@@ -1030,7 +1030,7 @@ function Dashboard() {
                         strokeWidth={3}
                         dot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
                         activeDot={{ r: 8, strokeWidth: 0 }}
-                        name={<AutoTranslate>Pending Documents</AutoTranslate>}
+                        name={<AutoTranslate>Pending Evidence</AutoTranslate>}
                       />
                     )}
                   </LineChart>
@@ -1043,7 +1043,7 @@ function Dashboard() {
           <div className="card">
             <h3>
               <span className="icon"><img src={fileTypesIcon} alt="icon" /></span>
-              <AutoTranslate>Top 10 File Types {selectedYear}</AutoTranslate>
+              <AutoTranslate>Top 10 Evidence Types {selectedYear}</AutoTranslate>
               {/* 🌀  */}
             </h3>
             {isGrLoading ? (
@@ -1073,7 +1073,7 @@ function Dashboard() {
                       }}
                     />
                     <Radar
-                      name={<AutoTranslate>File Count</AutoTranslate>}
+                      name={<AutoTranslate>Evidence Count</AutoTranslate>}
                       dataKey="FileCount"
                       stroke="#3182ce"
                       fill="#3182ce"

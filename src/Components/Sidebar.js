@@ -46,7 +46,8 @@ import { AiOutlineFileSearch } from "react-icons/ai";
 import { MdAdfScanner } from "react-icons/md";
 import { FaUserClock } from "react-icons/fa6";
 import { GiFiles } from "react-icons/gi";
-import logo from "../Assets/aridocsLogo.png";
+// import logo from "../Assets/aridocsLogo.png";
+import logo from "../Assets/ari-fdms-logo.png";
 import {
   API_HOST,
   SYSTEM_ADMIN,
