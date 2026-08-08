@@ -409,7 +409,7 @@ const FilesType = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>File Types</AutoTranslate></h1>
+        <h1><AutoTranslate>File Format</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -427,7 +427,7 @@ const FilesType = () => {
             <div className="grid grid-col-4 itemEnd">
               <div className="form-group ">
                 <label>
-                  <AutoTranslate>File</AutoTranslate> <AutoTranslate>Types</AutoTranslate>  <span className="text-red-500">*</span>
+                  <AutoTranslate>File Format</AutoTranslate>  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -464,7 +464,7 @@ const FilesType = () => {
                       <AutoTranslate>Adding...</AutoTranslate>
                     ) : (
                       <>
-                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add File Type</AutoTranslate>
+                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add File Format</AutoTranslate>
                       </>
                     )}
                   </button>
@@ -526,7 +526,7 @@ const FilesType = () => {
             <thead>
               <tr>
                 <th className='text-center'><AutoTranslate>SN</AutoTranslate></th>
-                <th><AutoTranslate>File</AutoTranslate> <AutoTranslate>Types</AutoTranslate></th>
+                <th><AutoTranslate>File</AutoTranslate> <AutoTranslate>Format</AutoTranslate></th>
                 <th><AutoTranslate>Extension</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>Updated Date</AutoTranslate></th>

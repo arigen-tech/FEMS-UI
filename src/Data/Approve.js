@@ -549,7 +549,7 @@ const Approve = () => {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Pending Documents</AutoTranslate></h1>
+        <h1><AutoTranslate>Pending Evidence</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -586,7 +586,7 @@ const Approve = () => {
           {/* Branch Filter Dropdown */}
           <div className="form-group">
             <label htmlFor="branchFilter">
-              <AutoTranslate>Branch</AutoTranslate>
+              <AutoTranslate>Laboratories</AutoTranslate>
             </label>
             <select
               id="branchFilter"
@@ -597,7 +597,7 @@ const Approve = () => {
                 setCurrentPage(1);
               }}
             >
-              <option value=""><AutoTranslate>All Branches</AutoTranslate></option>
+              <option value=""><AutoTranslate>All Laboratories</AutoTranslate></option>
               {branches.map((branch) => (
                 <option key={branch.id} value={branch.id}>
                   {branch.name}
@@ -609,7 +609,7 @@ const Approve = () => {
           {/* Department Filter Dropdown */}
           <div className="form-group">
             <label htmlFor="departmentFilter">
-              <AutoTranslate>Department</AutoTranslate>
+              <AutoTranslate>Division</AutoTranslate>
             </label>
             <select
               id="departmentFilter"
@@ -620,7 +620,7 @@ const Approve = () => {
               }}
               disabled={branchFilter === ''}
             >
-              <option value=""><AutoTranslate>All Departments</AutoTranslate></option>
+              <option value=""><AutoTranslate>All Divisions</AutoTranslate></option>
               {departments
                 .filter(dept => branchFilter === '' || dept.branch?.id === parseInt(branchFilter))
                 .map((dept) => (
@@ -657,19 +657,19 @@ const Approve = () => {
                   <AutoTranslate>Title</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>File No</AutoTranslate>
+                  <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Subject</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Branch</AutoTranslate>
+                  <AutoTranslate>Laboratories</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Department</AutoTranslate>
+                  <AutoTranslate>Division</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Category</AutoTranslate>
+                  <AutoTranslate>Evidence Category</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Uploaded Date</AutoTranslate>
@@ -706,12 +706,12 @@ const Approve = () => {
                     <td>
                       {doc.branchMaster
                         ? doc.branchMaster?.name
-                        : <AutoTranslate>No Branch</AutoTranslate>}
+                        : <AutoTranslate>No Laboratories</AutoTranslate>}
                     </td>
                     <td>
                       {doc.departmentMaster
                         ? doc.departmentMaster?.name
-                        : <AutoTranslate>No Department</AutoTranslate>}
+                        : <AutoTranslate>No Divisions</AutoTranslate>}
                     </td>
                     <td>
                       {doc.categoryMaster ? doc.categoryMaster.name : ""}

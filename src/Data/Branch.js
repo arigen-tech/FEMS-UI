@@ -370,7 +370,7 @@ const Branch = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Branches</AutoTranslate></h1>
+        <h1><AutoTranslate>Laboratories</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -425,7 +425,7 @@ const Branch = () => {
                       <AutoTranslate>Adding...</AutoTranslate>
                     ) : (
                       <>
-                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Branch</AutoTranslate>
+                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Laboratory</AutoTranslate>
                       </>
                     )}
                   </button>
@@ -490,7 +490,7 @@ const Branch = () => {
                 <th className='text-center'>
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
-                <th><AutoTranslate>Branches</AutoTranslate></th>
+                <th><AutoTranslate>Laboratories</AutoTranslate></th>
                 <th><AutoTranslate>Address</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>Updated Date</AutoTranslate></th>

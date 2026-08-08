@@ -345,7 +345,7 @@ const Category = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Categories</AutoTranslate></h1>
+        <h1><AutoTranslate>Evidence Categories</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -451,7 +451,7 @@ const Category = () => {
                 <th className='text-center'>
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
-                <th><AutoTranslate>Category</AutoTranslate></th>
+                <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>Updated Date</AutoTranslate></th>
                 <th><AutoTranslate>Status</AutoTranslate></th>

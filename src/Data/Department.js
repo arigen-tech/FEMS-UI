@@ -385,7 +385,7 @@ const Department = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Department</AutoTranslate></h1>
+        <h1><AutoTranslate>Division</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -418,13 +418,13 @@ const Department = () => {
 
               <div className="form-group ">
                 <label>
-                  <AutoTranslate>Branch</AutoTranslate> <span className="text-red-500">*</span>
+                  <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.branch?.id || ''}
                   onChange={handleBranchChange}
                 >
-                  <option value=""><AutoTranslate>Select Branch</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Select Laboratories</AutoTranslate></option>
                   {branches.map(branch => (
                     <option key={branch.id} value={branch.id}>
                       {branch.name}
@@ -444,7 +444,7 @@ const Department = () => {
                       <AutoTranslate>Adding...</AutoTranslate>
                     ) : (
                       <>
-                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Department</AutoTranslate>
+                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Division</AutoTranslate>
                       </>
                     )}
                   </button>
@@ -494,7 +494,7 @@ const Department = () => {
 
             <div className="form-group flex items-center gap-4">
               <label htmlFor="branchFilter">
-                <AutoTranslate>Branch:</AutoTranslate>
+                <AutoTranslate>Laboratories:</AutoTranslate>
               </label>
               <select
                 id="branchFilter"
@@ -504,7 +504,7 @@ const Department = () => {
                   setCurrentPage(1);
                 }}
               >
-                <option value=""><AutoTranslate>All Branches</AutoTranslate></option>
+                <option value=""><AutoTranslate>All Laboratories</AutoTranslate></option>
                 {branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -534,8 +534,8 @@ const Department = () => {
                 <th className="text-center">
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
-                <th><AutoTranslate>Department</AutoTranslate></th>
-                <th><AutoTranslate>Branch</AutoTranslate></th>
+                <th><AutoTranslate>Division</AutoTranslate></th>
+                <th><AutoTranslate>Laboratories</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>Updated Date</AutoTranslate></th>
                 <th><AutoTranslate>Status</AutoTranslate></th>

@@ -749,7 +749,7 @@ const TrashDoc = () => {
   return (
     <div className="px-1-">
       <div className="title">
-        <h1><AutoTranslate>Trash Documents</AutoTranslate></h1>
+        <h1><AutoTranslate>Trash Evidence</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -842,7 +842,7 @@ const TrashDoc = () => {
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>File No</AutoTranslate>
+                  <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Title</AutoTranslate>
@@ -851,7 +851,7 @@ const TrashDoc = () => {
                   <AutoTranslate>Subject</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Category</AutoTranslate>
+                  <AutoTranslate>Evidence Category</AutoTranslate>
                 </th>
                 {/* <th>
                   <AutoTranslate>Approval Status</AutoTranslate>

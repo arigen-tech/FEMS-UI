@@ -592,7 +592,7 @@ function RejectedDoc() {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Rejected Documents</AutoTranslate></h1>
+        <h1><AutoTranslate>Rejected Evidence</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -628,7 +628,7 @@ function RejectedDoc() {
           {/* Branch Filter */}
           <div className="form-group ">
             <label htmlFor="branchFilter">
-              <AutoTranslate>Branch</AutoTranslate>
+              <AutoTranslate>Laboratories</AutoTranslate>
             </label>
             <select
               id="branchFilter"
@@ -639,7 +639,7 @@ function RejectedDoc() {
                 setCurrentPage(1);
               }}
             >
-              <option value=""><AutoTranslate>All Branches</AutoTranslate></option>
+              <option value=""><AutoTranslate>All Laboratories</AutoTranslate></option>
               {branches.map((branch) => (
                 <option key={branch.id} value={branch.id}>
                   {branch.name}
@@ -651,7 +651,7 @@ function RejectedDoc() {
           {/* Department Filter */}
           <div className="form-group ">
             <label htmlFor="departmentFilter">
-              <AutoTranslate>Department</AutoTranslate>
+              <AutoTranslate>Division</AutoTranslate>
             </label>
             <select
               id="departmentFilter"
@@ -662,7 +662,7 @@ function RejectedDoc() {
               }}
               disabled={branchFilter === ''}
             >
-              <option value=""><AutoTranslate>All Departments</AutoTranslate></option>
+              <option value=""><AutoTranslate>All Division</AutoTranslate></option>
               {departments
                 .filter((dept) => branchFilter === '' || dept.branch?.id === parseInt(branchFilter))
                 .map((dept) => (
@@ -698,7 +698,7 @@ function RejectedDoc() {
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>File No</AutoTranslate>
+                  <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Title</AutoTranslate>
@@ -707,7 +707,7 @@ function RejectedDoc() {
                   <AutoTranslate>Subject</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Category</AutoTranslate>
+                  <AutoTranslate>Evidence Category</AutoTranslate>
                 </th>
                 <th className="text-center">
                   <AutoTranslate>No. Of Attached Files</AutoTranslate>

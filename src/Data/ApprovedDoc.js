@@ -1426,7 +1426,7 @@ const ApprovedDoc = () => {
   return (
     <div className="px-1">
       <h1 className="text-xl mb-4 font-semibold">
-        <AutoTranslate>Approved Documents</AutoTranslate>
+        <AutoTranslate>Approved Evidence</AutoTranslate>
       </h1>
 
       {popupMessage && (
@@ -1484,7 +1484,7 @@ const ApprovedDoc = () => {
             <div className="flex items-center">
               <CheckIcon className="h-5 w-5 text-blue-600 mr-2" />
               <span className="text-blue-700">
-                <AutoTranslate>{selectedDocuments.length} document(s) selected</AutoTranslate>
+                <AutoTranslate>{selectedDocuments.length} evidence(s) selected</AutoTranslate>
               </span>
             </div>
             <div className="flex gap-2">
@@ -1534,7 +1534,7 @@ const ApprovedDoc = () => {
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>File No</AutoTranslate>
+                  <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Title</AutoTranslate>
@@ -1543,7 +1543,7 @@ const ApprovedDoc = () => {
                   <AutoTranslate>Subject</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Category</AutoTranslate>
+                  <AutoTranslate>Evidence Category</AutoTranslate>
                 </th>
                 <th className="text-center">
                   <AutoTranslate>No. Of Attached Files</AutoTranslate>
