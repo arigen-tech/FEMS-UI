@@ -8,12 +8,12 @@ export default function LoadingComponent() {
         <div className="absolute w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full bg-gradient-to-tr from-blue-300 via-blue-500 to-blue-700 animate-pulse blur-lg opacity-60"></div>
         <img
           src={imageload}
-          alt="Loading documents"
+          alt="Loading Evidence"
           className="relative z-10 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 drop-shadow-xl"
         />
       </div>
       <p className="mt-3 text-white text-sm md:text-lg font-semibold tracking-wide animate-pulse drop-shadow">
-        Loading documents...
+        Loading Evidence...
       </p>
     </div>
   );

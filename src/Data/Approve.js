@@ -654,13 +654,13 @@ const Approve = () => {
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Title</AutoTranslate>
+                  <AutoTranslate>Case Title</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Subject</AutoTranslate>
+                  <AutoTranslate>Case Description</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Laboratories</AutoTranslate>
@@ -807,7 +807,7 @@ const Approve = () => {
                       <p className="text-lg font-extrabold text-indigo-600 border-b-4 border-indigo-600">D</p>
                       <p className="text-lg font-extrabold text-indigo-600 border-t-4 border-indigo-600">MS</p>
                     </div>
-                    <h2><AutoTranslate>Document Information</AutoTranslate></h2>
+                    <h2><AutoTranslate>Evidence Information</AutoTranslate></h2>
                   </div>
                   <div className="headerRight">
                     <p className="text-sm text-gray-600 mt-2 sm:mt-0">
@@ -832,13 +832,13 @@ const Approve = () => {
                       <div className="info-card">
                         <div className="info-grid">
                           {[
-                            { label: "Branch", value: selectedDoc?.employee?.branch?.name },
-                            { label: "Department", value: selectedDoc?.employee?.department?.name },
-                            { label: "File No.", value: selectedDoc?.fileNo },
-                            { label: "Title", value: selectedDoc?.title },
-                            { label: "Subject", value: selectedDoc?.subject },
+                            { label: "Laboratories", value: selectedDoc?.employee?.branch?.name },
+                            { label: "Division", value: selectedDoc?.employee?.department?.name },
+                            { label: "Case No.", value: selectedDoc?.fileNo },
+                            { label: "Case Title", value: selectedDoc?.title },
+                            { label: "Case Description", value: selectedDoc?.subject },
                             {
-                              label: "Category",
+                              label: "Evidence Category",
                               value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>,
                             },
                             // { label: "Status", value: selectedDoc?.approvalStatus },
@@ -912,7 +912,7 @@ const Approve = () => {
                               <AutoTranslate>File Name</AutoTranslate>
                             </span>
                             <span className="text-center">
-                              <AutoTranslate>Year</AutoTranslate>
+                              <AutoTranslate>Case Year</AutoTranslate>
                             </span>
                             <span className="text-center">
                               <AutoTranslate>Version</AutoTranslate>

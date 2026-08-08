@@ -873,7 +873,7 @@ const FileCompare = () => {
             <input
               ref={inputRef}
               type="text"
-              placeholder={translateInstant('Select File', currentLanguage)}
+              placeholder={translateInstant('Select Case', currentLanguage)}
               value={searchTerm}
               onChange={handleInputChange}
               onFocus={() => setShowDropdown(true)}
@@ -986,7 +986,7 @@ const FileCompare = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>File Compare</AutoTranslate></h1>
+        <h1><AutoTranslate>Case Compare</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -1010,15 +1010,15 @@ const FileCompare = () => {
             {/* First File */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700"><AutoTranslate>First File</AutoTranslate></h3>
+                <h3 className="text-lg font-medium text-gray-700"><AutoTranslate>First Case</AutoTranslate></h3>
                 <span className="text-sm text-gray-500"><AutoTranslate>Selected:</AutoTranslate> {selectedFirstFileIds.length}/2</span>
               </div>
               <div className="block text-md font-medium text-gray-700">
-                <AutoTranslate>Select File</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Select Case</AutoTranslate> <span className="text-red-500">*</span>
                 <FileSearchDropdown isFirst={true} />
               </div>
               <div className="block text-md font-medium text-gray-700">
-                <AutoTranslate>Select Documents</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Select Evidence</AutoTranslate> <span className="text-red-500">*</span>
                 <div className="mt-1 border rounded-md p-2 max-h-40 overflow-y-auto">
                   {firstFileDocuments.length > 0 ? (
                     firstFileDocuments.map((doc) => {
@@ -1047,8 +1047,8 @@ const FileCompare = () => {
                   ) : (
                     <p className="text-sm text-gray-500 p-2">
                       {selectedFirstFileNo
-                        ? <AutoTranslate>No documents available</AutoTranslate>
-                        : <AutoTranslate>Select a file to see documents</AutoTranslate>}
+                        ? <AutoTranslate>No evidence available</AutoTranslate>
+                        : <AutoTranslate>Select a case to see evidence</AutoTranslate>}
                     </p>
                   )}
                 </div>
@@ -1058,15 +1058,15 @@ const FileCompare = () => {
             {/* Second File */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700"><AutoTranslate>Second File</AutoTranslate></h3>
+                <h3 className="text-lg font-medium text-gray-700"><AutoTranslate>Second Case</AutoTranslate></h3>
                 <span className="text-sm text-gray-500"><AutoTranslate>Selected:</AutoTranslate> {selectedSecondFileIds.length}/2</span>
               </div>
               <div className="block text-md font-medium text-gray-700">
-                <AutoTranslate>Select File</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Select Case</AutoTranslate> <span className="text-red-500">*</span>
                 <FileSearchDropdown isFirst={false} />
               </div>
               <div className="block text-md font-medium text-gray-700">
-                <AutoTranslate>Select Documents</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Select Evidence</AutoTranslate> <span className="text-red-500">*</span>
                 <div className="mt-1 border rounded-md p-2 max-h-40 overflow-y-auto">
                   {secondFileDocuments.length > 0 ? (
                     secondFileDocuments.map((doc) => {
@@ -1095,8 +1095,8 @@ const FileCompare = () => {
                   ) : (
                     <p className="text-sm text-gray-500 p-2">
                       {selectedSecondFileNo
-                        ? <AutoTranslate>No documents available</AutoTranslate>
-                        : <AutoTranslate>Select a file to see documents</AutoTranslate>}
+                        ? <AutoTranslate>No Evidence available</AutoTranslate>
+                        : <AutoTranslate>Select a file to see Evidence</AutoTranslate>}
                     </p>
                   )}
                 </div>
@@ -1121,7 +1121,7 @@ const FileCompare = () => {
               ) : (
                 <>
                   <ArrowsRightLeftIcon className="h-5 w-5 mr-2" />
-                  <AutoTranslate>Compare Files</AutoTranslate>
+                  <AutoTranslate>Compare Cases</AutoTranslate>
                 </>
               )}
             </button>
@@ -1343,12 +1343,12 @@ const FileCompare = () => {
         {!comparisonResult && !showComparisonModal && (
           <div className="text-center py-12 text-gray-500">
             <DocumentDuplicateIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-            <p className="text-lg font-medium"><AutoTranslate>Select exactly 2 documents to compare</AutoTranslate></p>
-            <p className="text-sm"><AutoTranslate>You can select documents from the same file or different files</AutoTranslate></p>
+            <p className="text-lg font-medium"><AutoTranslate>Select exactly 2 evidences to compare</AutoTranslate></p>
+            <p className="text-sm"><AutoTranslate>You can select evidences from the same case or different cases</AutoTranslate></p>
             <div className="mt-4 text-xs text-gray-400">
-              <p>• <AutoTranslate>Select 2 documents from first file only</AutoTranslate></p>
-              <p>• <AutoTranslate>Select 2 documents from second file only</AutoTranslate></p>
-              <p>• <AutoTranslate>Select 1 document from each file</AutoTranslate></p>
+              <p>• <AutoTranslate>Select 2 evidences from first case only</AutoTranslate></p>
+              <p>• <AutoTranslate>Select 2 evidences from second case only</AutoTranslate></p>
+              <p>• <AutoTranslate>Select 1 evidence from each case</AutoTranslate></p>
             </div>
           </div>
         )}

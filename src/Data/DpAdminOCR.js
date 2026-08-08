@@ -293,14 +293,14 @@ const DpAdminOCR = () => {
 
       <div className="card mb-4">
         <h2>
-          <AutoTranslate>Search Documents</AutoTranslate>
+          <AutoTranslate>Search Evidence</AutoTranslate>
         </h2>
 
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="grid grid-col-4 mb-8">
             <div className="form-group">
               <label>
-                <AutoTranslate>Branch</AutoTranslate>
+                <AutoTranslate>Laboratories</AutoTranslate>
               </label>
               <input type="text" value={fixedBranchName || "Not assigned"} disabled />
               {/* <div className="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100">
@@ -310,7 +310,7 @@ const DpAdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <input type="text" value={fixedBranchName || "Not assigned"} disabled />
               {/* <div className="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100">
@@ -320,7 +320,7 @@ const DpAdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>File Year</AutoTranslate>
+                <AutoTranslate>Case Year</AutoTranslate>
               </label>
               <select
                 value={filters.year}
@@ -335,12 +335,12 @@ const DpAdminOCR = () => {
             </div>
             <div className="form-group">
               <label>
-                <AutoTranslate>Category</AutoTranslate>
+                <AutoTranslate>Evidence Category</AutoTranslate>
               </label>
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange("category", e.target.value)}>
-                <option value=""><AutoTranslate>All Categories</AutoTranslate></option>
+                <option value=""><AutoTranslate>All Evidence Category</AutoTranslate></option>
                 {categories.map((category) => (
                   <option key={category.name} value={category.name}>
                     {category.name}
@@ -392,7 +392,7 @@ const DpAdminOCR = () => {
                     : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
-                  <AutoTranslate>Search in Documents</AutoTranslate>
+                  <AutoTranslate>Search in Evidence</AutoTranslate>
                 </button>
               </div>
             </div>
@@ -412,7 +412,7 @@ const DpAdminOCR = () => {
       <div className="card">
         <div className="flex justify-between items-center mb-4">
           <h2 className="mb-0">
-            <AutoTranslate>Documents</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
+            <AutoTranslate>Evidence</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
           </h2>
           <div className="flex items-center">
             <label className="text-sm text-gray-700 mr-2">
@@ -434,7 +434,7 @@ const DpAdminOCR = () => {
 
         {filteredDocuments.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            <AutoTranslate>No documents found</AutoTranslate>
+            <AutoTranslate>No Evidence found</AutoTranslate>
           </div>
         ) : (
           <>
@@ -444,13 +444,13 @@ const DpAdminOCR = () => {
                   <tr>
                     <th className="text-center">#</th>
                     <th>
-                      <AutoTranslate>Title</AutoTranslate>
+                      <AutoTranslate>Case Title</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>File No</AutoTranslate>
+                      <AutoTranslate>Case No</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>Subject</AutoTranslate>
+                      <AutoTranslate>Case Description</AutoTranslate>
                     </th>
                     <th>
                       <AutoTranslate>Upload Date</AutoTranslate>

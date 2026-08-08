@@ -701,10 +701,10 @@ function RejectedDoc() {
                   <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Title</AutoTranslate>
+                  <AutoTranslate>Case Title</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Subject</AutoTranslate>
+                  <AutoTranslate>Case Description</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Evidence Category</AutoTranslate>
@@ -853,7 +853,7 @@ function RejectedDoc() {
                     <span className="text-lg font-bold">D</span>
                     <span className="text-lg font-bold">MS</span>
                   </div>
-                  <h2><AutoTranslate>Document Details</AutoTranslate></h2>
+                  <h2><AutoTranslate>Evidence Details</AutoTranslate></h2>
                 </div>
                 <div className="headerRight">
                   {/* Print Button */}
@@ -878,12 +878,12 @@ function RejectedDoc() {
                     <div className="info-card">
                       <div className="info-grid">
                         {[
-                          { label: "Branch", value: selectedDoc?.branchMaster?.name },
-                          { label: "Department", value: selectedDoc?.departmentMaster?.name },
-                          { label: "File No.", value: selectedDoc?.fileNo },
-                          { label: "Title", value: selectedDoc?.title },
-                          { label: "Subject", value: selectedDoc?.subject },
-                          { label: "Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Laboratories", value: selectedDoc?.branchMaster?.name },
+                          { label: "Division", value: selectedDoc?.departmentMaster?.name },
+                          { label: "Case No.", value: selectedDoc?.fileNo },
+                          { label: "Case Title", value: selectedDoc?.title },
+                          { label: "Case Description", value: selectedDoc?.subject },
+                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
                           // { label: "Status", value: selectedDoc?.approvalStatus },
                           { label: "Upload By", value: selectedDoc?.employee?.name },
                         ].map((item, idx) => (
@@ -951,7 +951,7 @@ function RejectedDoc() {
           <AutoTranslate>File Name</AutoTranslate>
         </span>
         <span className="text-center">
-          <AutoTranslate>Year</AutoTranslate>
+          <AutoTranslate>Case Year</AutoTranslate>
         </span>
         <span className="text-center">
           <AutoTranslate>Version</AutoTranslate>

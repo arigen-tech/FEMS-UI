@@ -282,19 +282,19 @@ const AdminOCR = () => {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Document Text Search (OCR)</AutoTranslate></h1>
+        <h1><AutoTranslate>Evidence Text Search (OCR)</AutoTranslate></h1>
       </div>
 
       <div className="card mb-4">
         <h2>
-          <AutoTranslate>Search Documents</AutoTranslate>
+          <AutoTranslate>Search Evidence</AutoTranslate>
         </h2>
 
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="grid grid-col-4 mb-8">
             <div className="form-group">
               <label>
-                <AutoTranslate>Branch</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-500">*</span>
               </label>
               <select
                 value={filters.branch}
@@ -302,7 +302,7 @@ const AdminOCR = () => {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
-                <option value=""><AutoTranslate>Select a branch</AutoTranslate></option>
+                <option value=""><AutoTranslate>Select a Laboratory</AutoTranslate></option>
                 {branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -313,7 +313,7 @@ const AdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <select
                 value={filters.department}
@@ -332,7 +332,7 @@ const AdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>File Year</AutoTranslate>
+                <AutoTranslate>Case Year</AutoTranslate>
               </label>
               <select
                 value={filters.year}
@@ -350,14 +350,14 @@ const AdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>Category</AutoTranslate>
+                <AutoTranslate>Evidence Category</AutoTranslate>
               </label>
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange("category", e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value=""><AutoTranslate>All Categories</AutoTranslate></option>
+                <option value=""><AutoTranslate>All Evidence Category</AutoTranslate></option>
                 {categories.map((category) => (
                   <option key={category.name} value={category.name}>
                     {category.name}
@@ -414,7 +414,7 @@ const AdminOCR = () => {
                     : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
-                  <AutoTranslate>Search in Documents</AutoTranslate>
+                  <AutoTranslate>Search in Evidence</AutoTranslate>
                 </button>
               </div>
             </div>
@@ -434,7 +434,7 @@ const AdminOCR = () => {
       <div className="card">
         <div className="flex justify-between items-center mb-4">
           <h2 className="mb-0">
-            <AutoTranslate>Documents</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
+            <AutoTranslate>Evidence</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
           </h2>
           <div className="flex items-center">
             <label className="text-sm text-gray-700 mr-2">
@@ -456,7 +456,7 @@ const AdminOCR = () => {
 
         {filteredDocuments.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            <AutoTranslate>No documents found</AutoTranslate>
+            <AutoTranslate>No evidence found</AutoTranslate>
           </div>
         ) : (
           <>
@@ -466,13 +466,13 @@ const AdminOCR = () => {
                   <tr>
                     <th className="text-center">#</th>
                     <th>
-                      <AutoTranslate>Title</AutoTranslate>
+                      <AutoTranslate>Case Title</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>File No</AutoTranslate>
+                      <AutoTranslate>Case No</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>Subject</AutoTranslate>
+                      <AutoTranslate>Case Description</AutoTranslate>
                     </th>
                     <th>
                       <AutoTranslate>Upload Date</AutoTranslate>

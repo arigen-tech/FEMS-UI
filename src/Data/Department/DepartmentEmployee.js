@@ -617,7 +617,7 @@ const DepartmentEmployee = () => {
     return (
         <div className="px-2-">
             <div className="title">
-                <h1><AutoTranslate>Department Users</AutoTranslate></h1>
+                <h1><AutoTranslate>Division Users</AutoTranslate></h1>
             </div>
 
             <div className="card">
@@ -696,7 +696,7 @@ const DepartmentEmployee = () => {
 
                             <div className="form-group">
                                 <label>
-                                    <AutoTranslate>Branch</AutoTranslate>
+                                    <AutoTranslate>Laboratories</AutoTranslate>
                                 </label>
                                 <input
                                     type="text"
@@ -708,7 +708,7 @@ const DepartmentEmployee = () => {
 
                             <div className="form-group">
                                 <label>
-                                    <AutoTranslate>Department</AutoTranslate>
+                                    <AutoTranslate>Division</AutoTranslate>
                                 </label>
                                 <input
                                     type="text"
@@ -767,7 +767,7 @@ const DepartmentEmployee = () => {
                     {/* Branch Filter */}
                     <div className="form-group ">
                         <label htmlFor="branchFilter" >
-                            <AutoTranslate>Branch</AutoTranslate>
+                            <AutoTranslate>Laboratories</AutoTranslate>
                         </label>
                         <select
                             id="branchFilter"
@@ -791,7 +791,7 @@ const DepartmentEmployee = () => {
                     {/* Department Filter */}
                     <div className="form-group ">
                         <label htmlFor="departmentFilter" >
-                            <AutoTranslate>Department</AutoTranslate>
+                            <AutoTranslate>Division</AutoTranslate>
                         </label>
                         <select
                             id="departmentFilter"
@@ -834,8 +834,8 @@ const DepartmentEmployee = () => {
                                 <th><AutoTranslate>Name</AutoTranslate></th>
                                 <th><AutoTranslate>Email</AutoTranslate></th>
                                 <th><AutoTranslate>Phone No.</AutoTranslate></th>
-                                <th><AutoTranslate>Branch</AutoTranslate></th>
-                                <th><AutoTranslate>Department</AutoTranslate></th>
+                                <th><AutoTranslate>Laboratories</AutoTranslate></th>
+                                <th><AutoTranslate>Division</AutoTranslate></th>
                                 <th><AutoTranslate>Role</AutoTranslate></th>
                                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                                 <th><AutoTranslate>Updated Date</AutoTranslate></th>
@@ -964,7 +964,7 @@ const DepartmentEmployee = () => {
                                     <strong>
                                         {employeeToToggle.active === true ? <AutoTranslate>deactivate</AutoTranslate> : <AutoTranslate>activate</AutoTranslate>}
                                     </strong>{" "}
-                                    <AutoTranslate>the employee</AutoTranslate> <strong>{employeeToToggle.name}</strong> ?
+                                    <AutoTranslate>the User</AutoTranslate> <strong>{employeeToToggle.name}</strong> ?
                                 </p>
                                 <div className="flex justify-end space-x-4 mt-4">
                                     <button

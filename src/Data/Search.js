@@ -716,9 +716,9 @@ const Search = () => {
 
         {/* File No */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>File No</AutoTranslate></label>
+          <label><AutoTranslate>Case No</AutoTranslate></label>
           <input
-            placeholder="Enter File No"
+            placeholder="Enter Case No"
             value={fileNo}
             onChange={(e) => setFileNo(e.target.value)}
           />
@@ -726,9 +726,9 @@ const Search = () => {
 
         {/* Title */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>Title</AutoTranslate></label>
+          <label><AutoTranslate>Case Title</AutoTranslate></label>
           <input
-            placeholder="Enter Title"
+            placeholder="Enter Case Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -736,9 +736,9 @@ const Search = () => {
 
         {/* Subject */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>Subject</AutoTranslate></label>
+          <label><AutoTranslate>Case Description</AutoTranslate></label>
           <input
-            placeholder="Enter Subject"
+            placeholder="Enter Case Description"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
@@ -756,14 +756,14 @@ const Search = () => {
 
         {/* Category */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>Category</AutoTranslate></label>
+          <label><AutoTranslate>Evidence Category</AutoTranslate></label>
           <select
             value={categoryId ?? ""}
             onChange={(e) =>
               setCategoryId(e.target.value ? Number(e.target.value) : null)
             }
           >
-            <option value="">All Categories</option>
+            <option value="">All Evidence Category</option>
             {categoryOptions.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -772,7 +772,7 @@ const Search = () => {
 
         {/* Branch */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>Branch</AutoTranslate></label>
+          <label><AutoTranslate>Laboratories</AutoTranslate></label>
           <select
             value={branchId ?? ""}
             disabled={!isAdmin}
@@ -784,7 +784,7 @@ const Search = () => {
             className={`p-2 border rounded-md ${!isAdmin ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
           >
-            <option value="">All Branches</option>
+            <option value="">All Laboratories</option>
             {branchOptions.map((b) => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
@@ -793,7 +793,7 @@ const Search = () => {
 
         {/* Department */}
         <div className={fieldWrapper}>
-          <label><AutoTranslate>Department</AutoTranslate></label>
+          <label><AutoTranslate>Division</AutoTranslate></label>
           <select
             value={departmentId ?? ""}
             disabled={isDeptUser || !branchId}
@@ -803,7 +803,7 @@ const Search = () => {
             className={`p-2 border rounded-md ${isDeptUser || !branchId ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
           >
-            <option value="">All Departments</option>
+            <option value="">All Division</option>
             {departmentOptions.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
@@ -835,7 +835,7 @@ const Search = () => {
   return (
     <div className="p-1-">
       <div className="title">
-        <h1><AutoTranslate>Search Documents</AutoTranslate></h1>
+        <h1><AutoTranslate>Search Evidence</AutoTranslate></h1>
       </div>
 
       {popupMessage && (

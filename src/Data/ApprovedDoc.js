@@ -1537,10 +1537,10 @@ const ApprovedDoc = () => {
                   <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Title</AutoTranslate>
+                  <AutoTranslate>Case Title</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Subject</AutoTranslate>
+                  <AutoTranslate>Case Description</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Evidence Category</AutoTranslate>
@@ -1766,7 +1766,7 @@ const ApprovedDoc = () => {
                   <span className="text-lg font-bold">MS</span>
                 </div>
                 <h2>
-                  <AutoTranslate>Document Details</AutoTranslate>
+                  <AutoTranslate>Evidence Details</AutoTranslate>
                 </h2>
               </div>
               {/* Auto-selection Notification Banner */}
@@ -1808,12 +1808,12 @@ const ApprovedDoc = () => {
                   <div className="info-card">
                     <div className="info-grid">
                       {[
-                        { label: "Branch", value: selectedDoc?.branchMaster?.name },
-                        { label: "Department", value: selectedDoc?.departmentMaster?.name },
-                        { label: "File No.", value: selectedDoc?.fileNo },
-                        { label: "Title", value: selectedDoc?.title },
-                        { label: "Subject", value: selectedDoc?.subject },
-                        { label: "Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                        { label: "Laboratories", value: selectedDoc?.branchMaster?.name },
+                        { label: "Division", value: selectedDoc?.departmentMaster?.name },
+                        { label: "Case No.", value: selectedDoc?.fileNo },
+                        { label: "Case Title", value: selectedDoc?.title },
+                        { label: "Case Description", value: selectedDoc?.subject },
+                        { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
                         { label: "Upload By", value: selectedDoc?.employee?.name },
                       ].map((item, idx) => (
                         <p key={idx} className="text-md text-gray-700">
@@ -1937,7 +1937,7 @@ const ApprovedDoc = () => {
           <AutoTranslate>File Name</AutoTranslate>
         </span>
         <span className="text-center">
-          <AutoTranslate>Year</AutoTranslate>
+          <AutoTranslate>Case Year</AutoTranslate>
         </span>
         <span className="text-center">
           <AutoTranslate>Version</AutoTranslate>
@@ -2388,7 +2388,7 @@ const ApprovedDoc = () => {
             {/* Header */}
             <div className="modal-header">
               <div className="modal-title">
-                <h2><AutoTranslate>Share Document</AutoTranslate></h2>
+                <h2><AutoTranslate>Share Evidence</AutoTranslate></h2>
               </div>
               <div className="headerRight">
                 {/* Close Button */}
@@ -2410,19 +2410,19 @@ const ApprovedDoc = () => {
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <div className="mb-4">
                   <p className="text-sm text-gray-600 mb-2">
-                    <AutoTranslate>Document:</AutoTranslate> {documentToShare?.title}
+                    <AutoTranslate>Evidence:</AutoTranslate> {documentToShare?.title}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <AutoTranslate>Selected {selectedFileIds.length} file(s) to share with employees in your department.</AutoTranslate>
+                    <AutoTranslate>Selected {selectedFileIds.length} file(s) to share with user in your Division.</AutoTranslate>
                   </p>
                   <p className="text-sm text-blue-600 mt-1">
-                    <AutoTranslate>You can change which files to share by checking/unchecking files in the document details.</AutoTranslate>
+                    <AutoTranslate>You can change which files to share by checking/unchecking files in the evidence details.</AutoTranslate>
                   </p>
                 </div>
 
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <AutoTranslate>Select Employees</AutoTranslate>
+                    <AutoTranslate>Select User</AutoTranslate>
                   </label>
                   {loadingEmployees ? (
                     <div className="flex items-center">

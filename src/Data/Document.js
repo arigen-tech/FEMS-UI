@@ -1983,7 +1983,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               <tr>
                 <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
                 <th><AutoTranslate>Case No</AutoTranslate></th>
-                <th><AutoTranslate>Title</AutoTranslate></th>
+                <th><AutoTranslate>Case Title</AutoTranslate></th>
                 <th><AutoTranslate>Subject</AutoTranslate></th>
                 <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
