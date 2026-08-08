@@ -581,7 +581,7 @@ function Dashboard() {
 
               <Link to="/create-department">
                 <div className="gridItems">
-                  <StatBlock title="Laboratory Divisions" value={stats.totalDepartment} Icon={FcDepartment} />
+                  <StatBlock title="Laboratory Division" value={stats.totalDepartment} Icon={FcDepartment} />
                 </div>
               </Link>
 
@@ -599,7 +599,7 @@ function Dashboard() {
 
               <Link to="/create-fileType">
                 <div className="gridItems">
-                  <StatBlock title="Evidence Types" value={stats.totalFilesType} Icon={PiFilesFill} />
+                  <StatBlock title="File Format" value={stats.totalFilesType} Icon={PiFilesFill} />
                 </div>
               </Link>
 
@@ -637,7 +637,7 @@ function Dashboard() {
             <>
               <Link to="/branchusers">
                 <div className="gridItems">
-                  <StatBlock title="Laboratories Users" value={stats.branchUser} Icon={UserGroupIcon} />
+                  <StatBlock title="Laboratories User" value={stats.branchUser} Icon={UserGroupIcon} />
                 </div>
               </Link>
 
@@ -649,7 +649,7 @@ function Dashboard() {
 
               <Link to="/create-departments">
                 <div className="gridItems">
-                  <StatBlock title="Laboratory Divisions" value={stats.departmentCountForBranch} Icon={FcDepartment} />
+                  <StatBlock title="Laboratory Division" value={stats.departmentCountForBranch} Icon={FcDepartment} />
                 </div>
               </Link>
 
@@ -687,7 +687,7 @@ function Dashboard() {
             <>
               <Link to="/Departmentusers">
                 <div className="gridItems">
-                  <StatBlock title="Divisions Users" value={stats.departmentUser} Icon={UserGroupIcon} />
+                  <StatBlock title="Division Users" value={stats.departmentUser} Icon={UserGroupIcon} />
                 </div>
               </Link>
 
@@ -757,7 +757,7 @@ function Dashboard() {
         <div className="grid grid-col-4">
           <div className="dateInput">
             <label>
-              <AutoTranslate>Select Year:</AutoTranslate>
+              <AutoTranslate>Select Case Year:</AutoTranslate>
             </label>
             <div className="relative">
               <input

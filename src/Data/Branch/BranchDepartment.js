@@ -358,7 +358,7 @@ const BranchDepartments = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Branch Department</AutoTranslate></h1>
+        <h1><AutoTranslate>Laboratories Division</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -377,7 +377,7 @@ const BranchDepartments = () => {
             <div className="grid grid-col-4 itemEnd">
               <div className="form-group ">
                 <label>
-                  <AutoTranslate>Department Name</AutoTranslate> <span className="text-red-500">*</span>
+                  <AutoTranslate>Division Name</AutoTranslate> <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -391,7 +391,7 @@ const BranchDepartments = () => {
 
               <div className="form-group ">
                 <label>
-                  <AutoTranslate>Branch</AutoTranslate>
+                  <AutoTranslate>Laboratories</AutoTranslate>
                 </label>
                 <input
                   type="text"
@@ -412,7 +412,7 @@ const BranchDepartments = () => {
                       <AutoTranslate>Adding...</AutoTranslate>
                     ) : (
                       <>
-                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Department</AutoTranslate>
+                        <PlusCircleIcon className="h-5 w-5 mr-1" /> <AutoTranslate>Add Division</AutoTranslate>
                       </>
                     )}
                   </button>
@@ -477,8 +477,8 @@ const BranchDepartments = () => {
             <thead>
               <tr>
                 <th className='text-center'><AutoTranslate>SR.</AutoTranslate></th>
-                <th><AutoTranslate>Department</AutoTranslate></th>
-                <th><AutoTranslate>Branch</AutoTranslate></th>
+                <th><AutoTranslate>Division</AutoTranslate></th>
+                <th><AutoTranslate>Laboratories</AutoTranslate></th>
                 <th><AutoTranslate>Created On</AutoTranslate></th>
                 <th><AutoTranslate>Updated On</AutoTranslate></th>
                 <th><AutoTranslate>Status</AutoTranslate></th>

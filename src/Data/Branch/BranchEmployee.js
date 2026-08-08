@@ -689,7 +689,7 @@ const BranchEmployee = () => {
     return (
         <div className="px-2-">
             <div className="title">
-                <h1><AutoTranslate>Branch Users</AutoTranslate></h1>
+                <h1><AutoTranslate>Laboratories User</AutoTranslate></h1>
             </div>
 
             <div className="card">
@@ -763,7 +763,7 @@ const BranchEmployee = () => {
                             </div>
                             <div className="form-group ">
                                 <label>
-                                    <AutoTranslate>Branch</AutoTranslate>
+                                    <AutoTranslate>Laboratories</AutoTranslate>
                                 </label>
                                 <input
                                     type="text"
@@ -774,13 +774,13 @@ const BranchEmployee = () => {
                             </div>
                             <div className="form-group ">
                                 <label>
-                                    <AutoTranslate>Department</AutoTranslate>
+                                    <AutoTranslate>Division</AutoTranslate>
                                 </label>
                                 <select
                                     name="department"
                                     value={formData.department?.id || ""}
                                     onChange={handleSelectChange}>
-                                    <option value=""><AutoTranslate>Select Department</AutoTranslate></option>
+                                    <option value=""><AutoTranslate>Select Division</AutoTranslate></option>
                                     {departmentOptions.map((department) => (
                                         <option key={department.id} value={department.id}>
                                             {department.name}
@@ -842,7 +842,7 @@ const BranchEmployee = () => {
                             {/* Branch Filter */}
                             <div className="form-group ">
                                 <label htmlFor="branchFilter">
-                                    <AutoTranslate>Branch</AutoTranslate>
+                                    <AutoTranslate>Laboratories</AutoTranslate>
                                 </label>
                                 <select
                                     id="branchFilter"
@@ -866,7 +866,7 @@ const BranchEmployee = () => {
                             {/* Department Filter */}
                             <div className="form-group ">
                                 <label htmlFor="departmentFilter">
-                                    <AutoTranslate>Department</AutoTranslate>
+                                    <AutoTranslate>Division</AutoTranslate>
                                 </label>
                                 <select
                                     id="departmentFilter"
@@ -909,8 +909,8 @@ const BranchEmployee = () => {
                                         <th><AutoTranslate>Name</AutoTranslate></th>
                                         <th><AutoTranslate>Email</AutoTranslate></th>
                                         <th><AutoTranslate>Phone No.</AutoTranslate></th>
-                                        <th><AutoTranslate>Branch</AutoTranslate></th>
-                                        <th><AutoTranslate>Department</AutoTranslate></th>
+                                        <th><AutoTranslate>Laboratories</AutoTranslate></th>
+                                        <th><AutoTranslate>Division</AutoTranslate></th>
                                         <th><AutoTranslate>Role</AutoTranslate></th>
                                         <th><AutoTranslate>Created Date</AutoTranslate></th>
                                         <th><AutoTranslate>Updated Date</AutoTranslate></th>

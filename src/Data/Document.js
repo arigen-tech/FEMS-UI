@@ -1295,7 +1295,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Upload Document</AutoTranslate></h1>
+        <h1><AutoTranslate>Register Case & Evidence</AutoTranslate></h1>
       </div>
 
       <div className="card">
@@ -1310,10 +1310,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           {/* ========== DOCUMENT METADATA ========== */}
           <div className="cardLight">
             <h2 className="flex align-center gap-2">
-              📁 <AutoTranslate>Document Metadata</AutoTranslate> <span className="text-red-500">*</span>
+              📁 <AutoTranslate>Evidence Metadata</AutoTranslate> <span className="text-red-500">*</span>
               {isDocumentSaved && (
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                  <AutoTranslate>Document ID</AutoTranslate>: #{editingDoc.id}
+                  <AutoTranslate>Evidence ID</AutoTranslate>: #{editingDoc.id}
                 </span>
               )}
               {hasApprovedFiles && (
@@ -1324,9 +1324,127 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             </h2>
 
             <div className="grid grid-col-4 mb-4">
+
+            <div className="form-group">
+                <label><AutoTranslate>Case Number</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="CASE-2026-000145" required  />
+              </div>
+
+
               <div className="form-group">
                 <label>
-                  <AutoTranslate>File No.</AutoTranslate>
+                  <AutoTranslate>Case Title</AutoTranslate>
+                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
+                </label>
+                <input
+                  type="text"
+                  placeholder={getFallbackTranslation('Enter Title', currentLanguage)}
+                  name="title"
+                  value={formData.title || ''}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  disabled={isMetadataDisabled()}
+                  maxLength={20}
+                  minLength={3}
+                  required
+                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
+                />
+              </div>
+
+               <div className="form-group">
+                <label>
+                  <AutoTranslate>Case Description</AutoTranslate>
+                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
+                </label>
+                <input
+                  type="text"
+                  placeholder={getFallbackTranslation('Enter Subject', currentLanguage)}
+                  name="subject"
+                  value={formData.subject || ''}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  disabled={isMetadataDisabled()}
+                  maxLength={20}
+                  minLength={3}
+                  required
+                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
+                />
+              </div>
+
+
+
+              <div className="form-group">
+                <label><AutoTranslate>FIR Number</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="FIR-145/2026" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Police Station</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="Saheed Nagar PS" required  />
+              </div>
+              <div className="form-group">
+                <label>
+                  <AutoTranslate>District</AutoTranslate>
+                </label>
+                <select>
+                  <option value=""><AutoTranslate>Select District</AutoTranslate></option>
+                  <option><AutoTranslate>Khordha</AutoTranslate></option>
+                  <option><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Crime Type</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="Murder" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Forwarding Authority</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="Inspector, Saheed Nagar PS" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Investigating Officer</AutoTranslate></label>
+                <input type="text" placeholder=""name=""value="SI Rajesh Kumar" required  />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <AutoTranslate>Receiving Laboratory</AutoTranslate>
+                </label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option><AutoTranslate>DFSL Bhubaneswar</AutoTranslate></option>
+                  <option><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>
+                  <AutoTranslate>Laboratory Division</AutoTranslate>
+                </label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option><AutoTranslate>Biology</AutoTranslate></option>
+                  <option><AutoTranslate>Cyber</AutoTranslate></option>
+                  <option><AutoTranslate>Fingerprint</AutoTranslate></option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>
+                  <AutoTranslate>Priority</AutoTranslate>
+                </label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option><AutoTranslate>Normal</AutoTranslate></option>
+                  <option><AutoTranslate>High</AutoTranslate></option>
+                  <option><AutoTranslate>Urgent</AutoTranslate></option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Date Received</AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+
+
+              {/* <div className="form-group">
+                <label>
+                  <AutoTranslate>Case No.</AutoTranslate>
                   {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
                 </label>
                 <input
@@ -1346,49 +1464,15 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     <AutoTranslate>Document already created. You can only add new files.</AutoTranslate>
                   </p>
                 )}
-              </div>
+              </div> */}
+
+              
+
+             
 
               <div className="form-group">
                 <label>
-                  <AutoTranslate>Title</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <input
-                  type="text"
-                  placeholder={getFallbackTranslation('Enter Title', currentLanguage)}
-                  name="title"
-                  value={formData.title || ''}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  disabled={isMetadataDisabled()}
-                  maxLength={20}
-                  minLength={3}
-                  required
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>
-                  <AutoTranslate>Subject</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <input
-                  type="text"
-                  placeholder={getFallbackTranslation('Enter Subject', currentLanguage)}
-                  name="subject"
-                  value={formData.subject || ''}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  disabled={isMetadataDisabled()}
-                  maxLength={20}
-                  minLength={3}
-                  required
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>
-                  <AutoTranslate>Category</AutoTranslate>
+                  <AutoTranslate>Evidence Category</AutoTranslate>
                   {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
                 </label>
                 <select
@@ -1398,12 +1482,31 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   disabled={isMetadataDisabled()}
                   className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
                 >
-                  <option value=""><AutoTranslate>Select category</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Select Evidence Category</AutoTranslate></option>
                   {categoryOptions.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
                   ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>
+                  <AutoTranslate>Evidence Type</AutoTranslate>
+                </label>
+                <select>
+                  <option value=""><AutoTranslate>Select Evidence Type</AutoTranslate></option>
+                  <option><AutoTranslate>Crime Scene Photograph</AutoTranslate></option>
+                  <option><AutoTranslate>CCTV Footage</AutoTranslate></option>
+                  <option><AutoTranslate>DNA Sample</AutoTranslate></option>
+                  <option><AutoTranslate>DNA Report</AutoTranslate></option>
+                  <option><AutoTranslate>Voice Recording</AutoTranslate></option>
+                  <option><AutoTranslate>Fingerprint Image</AutoTranslate></option>
+                  <option><AutoTranslate>Chemical Report</AutoTranslate></option>
+                  <option><AutoTranslate>Ballistic Report</AutoTranslate></option>
+                  <option><AutoTranslate>Seizure Memo</AutoTranslate></option>
+                  <option><AutoTranslate>Court Order</AutoTranslate></option>
+                  <option><AutoTranslate>Mobile Extraction</AutoTranslate></option>
                 </select>
               </div>
             </div>
@@ -1425,7 +1528,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           <div className="metaDataCard">
             <div className="flex items-center justify-between mb-3">
               <h2 className="flex align-center gap-2 mb-0">
-                🧩 <AutoTranslate>Document Additional Metadata</AutoTranslate>{" "}
+                🧩 <AutoTranslate>Evidence Additional Metadata</AutoTranslate>{" "}
                 <span className="text-gray-500">(optional)</span>
               </h2>
               {(() => {
@@ -1502,7 +1605,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           {/* ========== FILE METADATA ========== */}
           <div className="cardLight">
             <h2 className="flex align-center gap-2">
-              📄 <AutoTranslate>File Metadata</AutoTranslate> <span className="text-red-500">*</span>
+              📄 <AutoTranslate>Case Metadata</AutoTranslate> <span className="text-red-500">*</span>
               {uploadedFilePath.length > 0 && (
                 <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
                   {uploadedFilePath.length} <AutoTranslate>files added</AutoTranslate>
@@ -1513,7 +1616,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             <div className="grid grid-col-4">
               <div className="form-group">
                 <label>
-                  <AutoTranslate>Year</AutoTranslate>
+                  <AutoTranslate>Case Year</AutoTranslate>
                   {isDocumentSaved && (
                     <span className="text-xs text-green-600 ml-1">(can change)</span>
                   )}
@@ -1568,7 +1671,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
               <div className="form-group">
                 <label className="block text-md font-medium text-gray-700">
-                  <AutoTranslate>Folder Upload Enable</AutoTranslate>
+                  <AutoTranslate>Bulk Evidence Upload</AutoTranslate>
                 </label>
                 <div className="checkBox mt-2">
                   <input
@@ -1821,7 +1924,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     onClick={handleAddDocument}
                     className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
                   >
-                    <AutoTranslate>Upload Document</AutoTranslate>
+                    <AutoTranslate>Register Case</AutoTranslate>
                   </button>
                 ) : editingDoc ? (
                   <button
@@ -1829,7 +1932,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     disabled={bProcess}
                     className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
                   >
-                    {bProcess ? <AutoTranslate>Updating...</AutoTranslate> : <AutoTranslate>Update Document</AutoTranslate>}
+                    {bProcess ? <AutoTranslate>Registering...</AutoTranslate> : <AutoTranslate>Register Case</AutoTranslate>}
                   </button>
                 ) : (
                   <button
@@ -1837,7 +1940,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     onClick={handleAddDocument}
                     className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
                   >
-                    <AutoTranslate>Upload Document</AutoTranslate>
+                    <AutoTranslate>Register Case</AutoTranslate>
                   </button>
                 )}
               </div>
@@ -1879,10 +1982,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             <thead>
               <tr>
                 <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
-                <th><AutoTranslate>File No</AutoTranslate></th>
+                <th><AutoTranslate>Case No</AutoTranslate></th>
                 <th><AutoTranslate>Title</AutoTranslate></th>
                 <th><AutoTranslate>Subject</AutoTranslate></th>
-                <th><AutoTranslate>Category</AutoTranslate></th>
+                <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
                 <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
                 <th className="text-center"><AutoTranslate>Edit</AutoTranslate></th>
@@ -1979,7 +2082,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     <span className="text-lg font-bold">D</span>
                     <span className="text-lg font-bold">MS</span>
                   </div>
-                  <h2><AutoTranslate>Document Details</AutoTranslate></h2>
+                  <h2><AutoTranslate>Evidence Details</AutoTranslate></h2>
                 </div>
                 <div className="headerRight">
                   <button className="printBtn" onClick={() => handlePrintReport(selectedDoc?.id)} title="Print">
@@ -1997,12 +2100,12 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     <div className="info-card">
                       <div className="info-grid">
                         {[
-                          { label: "Branch", value: selectedDoc?.branchMaster?.name },
-                          { label: "Department", value: selectedDoc?.departmentMaster?.name },
-                          { label: "File No.", value: selectedDoc?.fileNo },
-                          { label: "Title", value: selectedDoc?.title },
-                          { label: "Subject", value: selectedDoc?.subject },
-                          { label: "Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Laboratories", value: selectedDoc?.branchMaster?.name },
+                          { label: "Division", value: selectedDoc?.departmentMaster?.name },
+                          { label: "Case No.", value: selectedDoc?.fileNo },
+                          { label: "Case Title", value: selectedDoc?.title },
+                          { label: "Case Description", value: selectedDoc?.subject },
+                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
                           { label: "Upload By", value: selectedDoc?.employee?.name },
                         ].map((item, idx) => (
                           <p key={idx} className="text-md text-gray-700">
@@ -2062,7 +2165,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                           style={{ gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(150px, 1.2fr) minmax(80px, 0.8fr)" }}
                         >
                           <span className="text-left"><AutoTranslate>File Name</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Year</AutoTranslate></span>
+                          <span className="text-center"><AutoTranslate>Case Year</AutoTranslate></span>
                           <span className="text-center"><AutoTranslate>Version</AutoTranslate></span>
                           <span className="text-center"><AutoTranslate>Status</AutoTranslate></span>
                           <span className="text-center"><AutoTranslate>Action By</AutoTranslate></span>
