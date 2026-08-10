@@ -842,28 +842,28 @@ const SearchByScan = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>File No.</AutoTranslate>
+                <AutoTranslate>Case No.</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.fileNo || "N/A"}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>Title</AutoTranslate>
+                <AutoTranslate>Case Title</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.title || "N/A"}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>Subject</AutoTranslate>
+                <AutoTranslate>Case Description</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.subject || "N/A"}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>Category</AutoTranslate>
+                <AutoTranslate>Evidence Category</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.categoryMaster?.name || "N/A"}</p>
             </div>
@@ -891,7 +891,7 @@ const SearchByScan = () => {
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>Branch</AutoTranslate>
+                <AutoTranslate>Laboratories</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.branchMaster?.name || "N/A"}</p>
             </div>
@@ -940,7 +940,7 @@ const SearchByScan = () => {
               </th>
 
               <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider w-24">
-                <AutoTranslate>Year</AutoTranslate>
+                <AutoTranslate>Case year</AutoTranslate>
               </th>
 
               <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider w-24">

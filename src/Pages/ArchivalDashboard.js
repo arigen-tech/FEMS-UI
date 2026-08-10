@@ -563,7 +563,7 @@ const ArchiveDashboard = () => {
                     className="border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="All">
-                      <AutoTranslate>All Departments</AutoTranslate>
+                      <AutoTranslate>All Division</AutoTranslate>
                     </option>
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>
@@ -622,7 +622,7 @@ const ArchiveDashboard = () => {
                           <AutoTranslate>Policy Name</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Branch</AutoTranslate>
+                          <AutoTranslate>Laboratories</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           <AutoTranslate>Department</AutoTranslate>
@@ -631,7 +631,7 @@ const ArchiveDashboard = () => {
                           <AutoTranslate>Status</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Documents</AutoTranslate>
+                          <AutoTranslate>evidence</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           <AutoTranslate>Total Files</AutoTranslate>
@@ -770,7 +770,7 @@ const ArchiveDashboard = () => {
               <div className="rounded-xl border border-gray-200 overflow-hidden bg-white">
                 <div className="p-4 border-b border-gray-200 bg-gray-50">
                   <h3 className="text-base font-semibold text-gray-800">
-                    <AutoTranslate>Documents in:</AutoTranslate> <span className="text-blue-600">{selectedJob?.archiveName}</span>
+                    <AutoTranslate>Evidence in:</AutoTranslate> <span className="text-blue-600">{selectedJob?.archiveName}</span>
                   </h3>
                 </div>
                 <div className="overflow-x-auto">
@@ -781,10 +781,10 @@ const ArchiveDashboard = () => {
                           <AutoTranslate>Document No.</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Title</AutoTranslate>
+                          <AutoTranslate>Case Title</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Branch</AutoTranslate>
+                          <AutoTranslate>Laboratories</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           <AutoTranslate>Department</AutoTranslate>

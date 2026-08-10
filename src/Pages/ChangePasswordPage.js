@@ -345,7 +345,7 @@ const ChangePasswordPage = () => {
                     </p>
 
                     <p className="text-md text-gray-900 ml-20 flex items-center">
-                      <strong className="w-24"><AutoTranslate>Branch</AutoTranslate>:</strong>
+                      <strong className="w-24"><AutoTranslate>Laboratories</AutoTranslate>:</strong>
                       <strong className="ml-2">{employee?.branch?.name || <AutoTranslate>All</AutoTranslate>}</strong>
                     </p>
 

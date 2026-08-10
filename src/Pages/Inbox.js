@@ -68,10 +68,10 @@ const dummyData = [
             <thead>
               <tr className="bg-slate-100">
                 <th className="border p-2 text-left">SR.</th>
-                <th className="border p-2 text-left">FILE NO.</th>
+                <th className="border p-2 text-left">Case No.</th>
                 <th className="border p-2 text-left">CREATION DATE</th>
-                <th className="border p-2 text-left">TITLE</th>
-                <th className="border p-2 text-left">SUBJECT</th>
+                <th className="border p-2 text-left">Case Title</th>
+                <th className="border p-2 text-left">Case Description</th>
                 <th className="border p-2 text-left">ACTION</th>
               </tr>
             </thead>

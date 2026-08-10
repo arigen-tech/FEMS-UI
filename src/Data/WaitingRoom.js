@@ -258,7 +258,7 @@ const WaitingRoom = ({ isOpen, onClose, onSelectDocuments, metadata, token }) =>
                   <th className="border p-2 text-left">SR.</th>
                   <th className="border p-2 text-left">Document Name</th>
                   <th className="border p-2 text-left">Source</th>
-                  <th className="border p-2 text-left">Year</th>
+                  <th className="border p-2 text-left">Case year</th>
                   <th className="border p-2 text-left">Version</th>
                   <th className="border p-2 text-left">Type</th>
                   <th className="border p-2 text-left">Created</th>

@@ -960,7 +960,7 @@ const FileCompare = () => {
                       {header.title || <AutoTranslate>No title</AutoTranslate>}
                     </div>
                     <div className="text-xs text-gray-500 mt-1 truncate">
-                      {header.subject || <AutoTranslate>No subject</AutoTranslate>}
+                      {header.subject || <AutoTranslate>No Case Description</AutoTranslate>}
                     </div>
                     <div className="text-xs text-blue-600 mt-1">{getCategoryName(header)}</div>
                   </div>

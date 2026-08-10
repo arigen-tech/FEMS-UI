@@ -367,7 +367,7 @@ const EmployeeRole = () => {
           {/* Branch Filter */}
           <div className="form-group ">
             <label htmlFor="branchFilter">
-              <AutoTranslate>Branch</AutoTranslate>
+              <AutoTranslate>Laboratories</AutoTranslate>
             </label>
             <select
               id="branchFilter"
@@ -436,7 +436,7 @@ const EmployeeRole = () => {
                 <th><AutoTranslate>Name</AutoTranslate></th>
                 <th><AutoTranslate>Email</AutoTranslate></th>
                 <th><AutoTranslate>Mobile No.</AutoTranslate></th>
-                <th><AutoTranslate>Branch</AutoTranslate></th>
+                <th><AutoTranslate>Laboratories</AutoTranslate></th>
                 <th><AutoTranslate>Department</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>CreatedBy</AutoTranslate></th>

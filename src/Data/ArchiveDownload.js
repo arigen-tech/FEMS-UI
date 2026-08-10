@@ -922,7 +922,7 @@ const ArchiveDownload = () => {
                 className="p-2 border rounded-md outline-none"
               >
                 <option value="">Select Department</option>
-                <option value="all">All Departments</option>
+                <option value="all">All Division</option>
                 {departmentOptions.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
@@ -982,7 +982,7 @@ const ArchiveDownload = () => {
                 onChange={handleInputChange}
                 className="p-2 border rounded-md outline-none"
               >
-                <option value="">Select Branch</option>
+                <option value="">Select Laboratories</option>
                 <option value="all">All Branches</option>
                 {branchOptions.map((branch) => (
                   <option key={branch.id} value={branch.id}>
@@ -1005,7 +1005,7 @@ const ArchiveDownload = () => {
                 disabled={!archiveCriteria.branchId || archiveCriteria.branchId === "all"}
               >
                 <option value="">Select Department</option>
-                <option value="all">All Departments</option>
+                <option value="all">All Division</option>
                 {departmentOptions.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
@@ -1241,7 +1241,7 @@ const ArchiveDownload = () => {
                     <th className="border p-2 text-left">SR.</th>
                     <th className="border p-2 text-left">Archive Name</th>
                     <th className="border p-2 text-left">Files Count</th>
-                    <th className="border p-2 text-left">Branch</th>
+                    <th className="border p-2 text-left">Laboratories</th>
                     <th className="border p-2 text-left">Department</th>
                     <th className="border p-2 text-left">Archive Date</th>
                     <th className="border p-2 text-left">Status</th>

@@ -1664,7 +1664,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               {unsportFile === true && (
                 <div className="form-group selfEnd">
                   <button onClick={viewfiletype} className="btn-primary w-full">
-                    <AutoTranslate>Show Supported File Types</AutoTranslate>
+                    <AutoTranslate>Show Supported File Format</AutoTranslate>
                   </button>
                 </div>
               )}
@@ -1984,7 +1984,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
                 <th><AutoTranslate>Case No</AutoTranslate></th>
                 <th><AutoTranslate>Case Title</AutoTranslate></th>
-                <th><AutoTranslate>Subject</AutoTranslate></th>
+                <th><AutoTranslate>Case Description</AutoTranslate></th>
                 <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
                 <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
@@ -1999,7 +1999,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   <td>{doc.fileNo || '--'}</td>
                   <td>{doc.title || '--'}</td>
                   <td>{doc.subject || '--'}</td>
-                  <td>{doc.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>}</td>
+                  <td>{doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}</td>
                   <td>{doc?.documentDetails?.length || 0}</td>
                   <td>{formatDate(doc.createdOn)}</td>
                   <td>
@@ -2105,7 +2105,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                           { label: "Case No.", value: selectedDoc?.fileNo },
                           { label: "Case Title", value: selectedDoc?.title },
                           { label: "Case Description", value: selectedDoc?.subject },
-                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
                           { label: "Upload By", value: selectedDoc?.employee?.name },
                         ].map((item, idx) => (
                           <p key={idx} className="text-md text-gray-700">
@@ -2240,7 +2240,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 text-sm mt-3">
                                   <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                                     <p className="text-gray-700">{file.year || '--'}</p>
                                   </div>
                                   <div>
@@ -2324,7 +2324,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             <div className="w-80 sm:w-96 bg-white rounded-xl shadow-xl p-5 border border-gray-200 max-h-[80vh] overflow-y-auto transition-all">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">
-                  <AutoTranslate>Supported File Types</AutoTranslate>
+                  <AutoTranslate>Supported File Format</AutoTranslate>
                 </h2>
                 <button
                   onClick={handlecloseFileType}

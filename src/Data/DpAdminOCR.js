@@ -401,7 +401,7 @@ const DpAdminOCR = () => {
             )}
             {fixedDepartmentId && filteredDocuments.length > 0 && (
               <div className="mt-2 text-sm text-gray-500">
-                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>documents</AutoTranslate>
+                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>evidence</AutoTranslate>
               </div>
             )}
           </div>

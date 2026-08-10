@@ -280,7 +280,7 @@ const AuditForm = () => {
           {/* Branch Filter */}
           <div className="form-group ">
             <label>
-              <AutoTranslate>Branch</AutoTranslate>
+              <AutoTranslate>Laboratories</AutoTranslate>
             </label>
             <select
               value={selectedBranch}
@@ -302,7 +302,7 @@ const AuditForm = () => {
           {/* Department Filter */}
           <div className="form-group ">
             <label>
-              <AutoTranslate>Department</AutoTranslate>
+              <AutoTranslate>Division</AutoTranslate>
             </label>
             <select
               value={selectedDepartment}
@@ -345,7 +345,7 @@ const AuditForm = () => {
                 <th><AutoTranslate>Form Name</AutoTranslate></th>
                 <th><AutoTranslate>Action Name</AutoTranslate></th>
                 <th><AutoTranslate>Action Date & Time</AutoTranslate></th>
-                <th><AutoTranslate>Employee</AutoTranslate></th>
+                <th><AutoTranslate>User</AutoTranslate></th>
                 <th><AutoTranslate>Status</AutoTranslate></th>
                 <th><AutoTranslate>IP Address</AutoTranslate></th>
               </tr>

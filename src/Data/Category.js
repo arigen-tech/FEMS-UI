@@ -568,7 +568,7 @@ const Category = () => {
                 <p className="mb-4">
                   <AutoTranslate>Are you sure you want to</AutoTranslate> {categoryToToggle?.active === true ?
                     <AutoTranslate>deactivate</AutoTranslate> :
-                    <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this category</AutoTranslate> <strong>{categoryToToggle?.name}</strong>?
+                    <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this Evidence Category</AutoTranslate> <strong>{categoryToToggle?.name}</strong>?
                 </p>
                 <div className="flex justify-end gap-4">
                   <button onClick={() => setModalVisible(false)} className="btn-cancel">

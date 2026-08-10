@@ -327,7 +327,7 @@ const Year = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Years</AutoTranslate></h1>
+        <h1><AutoTranslate>Case Years</AutoTranslate></h1>
       </div>
       <div className="card">
         {popupMessage && (
@@ -344,7 +344,7 @@ const Year = () => {
             <div className="grid grid-col-4 itemEnd">
               <div className="form-group ">
                 <label>
-                  <AutoTranslate>Year</AutoTranslate> <span className="text-red-500">*</span>
+                  <AutoTranslate>Case year</AutoTranslate> <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -431,7 +431,7 @@ const Year = () => {
             <thead>
               <tr>
                 <th className='text-center'><AutoTranslate>SN</AutoTranslate></th>
-                <th className='text-center'><AutoTranslate>Year</AutoTranslate></th>
+                <th className='text-center'><AutoTranslate>Case year</AutoTranslate></th>
                 <th><AutoTranslate>Created Date</AutoTranslate></th>
                 <th><AutoTranslate>Updated Date</AutoTranslate></th>
                 <th><AutoTranslate>Status</AutoTranslate></th>

@@ -812,7 +812,7 @@ const Search = () => {
 
         {/* Year */}
         {/* <div className={fieldWrapper}>
-        <label><AutoTranslate>Year</AutoTranslate></label>
+        <label><AutoTranslate>Case year</AutoTranslate></label>
         <select
           value={yearId ?? ""}
           onChange={(e) =>
@@ -957,10 +957,10 @@ const Search = () => {
                   <tr>
                     <th className="text-center"><AutoTranslate>SN</AutoTranslate></th>
                     <th><AutoTranslate>File No</AutoTranslate></th>
-                    <th><AutoTranslate>Title</AutoTranslate></th>
-                    <th><AutoTranslate>Subject</AutoTranslate></th>
-                    <th><AutoTranslate>Category</AutoTranslate></th>
-                    <th><AutoTranslate>Branch</AutoTranslate></th>
+                    <th><AutoTranslate>Case Title</AutoTranslate></th>
+                    <th><AutoTranslate>Case Description</AutoTranslate></th>
+                    <th><AutoTranslate>Evidence Category</AutoTranslate></th>
+                    <th><AutoTranslate>Laboratories</AutoTranslate></th>
                     <th><AutoTranslate>Department</AutoTranslate></th>
                     <th className="text-center"><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
                     <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
@@ -1174,7 +1174,7 @@ const Search = () => {
                       <AutoTranslate>File Name</AutoTranslate>
                     </span>
                     <span className="text-center">
-                      <AutoTranslate>Year</AutoTranslate>
+                      <AutoTranslate>Case year</AutoTranslate>
                     </span>
                     <span className="text-center">
                       <AutoTranslate>Version</AutoTranslate>
@@ -1278,7 +1278,7 @@ const Search = () => {
                           <div className="grid grid-cols-2 gap-2 text-sm mt-3">
                             <div>
                               <p className="text-xs text-gray-500">
-                                <AutoTranslate>Year</AutoTranslate>
+                                <AutoTranslate>Case year</AutoTranslate>
                               </p>
                               <p className="text-gray-700">{file.year}</p>
                             </div>
@@ -1371,7 +1371,7 @@ const Search = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-800">
-            <AutoTranslate>Supported File Types</AutoTranslate>
+            <AutoTranslate>Supported File Format</AutoTranslate>
           </h2>
           <button
             onClick={handlecloseFileType}

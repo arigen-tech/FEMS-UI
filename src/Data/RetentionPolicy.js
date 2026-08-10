@@ -503,7 +503,7 @@ const RetentionPolicy = () => {
                 onChange={handleBranchChange}
                 className="mt-1 block w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Select Branch</option>
+                <option value="">Select Laboratories</option>
                 {branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -521,7 +521,7 @@ const RetentionPolicy = () => {
                 className="mt-1 block w-full p-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={!formData.branchId}
               >
-                <option value="">All Departments</option>
+                <option value="">All Division</option>
                 {departments.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
@@ -616,7 +616,7 @@ const RetentionPolicy = () => {
                 <th className="border p-2 text-left">SR.</th>
                 <th className="border p-2 text-left">Policy Type</th>
                 <th className="border p-2 text-left">Retention Period</th>
-                <th className="border p-2 text-left">Branch</th>
+                <th className="border p-2 text-left">Laboratories</th>
                 <th className="border p-2 text-left">Department</th>
                 <th className="border p-2 text-left">Description</th>
                 <th className="border p-2 text-left">Status</th>

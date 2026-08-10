@@ -321,7 +321,7 @@ const AdminOCR = () => {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={!filters.branch}
               >
-                <option value=""><AutoTranslate>All Departments</AutoTranslate></option>
+                <option value=""><AutoTranslate>All Division</AutoTranslate></option>
                 {departments.map((department) => (
                   <option key={department.name} value={department.name}>
                     {department.name}
@@ -423,7 +423,7 @@ const AdminOCR = () => {
             )}
             {filters.branch && filteredDocuments.length > 0 && (
               <div className="mt-2 text-sm text-gray-500">
-                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>documents</AutoTranslate>
+                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>evidence</AutoTranslate>
               </div>
             )}
           </div>

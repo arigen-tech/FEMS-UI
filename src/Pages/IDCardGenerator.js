@@ -374,7 +374,7 @@ const IDCardGenerator = () => {
                     {/* Detail Grid */}
                     <div className={`${isHorizontal ? "grid grid-cols-2 gap-x-4 gap-y-1 text-sm" : "space-y-1 text-sm"}`}>
                         <div className="flex justify-between">
-                            <span className="font-medium text-gray-600">Branch:</span>
+                            <span className="font-medium text-gray-600">Laboratories:</span>
                             <span>{employee.branch?.name || "N/A"}</span>
                         </div>
                         <div className="flex justify-between">

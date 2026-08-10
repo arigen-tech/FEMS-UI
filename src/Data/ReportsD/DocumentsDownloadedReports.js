@@ -276,7 +276,7 @@ const DocumentsDownloadedReports = () => {
     return (
         <div className="p-4-">
             <div className="title">
-                <h1><AutoTranslate>Document Downloaded Reports</AutoTranslate></h1>
+                <h1><AutoTranslate>Evidence Downloaded Reports</AutoTranslate></h1>
             </div>
 
             <div className="card mb-6">
@@ -286,7 +286,7 @@ const DocumentsDownloadedReports = () => {
                         {/* Branch */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Branch</AutoTranslate>
+                                <AutoTranslate>Laboratories</AutoTranslate>
                             </label>
                             <select
                                 name="branch"
@@ -308,7 +308,7 @@ const DocumentsDownloadedReports = () => {
                         {/* Department */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Department</AutoTranslate>
+                                <AutoTranslate>Division</AutoTranslate>
                             </label>
                             <select
                                 name="department"
@@ -334,7 +334,7 @@ const DocumentsDownloadedReports = () => {
                         {/* Category */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Category</AutoTranslate>
+                                <AutoTranslate>Evidence Category</AutoTranslate>
                             </label>
                             <select
                                 name="category"
@@ -471,9 +471,9 @@ const DocumentsDownloadedReports = () => {
                         <table className="">
                             <thead>
                                 <tr>
-                                    <th>Document</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
+                                    <th>Evidence</th>
+                                    <th>Case Title</th>
+                                    <th>Evidence Category</th>
                                     <th>Version</th>
                                     <th>Action Date</th>
                                     <th>Action By</th>

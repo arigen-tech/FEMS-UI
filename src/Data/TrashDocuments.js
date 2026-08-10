@@ -896,7 +896,7 @@ const TrashDoc = () => {
                       <td>{doc.title || "N/A"}</td>
                       <td>{doc.subject || "N/A"}</td>
                       <td>
-                        {doc.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>}
+                        {doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}
                       </td>
                       {/* <td>
                         {doc.approvalStatus || <AutoTranslate>Pending</AutoTranslate>}
@@ -1052,7 +1052,7 @@ const TrashDoc = () => {
                         { label: "Case No.", value: selectedDoc?.fileNo },
                         { label: "Case Title", value: selectedDoc?.title },
                         { label: "Case Description", value: selectedDoc?.subject },
-                        { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                        { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
                         { label: "Status", value: selectedDoc?.approvalStatus },
                         { label: "Upload By", value: selectedDoc?.employee?.name },
                       ].map((item, idx) => (
@@ -1278,7 +1278,7 @@ const TrashDoc = () => {
 
                 <div className="grid grid-cols-2 gap-2 text-sm mt-3">
                   <div>
-                    <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                    <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                     <p className="text-gray-700">{file.yearMaster?.name || file.year || "--"}</p>
                   </div>
                   <div>

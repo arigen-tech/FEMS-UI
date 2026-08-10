@@ -307,7 +307,7 @@ const DocumentUploadReport = () => {
     return (
         <div className="p-4-">
             <div className="title">
-                <h1><AutoTranslate>Document Upload Reports</AutoTranslate></h1>
+                <h1><AutoTranslate>Evidence Upload Reports</AutoTranslate></h1>
             </div>
 
 
@@ -318,7 +318,7 @@ const DocumentUploadReport = () => {
                         {/* Branch */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Branch</AutoTranslate>
+                                <AutoTranslate>Laboratories</AutoTranslate>
                             </label>
                             <select
                                 name="branch"
@@ -340,7 +340,7 @@ const DocumentUploadReport = () => {
                         {/* Department */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Department</AutoTranslate>
+                                <AutoTranslate>Division</AutoTranslate>
                             </label>
                             <select
                                 name="department"
@@ -366,7 +366,7 @@ const DocumentUploadReport = () => {
                         {/* Category */}
                         <div className="form-group">
                             <label>
-                                <AutoTranslate>Category</AutoTranslate>
+                                <AutoTranslate>Evidence Category</AutoTranslate>
                             </label>
                             <select
                                 name="category"
@@ -520,9 +520,9 @@ const DocumentUploadReport = () => {
                         <table className="">
                             <thead>
                                 <tr>
-                                    <th>Document</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
+                                    <th>Evidence</th>
+                                    <th>Case Title</th>
+                                    <th>Evidence Category</th>
                                     <th>Version</th>
                                     <th>Status</th>
                                     <th>Action Date</th>

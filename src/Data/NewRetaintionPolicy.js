@@ -716,13 +716,13 @@ const NewRetaintionPolicy = () => {
                         </div>
                         <div className="form-group ">
                             <label>
-                                <AutoTranslate>Branch</AutoTranslate> <span className="text-red-500">*</span>
+                                <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="branchId"
                                 value={formData.branchId}
                                 onChange={handleBranchChange}>
-                                <option value=""><AutoTranslate>All Branch</AutoTranslate></option>
+                                <option value=""><AutoTranslate>All Laboratories</AutoTranslate></option>
                                 {branches.map((branch) => (
                                     <option key={branch.id} value={branch.id}>
                                         {branch.name}
@@ -740,7 +740,7 @@ const NewRetaintionPolicy = () => {
                                 value={formData.departmentId}
                                 onChange={handleInputChange}
                                 disabled={!formData.branchId}>
-                                <option value=""><AutoTranslate>All Departments</AutoTranslate></option>
+                                <option value=""><AutoTranslate>All Division</AutoTranslate></option>
                                 {departments.map((department) => (
                                     <option key={department.id} value={department.id}>
                                         {department.name}
@@ -750,13 +750,13 @@ const NewRetaintionPolicy = () => {
                         </div>
                         <div className="form-group ">
                             <label>
-                                <AutoTranslate>Category</AutoTranslate> <span className="text-red-500">*</span>
+                                <AutoTranslate>Evidence Category</AutoTranslate> <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="categoryId"
                                 value={formData.categoryId}
                                 onChange={handleInputChange}>
-                                <option value=""><AutoTranslate>All Category</AutoTranslate></option>
+                                <option value=""><AutoTranslate>All Evidence Category</AutoTranslate></option>
                                 {categories.map((cat) => (
                                     <option key={cat.id} value={cat.id}>
                                         {cat.name}
@@ -852,9 +852,9 @@ const NewRetaintionPolicy = () => {
                                 <th><AutoTranslate>PolicyType</AutoTranslate></th>
                                 <th><AutoTranslate>Archival Period</AutoTranslate></th>
                                 <th><AutoTranslate>Archive Date & Time</AutoTranslate></th>
-                                <th><AutoTranslate>Branch</AutoTranslate></th>
+                                <th><AutoTranslate>Laboratories</AutoTranslate></th>
                                 <th><AutoTranslate>Department</AutoTranslate></th>
-                                <th><AutoTranslate>Category</AutoTranslate></th>
+                                <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                                 <th><AutoTranslate>Description</AutoTranslate></th>
                                 <th className="text-center"><AutoTranslate>Status</AutoTranslate></th>
                                 <th className="text-center"><AutoTranslate>Edit</AutoTranslate></th>

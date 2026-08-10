@@ -1603,7 +1603,7 @@ const ApprovedDoc = () => {
                       <td>{doc.subject || "N/A"}</td>
 
                       <td>
-                        {doc.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>}
+                        {doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}
                       </td>
 
                       <td className="text-center">
@@ -1813,7 +1813,7 @@ const ApprovedDoc = () => {
                         { label: "Case No.", value: selectedDoc?.fileNo },
                         { label: "Case Title", value: selectedDoc?.title },
                         { label: "Case Description", value: selectedDoc?.subject },
-                        { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                        { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
                         { label: "Upload By", value: selectedDoc?.employee?.name },
                       ].map((item, idx) => (
                         <p key={idx} className="text-md text-gray-700">
@@ -2105,7 +2105,7 @@ const ApprovedDoc = () => {
 
                 <div className="grid grid-cols-2 gap-3 text-sm mt-3">
                   <div>
-                    <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                    <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                     <p className="text-gray-700">{file.yearMaster?.name || file.year || "--"}</p>
                   </div>
                   <div>
@@ -2619,7 +2619,7 @@ const ApprovedDoc = () => {
             {/* Header */}
             <div className="modal-header">
               <div className="modal-title">
-                <h2><AutoTranslate>Bulk Share Documents</AutoTranslate></h2>
+                <h2><AutoTranslate>Bulk Share Evidence</AutoTranslate></h2>
               </div>
               <div className="headerRight">
                 {/* Close Button */}
@@ -2671,7 +2671,7 @@ const ApprovedDoc = () => {
 
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <AutoTranslate>Select Employees</AutoTranslate>
+                    <AutoTranslate>Select User</AutoTranslate>
                   </label>
                   {loadingEmployees ? (
                     <div className="flex items-center">

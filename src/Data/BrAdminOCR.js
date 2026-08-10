@@ -308,19 +308,19 @@ const BrAdminOCR = () => {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Branch wise (OCR) Search</AutoTranslate></h1>
+        <h1><AutoTranslate>Laboratories wise (OCR) Search</AutoTranslate></h1>
       </div>
       
       <div className="card mb-4">
         <h2>
-          <AutoTranslate>Search Documents</AutoTranslate>
+          <AutoTranslate>Search Evidence</AutoTranslate>
         </h2>
 
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="grid grid-col-4 mb-8">
             <div className="form-group">
               <label>
-                <AutoTranslate>Branch</AutoTranslate> <span className="text-red-500">*</span>
+                <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-500">*</span>
               </label>
               <select
                 value={filters.branch}
@@ -328,7 +328,7 @@ const BrAdminOCR = () => {
                 required
                 disabled
               >
-                <option value=""><AutoTranslate>Select a branch</AutoTranslate></option>
+                <option value=""><AutoTranslate>Select a Laboratories</AutoTranslate></option>
                 {branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -346,7 +346,7 @@ const BrAdminOCR = () => {
                 onChange={(e) => handleFilterChange("department", e.target.value)}
                 disabled={!filters.branch}
               >
-                <option value=""><AutoTranslate>All Departments</AutoTranslate></option>
+                <option value=""><AutoTranslate>All Division</AutoTranslate></option>
                 {departments.map((department) => (
                   <option key={department.name} value={department.name}>
                     {department.name}
@@ -374,7 +374,7 @@ const BrAdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>Category</AutoTranslate>
+                <AutoTranslate>Evidence Category</AutoTranslate>
               </label>
               <select
                 value={filters.category}
@@ -434,7 +434,7 @@ const BrAdminOCR = () => {
                     : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
-                  <AutoTranslate>Search in Documents</AutoTranslate>
+                  <AutoTranslate>Search in Evidence</AutoTranslate>
                 </button>
               </div>
             </div>
@@ -443,7 +443,7 @@ const BrAdminOCR = () => {
             )}
             {userBranchId && filteredDocuments.length > 0 && (
               <div className="mt-2 text-sm text-gray-500">
-                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>documents</AutoTranslate>
+                <AutoTranslate>Searching in</AutoTranslate> {filteredDocuments.length} <AutoTranslate>evidence</AutoTranslate>
               </div>
             )}
 
@@ -456,7 +456,7 @@ const BrAdminOCR = () => {
 
         <div className="flex justify-between items-center mb-4">
           <h2 className="mb-0">
-            <AutoTranslate>Documents</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
+            <AutoTranslate>evidence</AutoTranslate> {filteredDocuments.length > 0 && `(${filteredDocuments.length})`}
           </h2>
           <div className="flex items-center">
             <label className="text-sm text-gray-700 mr-2">
@@ -488,13 +488,13 @@ const BrAdminOCR = () => {
                   <tr>
                     <th className="text-center">#</th>
                     <th>
-                      <AutoTranslate>Title</AutoTranslate>
+                      <AutoTranslate>Case Title</AutoTranslate>
                     </th>
                     <th>
                       <AutoTranslate>File No</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>Subject</AutoTranslate>
+                      <AutoTranslate>Case Description</AutoTranslate>
                     </th>
                     <th>
                       <AutoTranslate>Upload Date</AutoTranslate>

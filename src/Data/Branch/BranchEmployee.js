@@ -1040,7 +1040,7 @@ const BranchEmployee = () => {
                                     <strong>
                                         {employeeToToggle.active === true ? <AutoTranslate>deactivate</AutoTranslate> : <AutoTranslate>activate</AutoTranslate>}
                                     </strong>{" "}
-                                    <AutoTranslate>the employee</AutoTranslate> <strong>{employeeToToggle.name}</strong> ?
+                                    <AutoTranslate>the User</AutoTranslate> <strong>{employeeToToggle.name}</strong> ?
                                 </p>
                                 <div className="flex justify-end space-x-4">
                                     <button

@@ -1379,7 +1379,7 @@ const Import = () => {
                         }`} />
                       <div className={`font-semibold ${fileContentType === 'files' || fileContentType === 'both' ? 'text-gray-900' : 'text-gray-500'
                         }`}>
-                        <AutoTranslate>Import Files & Documents</AutoTranslate>
+                        <AutoTranslate>Import Files & Evidence</AutoTranslate>
                       </div>
                       {!(fileContentType === 'files' || fileContentType === 'both') && (
                         <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded"><AutoTranslate>Not available</AutoTranslate></span>

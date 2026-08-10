@@ -263,7 +263,7 @@ const DocumentReport = () => {
   };
 
   const validateForm = () => {
-    if (!searchCriteria.branch) return <AutoTranslate>Branch is required.</AutoTranslate>;
+    if (!searchCriteria.branch) return <AutoTranslate>Laboratories is required.</AutoTranslate>;
     if (!searchCriteria.department) return <AutoTranslate>Department is required.</AutoTranslate>;
     if (!fromDate) return <AutoTranslate>Start date is required.</AutoTranslate>;
     if (!toDate) return <AutoTranslate>End date is required.</AutoTranslate>;
@@ -300,7 +300,7 @@ const DocumentReport = () => {
             <>
               <div className="form-group">
                 <label htmlFor="branch">
-                  <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="branch"
@@ -335,7 +335,7 @@ const DocumentReport = () => {
             <>
               <div className="form-group">
                 <label htmlFor="branch">
-                  <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="branch"
@@ -369,7 +369,7 @@ const DocumentReport = () => {
             <>
               <div className="form-group">
                 <label htmlFor="branch">
-                  <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="branch"
@@ -377,7 +377,7 @@ const DocumentReport = () => {
                   value={searchCriteria.branch}
                   onChange={handleInputChange}
                 >
-                  <option value=""><AutoTranslate>Select Branch</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Select Laboratories</AutoTranslate></option>
                   {branchOptions.map((branch) => (
                     <option key={branch.id} value={branch.id}>
                       {branch.name}
@@ -410,7 +410,7 @@ const DocumentReport = () => {
 
           <div className="form-group">
             <label htmlFor="category">
-              <AutoTranslate>Category</AutoTranslate>
+              <AutoTranslate>Evidence Category</AutoTranslate>
             </label>
             <select
               id="category"
@@ -418,7 +418,7 @@ const DocumentReport = () => {
               value={searchCriteria.category}
               onChange={handleInputChange}
             >
-              <option value=""><AutoTranslate>All Category</AutoTranslate></option>
+              <option value=""><AutoTranslate>All Evidence Category</AutoTranslate></option>
               {categoryOptions.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}

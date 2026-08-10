@@ -289,7 +289,7 @@ const DocumentTrashReport = () => {
 
                         {/* Branch */}
                         <div className="form-group">
-                            <label><AutoTranslate>Branch</AutoTranslate></label>
+                            <label><AutoTranslate>Laboratories</AutoTranslate></label>
                             <select
                                 name="branch"
                                 value={searchCriteria.branch}
@@ -305,7 +305,7 @@ const DocumentTrashReport = () => {
 
                         {/* Department */}
                         <div className="form-group">
-                            <label><AutoTranslate>Department</AutoTranslate></label>
+                            <label><AutoTranslate>Evidence</AutoTranslate></label>
                             <select
                                 name="department"
                                 value={searchCriteria.department}
@@ -325,7 +325,7 @@ const DocumentTrashReport = () => {
 
                         {/* Category */}
                         <div className="form-group">
-                            <label><AutoTranslate>Category</AutoTranslate></label>
+                            <label><AutoTranslate>Evidence Category</AutoTranslate></label>
                             <select
                                 name="category"
                                 value={searchCriteria.category}
@@ -448,9 +448,9 @@ const DocumentTrashReport = () => {
                         <table className="">
                             <thead>
                                 <tr>
-                                    <th>Document</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
+                                    <th>Evidence</th>
+                                    <th>Case Title</th>
+                                    <th>Evidence Category</th>
                                     <th>Version</th>
                                     <th>Action Type</th>
                                     <th>Action Date</th>

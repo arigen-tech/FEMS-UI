@@ -740,7 +740,7 @@ const SharedDocs = () => {
   return (
     <div className="px-1-">
       <div className="title">
-        <h1><AutoTranslate>Shared Documents</AutoTranslate></h1>
+        <h1><AutoTranslate>Shared Evidence</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -799,10 +799,10 @@ const SharedDocs = () => {
                   <AutoTranslate>File No</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Title</AutoTranslate>
+                  <AutoTranslate>Case Title</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Subject</AutoTranslate>
+                  <AutoTranslate>Case Description</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Shared By</AutoTranslate>
@@ -1059,7 +1059,7 @@ const SharedDocs = () => {
                           { label: "File No.", value: selectedDoc.documentHeader?.fileNo },
                           { label: "Title", value: selectedDoc.documentHeader?.title },
                           { label: "Subject", value: selectedDoc.documentHeader?.subject },
-                          { label: "Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Evidence Category</AutoTranslate> },
                           { label: "Status", value: selectedDoc.documentHeader?.approvalStatus },
                           { label: "Shared By", value: selectedDoc.sharedByName },
                           { label: "Shared Date", value: formatDateArray(selectedDoc.sharedDate) },
@@ -1150,7 +1150,7 @@ const SharedDocs = () => {
                             <AutoTranslate>File Name</AutoTranslate>
                           </span>
                           <span className="text-center">
-                            <AutoTranslate>Year</AutoTranslate>
+                            <AutoTranslate>Case year</AutoTranslate>
                           </span>
                           <span className="text-center">
                             <AutoTranslate>Version</AutoTranslate>
@@ -1247,7 +1247,7 @@ const SharedDocs = () => {
 
                                 <div className="grid grid-cols-2 gap-2 text-sm mt-3">
                                   <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                                    <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                                     <p className="text-gray-700">{file.yearMaster?.name || "--"}</p>
                                   </div>
                                   <div>
@@ -1353,7 +1353,7 @@ const SharedDocs = () => {
 
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <AutoTranslate>Select Employees</AutoTranslate>
+                        <AutoTranslate>Select User</AutoTranslate>
                       </label>
                       {loadingEmployees ? (
                         <div className="flex items-center">

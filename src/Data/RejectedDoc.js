@@ -740,7 +740,7 @@ function RejectedDoc() {
                     <td>{doc.title || <AutoTranslate>N/A</AutoTranslate>}</td>
                     <td>{doc.subject || <AutoTranslate>N/A</AutoTranslate>}</td>
                     <td>
-                      {doc.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>}
+                      {doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}
                     </td>
                     <td className="text-center">
                       {doc?.documentDetails?.length}
@@ -883,7 +883,7 @@ function RejectedDoc() {
                           { label: "Case No.", value: selectedDoc?.fileNo },
                           { label: "Case Title", value: selectedDoc?.title },
                           { label: "Case Description", value: selectedDoc?.subject },
-                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate> },
+                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
                           // { label: "Status", value: selectedDoc?.approvalStatus },
                           { label: "Upload By", value: selectedDoc?.employee?.name },
                         ].map((item, idx) => (
@@ -1047,7 +1047,7 @@ function RejectedDoc() {
 
               <div className="grid grid-cols-2 gap-2 text-sm mt-3">
                 <div>
-                  <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                  <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                   <p className="text-gray-700">{file.year}</p>
                 </div>
                 <div>
@@ -1131,7 +1131,7 @@ function RejectedDoc() {
             {/* Header */}
             <div className="modal-header">
               <div className="modal-title">
-                <h2><AutoTranslate>Supported File Types</AutoTranslate></h2>
+                <h2><AutoTranslate>Supported File Format</AutoTranslate></h2>
               </div>
               <div className="headerRight">
                 {/* Close Button */}

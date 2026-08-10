@@ -400,7 +400,7 @@ const fetchQRCode = async (documentId) => {
           </div>
         </div>
 
-        <h1 className="font-bold text-lg mb-4">Your Matching Documents</h1>
+        <h1 className="font-bold text-lg mb-4">Your Matching Evidence</h1>
         
         {documents.length === 0 ? (
           <div className="text-center py-8 bg-gray-50 rounded-lg">
@@ -412,12 +412,12 @@ const fetchQRCode = async (documentId) => {
               <thead>
                 <tr className="bg-slate-100">
                   <th className="border p-2 text-left">S.N.</th>
-                  <th className="border p-2 text-left">Title</th>
+                  <th className="border p-2 text-left">Case Title</th>
                   <th className="border p-2 text-left">File No</th>
-                  <th className="border p-2 text-left">Subject</th>
-                  {/* <th className="border p-2 text-left">Year</th> */}
-                  <th className="border p-2 text-left">Category</th>
-                  <th className="border p-2 text-left">Branch</th>
+                  <th className="border p-2 text-left">Case Description</th>
+                  {/* <th className="border p-2 text-left">Case year</th> */}
+                  <th className="border p-2 text-left">Evidence Category</th>
+                  <th className="border p-2 text-left">Laboratories</th>
                   <th className="border p-2 text-left">Department</th>
                   <th className="border p-2 text-left">Uploaded By</th>
                   <th className="border p-2 text-left">View</th>

@@ -839,7 +839,7 @@ const Approve = () => {
                             { label: "Case Description", value: selectedDoc?.subject },
                             {
                               label: "Evidence Category",
-                              value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Category</AutoTranslate>,
+                              value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>,
                             },
                             // { label: "Status", value: selectedDoc?.approvalStatus },
                             { label: "Upload By", value: selectedDoc?.employee?.name },
@@ -1046,7 +1046,7 @@ const Approve = () => {
 
                                   <div className="grid grid-cols-2 gap-3 text-sm">
                                     <div>
-                                      <p className="text-xs text-gray-500"><AutoTranslate>Year</AutoTranslate></p>
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
                                       <p className="text-gray-700">{file.year}</p>
                                     </div>
                                     <div>

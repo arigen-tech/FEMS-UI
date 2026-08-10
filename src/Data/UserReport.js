@@ -273,7 +273,7 @@ const UserReport = () => {
   };
 
   const validateForm = () => {
-    if (!formData.branch) return <AutoTranslate>Branch is required.</AutoTranslate>;
+    if (!formData.branch) return <AutoTranslate>Laboratories is required.</AutoTranslate>;
     if (!formData.department) return <AutoTranslate>Department is required.</AutoTranslate>;
     if (!fromDate) return <AutoTranslate>Start date is required.</AutoTranslate>;
     if (!toDate) return <AutoTranslate>End date is required.</AutoTranslate>;
@@ -313,7 +313,7 @@ const UserReport = () => {
                 <>
                   <div className="form-group ">
                     <label htmlFor="branch">
-                      <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="branch"
@@ -329,7 +329,7 @@ const UserReport = () => {
 
                   <div className="form-group ">
                     <label htmlFor="department">
-                      <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="department"
@@ -350,7 +350,7 @@ const UserReport = () => {
                 <>
                   <div className="form-group ">
                     <label htmlFor="branch">
-                      <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="branch"
@@ -366,7 +366,7 @@ const UserReport = () => {
 
                   <div className="form-group ">
                     <label htmlFor="department">
-                      <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="department"
@@ -386,7 +386,7 @@ const UserReport = () => {
                 <>
                   <div className="form-group ">
                     <label htmlFor="branch">
-                      <AutoTranslate>Branch</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Laboratories</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="branch"
@@ -395,7 +395,7 @@ const UserReport = () => {
                       onChange={handleInputChange}
                       className="p-2 border rounded-md outline-none"
                     >
-                      <option value=""><AutoTranslate>Select Branch</AutoTranslate></option>
+                      <option value=""><AutoTranslate>Select Laboratories</AutoTranslate></option>
                       {branchOptions.map((branch) => (
                         <option key={branch.id} value={branch.id}>
                           {branch.name}
@@ -406,7 +406,7 @@ const UserReport = () => {
 
                   <div className="form-group ">
                     <label htmlFor="department">
-                      <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                      <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                     </label>
                     <select
                       id="department"

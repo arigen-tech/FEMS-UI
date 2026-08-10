@@ -607,7 +607,7 @@ const Branch = () => {
                   <p className="mb-4">
                     <AutoTranslate>Are you sure you want to</AutoTranslate> {branchToToggle?.isActive ?
                       <AutoTranslate>deactivate</AutoTranslate> :
-                      <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this branch</AutoTranslate> <strong>{branchToToggle?.name}</strong>?
+                      <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this Laboratories</AutoTranslate> <strong>{branchToToggle?.name}</strong>?
                   </p>
                   <div className="flex justify-end gap-4">
                     <button onClick={() => setModalVisible(false)} className="btn-cancel">

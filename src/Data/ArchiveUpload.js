@@ -202,7 +202,7 @@ const ArchiveUpload = () => {
           <>
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="branch">
-                <AutoTranslate>Branch</AutoTranslate>
+                <AutoTranslate>Laboratories</AutoTranslate>
               </label>
               <select
                 id="branchId"
@@ -239,7 +239,7 @@ const ArchiveUpload = () => {
           <>
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="branch">
-                <AutoTranslate>Branch</AutoTranslate>
+                <AutoTranslate>Laboratories</AutoTranslate>
               </label>
               <select
                 id="branchId"
@@ -275,7 +275,7 @@ const ArchiveUpload = () => {
           <>
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="branch">
-                <AutoTranslate>Branch</AutoTranslate>
+                <AutoTranslate>Laboratories</AutoTranslate>
               </label>
               <select
                 id="branchId"
@@ -284,7 +284,7 @@ const ArchiveUpload = () => {
                 onChange={handleInputChange}
                 className="p-2 border rounded-md outline-none"
               >
-                <option value=""><AutoTranslate>Select Branch</AutoTranslate></option>
+                <option value=""><AutoTranslate>Select Laboratories</AutoTranslate></option>
                 {branchOptions.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
