@@ -370,7 +370,7 @@ const Branch = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Laboratories</AutoTranslate></h1>
+        <h1><AutoTranslate>Laboratory</AutoTranslate></h1>
       </div>
 
       <div className="card">

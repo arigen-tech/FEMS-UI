@@ -1095,8 +1095,8 @@ const FileCompare = () => {
                   ) : (
                     <p className="text-sm text-gray-500 p-2">
                       {selectedSecondFileNo
-                        ? <AutoTranslate>No Evidence available</AutoTranslate>
-                        : <AutoTranslate>Select a file to see Evidence</AutoTranslate>}
+                        ? <AutoTranslate>No evidence available</AutoTranslate>
+                        : <AutoTranslate>Select a case to see evidence</AutoTranslate>}
                     </p>
                   )}
                 </div>

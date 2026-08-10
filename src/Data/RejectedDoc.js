@@ -718,7 +718,7 @@ function RejectedDoc() {
                   </th>
                 )}
                 <th className="text-center">
-                  <AutoTranslate>view</AutoTranslate>
+                  <AutoTranslate>View</AutoTranslate>
                 </th>
               </tr>
             </thead>

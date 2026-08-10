@@ -1510,7 +1510,7 @@ const TrashDoc = () => {
                     const deletedFilesCount = doc.documentDetails?.filter(file => file.isDeleted === true).length || 0;
                     return (
                       <li key={index} className="text-sm text-gray-600 truncate">
-                        • {doc.title} ({deletedFilesCount} file{deletedFilesCount !== 1 ? 's' : ''})
+                        • {doc.title} ({deletedFilesCount} case{deletedFilesCount !== 1 ? 's' : ''})
                       </li>
                     );
                   })}

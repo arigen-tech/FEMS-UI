@@ -574,7 +574,7 @@ const ExportData = () => {
   const getExportTypeDisplayName = (type) => {
     switch (type) {
       case 'database': return 'Database';
-      case 'files': return 'Documents';
+      case 'files': return 'Evidence';
       case 'complete': return 'Full System';
       default: return type;
     }
@@ -836,7 +836,7 @@ const ExportData = () => {
               <AutoTranslate>Data Management & Backup</AutoTranslate>
             </h1>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              <AutoTranslate>Secure and reliable backup solutions for your database and document files</AutoTranslate>
+              <AutoTranslate>Secure and reliable backup solutions for your database and Evidence cases</AutoTranslate>
             </p>
           </div>
 
@@ -930,8 +930,8 @@ const ExportData = () => {
                 <ExportActionCard
                   type="files"
                   icon={FileArchive}
-                  title="Documents Backup"
-                  description="Backup all document files, images, and attachments with folder structure for today"
+                  title="Evidence Backup"
+                  description="Backup all evidence cases, images, and attachments with folder structure for today"
                   variant="warning"
                 />
                 <ExportActionCard
@@ -1018,7 +1018,7 @@ const ExportData = () => {
                   type="files"
                   icon={HardDrive}
                   title="Files Export"
-                  description="Export documents and media files modified within the specified date range"
+                  description="Export evidence and media cases modified within the specified date range"
                   variant="warning"
                 />
                 <ExportActionCard

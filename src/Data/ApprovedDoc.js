@@ -2416,7 +2416,7 @@ const ApprovedDoc = () => {
                     <AutoTranslate>Selected {selectedFileIds.length} Case(s) to share with user in your Division.</AutoTranslate>
                   </p>
                   <p className="text-sm text-blue-600 mt-1">
-                    <AutoTranslate>You can change which files to share by checking/unchecking files in the evidence details.</AutoTranslate>
+                    <AutoTranslate>You can change which cases to share by checking/unchecking cases in the evidence details.</AutoTranslate>
                   </p>
                 </div>
 

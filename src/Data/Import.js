@@ -1143,10 +1143,10 @@ const Import = () => {
               </div>
             </div>
             <h1 className="text-2xl font-bold">
-              <AutoTranslate>DMS Data Import</AutoTranslate>
+              <AutoTranslate>FDMS Data Import</AutoTranslate>
             </h1>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              <AutoTranslate>Restore your Document Management System from backup files. Supports files up to 100GB with selective table and file import.</AutoTranslate>
+              <AutoTranslate>Restore your Evidence Management System from backup cases. Supports cases up to 100GB with selective table and case import.</AutoTranslate>
             </p>
           </div>
 
@@ -1163,7 +1163,7 @@ const Import = () => {
                   </div>
                   <div>
                     <h2 className="font-semibold text-gray-900">
-                      {progress < 100 ? <AutoTranslate>🔄 Importing DMS Data</AutoTranslate> : <AutoTranslate>✅ Import Complete</AutoTranslate>}
+                      {progress < 100 ? <AutoTranslate>🔄 Importing FDMS Data</AutoTranslate> : <AutoTranslate>✅ Import Complete</AutoTranslate>}
                     </h2>
                     <p className="text-sm text-gray-600">
                       {importOptions.importDatabase && `${selectedTables.size} tables`}
@@ -1211,10 +1211,10 @@ const Import = () => {
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  <AutoTranslate>Select DMS Export File</AutoTranslate>
+                  <AutoTranslate>Select FDMS Export Case</AutoTranslate>
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  <AutoTranslate>Choose a ZIP file that was exported from your DMS system. The system will automatically detect available content</AutoTranslate> <AutoTranslate>database</AutoTranslate>, <AutoTranslate>files</AutoTranslate>, <AutoTranslate>or both</AutoTranslate>.
+                  <AutoTranslate>Choose a ZIP case that was exported from your FDMS system. The system will automatically detect available content</AutoTranslate> <AutoTranslate>database</AutoTranslate>, <AutoTranslate>cases</AutoTranslate>, <AutoTranslate>or both</AutoTranslate>.
                 </p>
 
                 <input

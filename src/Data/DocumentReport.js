@@ -284,7 +284,7 @@ const DocumentReport = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Document Reports</AutoTranslate></h1>
+        <h1><AutoTranslate>Evidence Reports</AutoTranslate></h1>
       </div>
 
       <div className="card">
