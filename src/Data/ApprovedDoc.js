@@ -2810,7 +2810,7 @@ const ApprovedDoc = () => {
                             <AutoTranslate>Shared To</AutoTranslate>
                           </th>
                           <th>
-                            <AutoTranslate>Files Shared</AutoTranslate>
+                            <AutoTranslate>Cases Shared</AutoTranslate>
                           </th>
                           <th>
                             <AutoTranslate>Shared Date</AutoTranslate>
