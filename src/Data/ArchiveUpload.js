@@ -218,7 +218,7 @@ const ArchiveUpload = () => {
 
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="department">
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <select
                 id="departmentId"
@@ -255,7 +255,7 @@ const ArchiveUpload = () => {
 
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="department">
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <select
                 id="departmentId"
@@ -295,7 +295,7 @@ const ArchiveUpload = () => {
 
             <div className="flex flex-col">
               <label className="mb-1" htmlFor="department">
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <select
                 id="departmentId"

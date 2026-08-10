@@ -339,7 +339,7 @@ const BrAdminOCR = () => {
 
             <div className="form-group">
               <label>
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <select
                 value={filters.department}

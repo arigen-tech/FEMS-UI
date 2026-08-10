@@ -315,7 +315,7 @@ const DocumentReport = () => {
 
               <div className="form-group">
                 <label htmlFor="department">
-                  <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="department"
@@ -350,7 +350,7 @@ const DocumentReport = () => {
 
               <div className="form-group">
                 <label htmlFor="department">
-                  <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="department"
@@ -388,7 +388,7 @@ const DocumentReport = () => {
 
               <div className="form-group">
                 <label htmlFor="department">
-                  <AutoTranslate>Department</AutoTranslate> <span className="text-red-700">*</span>
+                  <AutoTranslate>Division</AutoTranslate> <span className="text-red-700">*</span>
                 </label>
                 <select
                   id="department"

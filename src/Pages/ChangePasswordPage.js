@@ -351,7 +351,7 @@ const ChangePasswordPage = () => {
 
                     {department && (
                       <p className="text-md text-gray-900 ml-20 flex items-center">
-                        <strong className="w-24"><AutoTranslate>Department</AutoTranslate>:</strong>
+                        <strong className="w-24"><AutoTranslate>Division</AutoTranslate>:</strong>
                         <strong className="ml-2">{employee?.department?.name || <AutoTranslate>All</AutoTranslate>}</strong>
                       </p>
                     )}

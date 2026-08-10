@@ -884,7 +884,7 @@ const SearchByScan = () => {
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <label className="block text-sm font-medium text-gray-500 mb-1">
-                <AutoTranslate>Department</AutoTranslate>
+                <AutoTranslate>Division</AutoTranslate>
               </label>
               <p className="text-gray-800 font-medium">{headerData?.departmentMaster?.name || "N/A"}</p>
             </div>

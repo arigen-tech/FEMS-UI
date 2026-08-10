@@ -643,7 +643,7 @@ const FilesType = () => {
                 <p className="mb-4">
                   <AutoTranslate>Are you sure you want to</AutoTranslate> {fileTypeToToggle?.isActive ?
                     <AutoTranslate>deactivate</AutoTranslate> :
-                    <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this file type</AutoTranslate> <strong>{fileTypeToToggle?.filetype}</strong>?
+                    <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>this case type</AutoTranslate> <strong>{fileTypeToToggle?.filetype}</strong>?
                 </p>
                 <div className="flex justify-end gap-4">
                   <button onClick={() => setModalVisible(false)} className="btn-cancel">

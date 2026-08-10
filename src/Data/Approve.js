@@ -1133,7 +1133,7 @@ const Approve = () => {
             {/* Modal body Content */}
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
-                <p><AutoTranslate>Are you sure you want to approve this document?</AutoTranslate></p>
+                <p><AutoTranslate>Are you sure you want to approve this evidence?</AutoTranslate></p>
                 <div className="flex justify-end mt-4">
                   <button
                     className="bg-green-500 text-white p-2 rounded-md mr-2"

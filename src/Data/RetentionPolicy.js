@@ -617,7 +617,7 @@ const RetentionPolicy = () => {
                 <th className="border p-2 text-left">Policy Type</th>
                 <th className="border p-2 text-left">Retention Period</th>
                 <th className="border p-2 text-left">Laboratories</th>
-                <th className="border p-2 text-left">Department</th>
+                <th className="border p-2 text-left">Division</th>
                 <th className="border p-2 text-left">Description</th>
                 <th className="border p-2 text-left">Status</th>
                 <th className="border p-2 text-left">Edit</th>

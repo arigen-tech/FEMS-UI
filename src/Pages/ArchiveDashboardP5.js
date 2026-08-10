@@ -506,7 +506,7 @@ const ArchiveDashboardP5 = () => {
                         useImage
                     />
                     <StatCard
-                        label="Total Files"
+                        label="Total Cases"
                         value={stats.totalFiles}
                         bg="bg-slate-50"
                         border="border-slate-200"
@@ -516,7 +516,7 @@ const ArchiveDashboardP5 = () => {
                         iconColor="text-slate-600"
                     />
                     <StatCard
-                        label="Archived Files"
+                        label="Archived Cases"
                         value={stats.archivedFiles}
                         bg="bg-emerald-50"
                         border="border-emerald-200"
@@ -526,7 +526,7 @@ const ArchiveDashboardP5 = () => {
                         iconColor="text-emerald-600"
                     />
                     <StatCard
-                        label="Failed Files"
+                        label="Failed Cases"
                         value={stats.failedFiles}
                         bg="bg-rose-50"
                         border="border-rose-200"
@@ -536,7 +536,7 @@ const ArchiveDashboardP5 = () => {
                         iconColor="text-rose-600"
                     />
                     <StatCard
-                        label="In-Progress Files"
+                        label="In-Progress Cases"
                         value={stats.pendingFiles}
                         bg="bg-amber-50"
                         border="border-amber-200"
@@ -679,7 +679,7 @@ const ArchiveDashboardP5 = () => {
                                                     <AutoTranslate>Laboratories</AutoTranslate>
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                                                    <AutoTranslate>Department</AutoTranslate>
+                                                    <AutoTranslate>Division</AutoTranslate>
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                                                     <AutoTranslate>Status</AutoTranslate>
@@ -845,7 +845,7 @@ const ArchiveDashboardP5 = () => {
                                                     <AutoTranslate>Laboratories</AutoTranslate>
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                                                    <AutoTranslate>Department</AutoTranslate>
+                                                    <AutoTranslate>Division</AutoTranslate>
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                                                     <AutoTranslate>Total Versions</AutoTranslate>

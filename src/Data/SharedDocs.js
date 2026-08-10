@@ -708,7 +708,7 @@ const SharedDocs = () => {
 
         // Show success message
         if (shareResponse.totalFilesShared > 0) {
-          showPopup(`Successfully shared ${shareResponse.totalFilesShared} file(s)!`, 'success');
+          showPopup(`Successfully shared ${shareResponse.totalFilesShared} Case(s)!`, 'success');
         } else {
           showPopup('Document shared successfully!', 'success');
         }
@@ -1344,10 +1344,10 @@ const SharedDocs = () => {
                   <div className="bodyScroller print:overflow-visible print:max-h-none">
                     <div className="mb-4">
                       <p className="text-sm text-gray-600 mb-2">
-                        <AutoTranslate>Document:</AutoTranslate> {documentToShare?.documentHeader?.title}
+                        <AutoTranslate>Evidence:</AutoTranslate> {documentToShare?.documentHeader?.title}
                       </p>
                       <p className="text-sm text-gray-600">
-                        <AutoTranslate>Selected {selectedFileIds.length} shared file(s) to share with employees in your department.</AutoTranslate>
+                        <AutoTranslate>Selected {selectedFileIds.length} shared Case(s) to share with employees in your department.</AutoTranslate>
                       </p>
                     </div>
 
@@ -1440,7 +1440,7 @@ const SharedDocs = () => {
                         ) : (
                           <>
                             <ShareIcon className="h-4 w-4 mr-2" />
-                            <AutoTranslate>Share {selectedFileIds.length} File(s)</AutoTranslate>
+                            <AutoTranslate>Share {selectedFileIds.length} Case(s)</AutoTranslate>
                           </>
                         )}
                       </button>
@@ -1589,7 +1589,7 @@ const SharedDocs = () => {
                     </p>
                     <p className="font-semibold">{shareToRevoke?.sharedToName}</p>
                     <p className="text-sm text-gray-600 mt-1">
-                      <AutoTranslate>Document:</AutoTranslate> {shareToRevoke?.documentName}
+                      <AutoTranslate>Evidence:</AutoTranslate> {shareToRevoke?.documentName}
                     </p>
                     <p className="text-sm text-gray-600">
                       <AutoTranslate>Files:</AutoTranslate> {shareToRevoke?.sharedFileNames?.length || shareToRevoke?.totalFilesShared || 0}

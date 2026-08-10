@@ -733,7 +733,7 @@ const NewRetaintionPolicy = () => {
 
                         <div className="form-group ">
                             <label>
-                                <AutoTranslate>Department</AutoTranslate> <span className="text-red-500">*</span>
+                                <AutoTranslate>Division</AutoTranslate> <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="departmentId"
@@ -853,7 +853,7 @@ const NewRetaintionPolicy = () => {
                                 <th><AutoTranslate>Archival Period</AutoTranslate></th>
                                 <th><AutoTranslate>Archive Date & Time</AutoTranslate></th>
                                 <th><AutoTranslate>Laboratories</AutoTranslate></th>
-                                <th><AutoTranslate>Department</AutoTranslate></th>
+                                <th><AutoTranslate>Division</AutoTranslate></th>
                                 <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                                 <th><AutoTranslate>Description</AutoTranslate></th>
                                 <th className="text-center"><AutoTranslate>Status</AutoTranslate></th>

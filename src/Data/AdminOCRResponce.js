@@ -418,7 +418,7 @@ const fetchQRCode = async (documentId) => {
                   {/* <th className="border p-2 text-left">Case year</th> */}
                   <th className="border p-2 text-left">Evidence Category</th>
                   <th className="border p-2 text-left">Laboratories</th>
-                  <th className="border p-2 text-left">Department</th>
+                  <th className="border p-2 text-left">Division</th>
                   <th className="border p-2 text-left">Uploaded By</th>
                   <th className="border p-2 text-left">View</th>
                 </tr>

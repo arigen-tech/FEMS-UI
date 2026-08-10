@@ -586,7 +586,7 @@ const ApprovedDoc = () => {
       setSelectAllDocsChecked(false);
       setBulkDocDeleteModalVisible(false);
 
-      showPopup(`${allFilesToDelete.length} approved file(s) from ${selectedDocuments.length} document(s) moved to trash successfully!`, 'success');
+      showPopup(`${allFilesToDelete.length} approved Case(s) from ${selectedDocuments.length} document(s) moved to trash successfully!`, 'success');
     } catch (error) {
       console.error('Error in bulk document delete:', error);
       showPopup('Failed to move some files to trash. Please try again!', 'error');
@@ -1296,7 +1296,7 @@ const ApprovedDoc = () => {
 
         // Show success message
         if (shareResponse.totalFilesShared > 0) {
-          showPopup(`Successfully shared ${shareResponse.totalFilesShared} file(s)!`, 'success');
+          showPopup(`Successfully shared ${shareResponse.totalFilesShared} Case(s)!`, 'success');
         } else {
           showPopup('Document shared successfully!', 'success');
         }
@@ -1775,7 +1775,7 @@ const ApprovedDoc = () => {
                   <div className="flex items-center">
                     <CheckIcon className="h-5 w-5 text-blue-600 mr-2" />
                     <span className="text-blue-700 font-medium">
-                      <AutoTranslate>{selectedFileIds.length} approved file(s) auto-selected for sharing</AutoTranslate>
+                      <AutoTranslate>{selectedFileIds.length} approved Case(s) auto-selected for sharing</AutoTranslate>
                     </span>
                   </div>
                   <p className="text-sm text-blue-600 mt-1">
@@ -2215,7 +2215,7 @@ const ApprovedDoc = () => {
               <div className="modal-body">
                 <div className="bodyScroller print:overflow-visible print:max-h-none">
                   <p className="mb-4">
-                    <AutoTranslate>Are you sure you want to move this file to trash?</AutoTranslate>
+                    <AutoTranslate>Are you sure you want to move this case to trash?</AutoTranslate>
                     <br />
                     <strong>"{fileToDelete?.docName}"</strong>
                   </p>
@@ -2264,7 +2264,7 @@ const ApprovedDoc = () => {
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <p className="mb-4">
-                  <AutoTranslate>Are you sure you want to move {selectedFiles.length} file(s) to trash?</AutoTranslate>
+                  <AutoTranslate>Are you sure you want to move {selectedFiles.length} Case(s) to trash?</AutoTranslate>
                 </p>
                 <ul className="mb-4 max-h-40 overflow-y-auto">
                   {selectedFiles.slice(0, 5).map((file, index) => (
@@ -2332,7 +2332,7 @@ const ApprovedDoc = () => {
                   <AutoTranslate>Are you sure you want to move all approved files from {selectedDocuments.length} document(s) to trash?</AutoTranslate>
                   <br />
                   <small className="text-gray-600">
-                    <AutoTranslate>This will move only APPROVED files from the selected documents to trash.</AutoTranslate>
+                    <AutoTranslate>This will move only APPROVED cases from the selected evidence to trash.</AutoTranslate>
                   </small>
                 </p>
                 <ul className="mb-4 max-h-40 overflow-y-auto">
@@ -2413,7 +2413,7 @@ const ApprovedDoc = () => {
                     <AutoTranslate>Evidence:</AutoTranslate> {documentToShare?.title}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <AutoTranslate>Selected {selectedFileIds.length} file(s) to share with user in your Division.</AutoTranslate>
+                    <AutoTranslate>Selected {selectedFileIds.length} Case(s) to share with user in your Division.</AutoTranslate>
                   </p>
                   <p className="text-sm text-blue-600 mt-1">
                     <AutoTranslate>You can change which files to share by checking/unchecking files in the evidence details.</AutoTranslate>
@@ -2600,7 +2600,7 @@ const ApprovedDoc = () => {
                     ) : (
                       <>
                         <ShareIcon className="h-4 w-4 mr-2" />
-                        <AutoTranslate>Share {selectedFileIds.length} File(s)</AutoTranslate>
+                        <AutoTranslate>Share {selectedFileIds.length} Case(s)</AutoTranslate>
                       </>
                     )}
                   </button>
@@ -2910,10 +2910,10 @@ const ApprovedDoc = () => {
                   </p>
                   <p className="font-semibold">{shareToRevoke?.sharedToName}</p>
                   <p className="text-sm text-gray-600 mt-1">
-                    <AutoTranslate>Document:</AutoTranslate> {shareToRevoke?.documentName}
+                    <AutoTranslate>Evidence:</AutoTranslate> {shareToRevoke?.documentName}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <AutoTranslate>Files shared:</AutoTranslate> {shareToRevoke?.totalFilesShared || 1}
+                    <AutoTranslate>Cases shared:</AutoTranslate> {shareToRevoke?.totalFilesShared || 1}
                   </p>
                 </div>
                 <div className="mb-4">

@@ -625,7 +625,7 @@ const ArchiveDashboard = () => {
                           <AutoTranslate>Laboratories</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Department</AutoTranslate>
+                          <AutoTranslate>Division</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           <AutoTranslate>Status</AutoTranslate>
@@ -787,7 +787,7 @@ const ArchiveDashboard = () => {
                           <AutoTranslate>Laboratories</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                          <AutoTranslate>Department</AutoTranslate>
+                          <AutoTranslate>Division</AutoTranslate>
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           <AutoTranslate>Total Versions</AutoTranslate>

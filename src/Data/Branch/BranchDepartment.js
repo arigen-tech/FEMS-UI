@@ -590,7 +590,7 @@ const BranchDepartments = () => {
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <p>
-            <AutoTranslate>Are you sure you want to</AutoTranslate> {toggleDepartment?.isActive === 1 ? <AutoTranslate>deactivate</AutoTranslate> : <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>the department</AutoTranslate> <strong>{toggleDepartment?.name}</strong>?
+            <AutoTranslate>Are you sure you want to</AutoTranslate> {toggleDepartment?.isActive === 1 ? <AutoTranslate>deactivate</AutoTranslate> : <AutoTranslate>activate</AutoTranslate>} <AutoTranslate>the division</AutoTranslate> <strong>{toggleDepartment?.name}</strong>?
           </p>
           <div className="mt-6 flex justify-end gap-4">
             <button

@@ -152,7 +152,7 @@ const Scanner = () => {
               htmlFor="fileName"
               className="block text-lg font-medium text-gray-700"
             >
-              <AutoTranslate>Enter Name of Scanned Document:</AutoTranslate>
+              <AutoTranslate>Enter Name of Scanned Evidence:</AutoTranslate>
             </label>
             <input
               type="text"

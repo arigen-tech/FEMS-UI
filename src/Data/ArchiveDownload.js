@@ -1242,7 +1242,7 @@ const ArchiveDownload = () => {
                     <th className="border p-2 text-left">Archive Name</th>
                     <th className="border p-2 text-left">Files Count</th>
                     <th className="border p-2 text-left">Laboratories</th>
-                    <th className="border p-2 text-left">Department</th>
+                    <th className="border p-2 text-left">Division</th>
                     <th className="border p-2 text-left">Archive Date</th>
                     <th className="border p-2 text-left">Status</th>
                     <th className="border p-2 text-left">Actions</th>

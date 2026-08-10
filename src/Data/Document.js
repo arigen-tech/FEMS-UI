@@ -899,7 +899,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       });
 
       showPopup(
-        `${processedDocuments.length} file(s) added from Waiting Room!`,
+        `${processedDocuments.length} Case(s) added from Waiting Room!`,
         "success"
       );
     } catch (error) {

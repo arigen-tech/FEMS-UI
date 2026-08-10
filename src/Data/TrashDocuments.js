@@ -337,7 +337,7 @@ const TrashDoc = () => {
       setSelectAllDocsChecked(false);
       setBulkDocRestoreModalVisible(false);
 
-      showPopup(`${allFilesToRestore.length} file(s) from ${selectedDocuments.length} document(s) restored successfully!`, 'success');
+      showPopup(`${allFilesToRestore.length} Case(s) from ${selectedDocuments.length} document(s) restored successfully!`, 'success');
     } catch (error) {
       console.error('Error in bulk document restore:', error);
       showPopup('Failed to restore some files. Please try again!', 'error');
@@ -476,7 +476,7 @@ const TrashDoc = () => {
       setSelectAllFilesChecked(false);
       setBulkFileRestoreModalVisible(false);
 
-      showPopup(`${selectedFiles.length} file(s) restored successfully!`, 'success');
+      showPopup(`${selectedFiles.length} Case(s) restored successfully!`, 'success');
     } catch (error) {
       console.error('Error in bulk file restore:', error);
       showPopup('Failed to restore some files. Please try again!', 'error');
@@ -1383,7 +1383,7 @@ const TrashDoc = () => {
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <p className="mb-4">
-                  <AutoTranslate>Are you sure you want to restore this file?</AutoTranslate>
+                  <AutoTranslate>Are you sure you want to restore this case?</AutoTranslate>
                   <br />
                   <strong>"{fileToRestore?.docName}"</strong>
                 </p>
@@ -1434,7 +1434,7 @@ const TrashDoc = () => {
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <p className="mb-4">
-                  <AutoTranslate>Are you sure you want to restore {selectedFiles.length} file(s)?</AutoTranslate>
+                  <AutoTranslate>Are you sure you want to restore {selectedFiles.length} Case(s)?</AutoTranslate>
                 </p>
                 <ul className="mb-4 max-h-40 overflow-y-auto">
                   {selectedFiles.slice(0, 5).map((file, index) => (
@@ -1499,10 +1499,10 @@ const TrashDoc = () => {
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
                 <p className="mb-4">
-                  <AutoTranslate>Are you sure you want to restore all deleted files from {selectedDocuments.length} Evidence(s)?</AutoTranslate>
+                  <AutoTranslate>Are you sure you want to restore all deleted cases from {selectedDocuments.length} Evidence(s)?</AutoTranslate>
                   <br />
                   <small className="text-gray-600">
-                    <AutoTranslate>This will restore all deleted files in the selected Evidence.</AutoTranslate>
+                    <AutoTranslate>This will restore all deleted cases in the selected Evidence.</AutoTranslate>
                   </small>
                 </p>
                 <ul className="mb-4 max-h-40 overflow-y-auto">

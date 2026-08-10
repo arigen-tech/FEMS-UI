@@ -961,7 +961,7 @@ const Search = () => {
                     <th><AutoTranslate>Case Description</AutoTranslate></th>
                     <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                     <th><AutoTranslate>Laboratories</AutoTranslate></th>
-                    <th><AutoTranslate>Department</AutoTranslate></th>
+                    <th><AutoTranslate>Division</AutoTranslate></th>
                     <th className="text-center"><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
                     <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
                     <th className="text-center"><AutoTranslate>View</AutoTranslate></th>
