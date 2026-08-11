@@ -1323,6 +1323,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <input type="text" placeholder="" name="" value="" required  />
               </div>
               <div className="form-group">
+                <label><AutoTranslate>Case Title</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
                 <label><AutoTranslate>FIR Number</AutoTranslate></label>
                 <input type="text" placeholder="" name="" value="" required  />
               </div>
@@ -1345,9 +1349,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   <option value=""><AutoTranslate></AutoTranslate></option>
                 </select>
               </div>
+              
               <div className="form-group">
-                <label><AutoTranslate>Police Station</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
+                <label><AutoTranslate>State</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
+                </select>
               </div>
               <div className="form-group">
                 <label><AutoTranslate>District</AutoTranslate></label>
@@ -1357,11 +1365,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 </select>
               </div>
               <div className="form-group">
-                <label><AutoTranslate>State</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
+                <label><AutoTranslate>Police Station</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
 
               <div className="form-group">
