@@ -113,6 +113,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   ]);
   const [deletedMetaDataIds, setDeletedMetaDataIds] = useState([]);
 
+  const [submission, setSubmission] = useState("");
+
   // ============ SAFE ACCESS UTILITIES ============
   const safeGet = (obj, path, defaultValue = '') => {
     if (!obj) return defaultValue;
@@ -1307,222 +1309,349 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           />
         )}
         <div ref={formSectionRef} className="">
-          {/* ========== DOCUMENT METADATA ========== */}
-          <div className="cardLight">
-            <h2 className="flex align-center gap-2">
-              📁 <AutoTranslate>Evidence Metadata</AutoTranslate> <span className="text-red-500">*</span>
-              {isDocumentSaved && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                  <AutoTranslate>Evidence ID</AutoTranslate>: #{editingDoc.id}
-                </span>
-              )}
-              {hasApprovedFiles && (
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                  <AutoTranslate>Has Approved Files</AutoTranslate>
-                </span>
-              )}
-            </h2>
+{/* Case Information section */}
+ <div className="cardLight">
+            <h2 className="flex align-center gap-2">📝 <AutoTranslate>Case Information</AutoTranslate> <span className="text-red-500">*</span></h2>
+
+            <div className="grid grid-col-4 mb-4">
+            <div className="form-group">
+                <label><AutoTranslate>Case ID</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Case Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>FIR Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>FIR Date</AutoTranslate></label>
+                <input type="date" placeholder="" name="" value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Case Type</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Crime Type</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Police Station</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>District</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>State</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Investigating Officer</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Court Reference</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Priority </AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Normal</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Urgent</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Critical</AutoTranslate></option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Date of Incident</AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+
+             <div className="form-group">
+                <label><AutoTranslate>Incident Location</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>     
+            </div>
+          </div>
+{/* Case Information section end */}
+
+{/* Forwarding Authority Details */}
+<div className="cardLight">
+            <h2 className="flex align-center gap-2">📤 <AutoTranslate>Forwarding Authority Details</AutoTranslate> <span className="text-red-500">*</span></h2>
 
             <div className="grid grid-col-4 mb-4">
 
             <div className="form-group">
-                <label><AutoTranslate>Case Number</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="CASE-2026-000145" required  />
-              </div>
-
-
-              <div className="form-group">
-                <label>
-                  <AutoTranslate>Case Title</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <input
-                  type="text"
-                  placeholder={getFallbackTranslation('Enter Title', currentLanguage)}
-                  name="title"
-                  value={formData.title || ''}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  disabled={isMetadataDisabled()}
-                  maxLength={20}
-                  minLength={3}
-                  required
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                />
-              </div>
-
-               <div className="form-group">
-                <label>
-                  <AutoTranslate>Case Description</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <input
-                  type="text"
-                  placeholder={getFallbackTranslation('Enter Subject', currentLanguage)}
-                  name="subject"
-                  value={formData.subject || ''}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  disabled={isMetadataDisabled()}
-                  maxLength={20}
-                  minLength={3}
-                  required
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                />
-              </div>
-
-
-
-              <div className="form-group">
-                <label><AutoTranslate>FIR Number</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="FIR-145/2026" required  />
+                <label><AutoTranslate>Forwarding Authority Type</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
               <div className="form-group">
-                <label><AutoTranslate>Police Station</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="Saheed Nagar PS" required  />
+                <label><AutoTranslate>Authority Name</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
               <div className="form-group">
-                <label>
-                  <AutoTranslate>District</AutoTranslate>
-                </label>
-                <select>
-                  <option value=""><AutoTranslate>Select District</AutoTranslate></option>
-                  <option><AutoTranslate>Khordha</AutoTranslate></option>
-                  <option><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Crime Type</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="Murder" required  />
+                <label><AutoTranslate>Designation</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
               <div className="form-group">
-                <label><AutoTranslate>Forwarding Authority</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="Inspector, Saheed Nagar PS" required  />
+                <label><AutoTranslate>Organisation </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
               <div className="form-group">
-                <label><AutoTranslate>Investigating Officer</AutoTranslate></label>
-                <input type="text" placeholder=""name=""value="SI Rajesh Kumar" required  />
-              </div>
-
-              <div className="form-group">
-                <label>
-                  <AutoTranslate>Receiving Laboratory</AutoTranslate>
-                </label>
+                <label><AutoTranslate>District </AutoTranslate></label>
                 <select>
                   <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option><AutoTranslate>DFSL Bhubaneswar</AutoTranslate></option>
-                  <option><AutoTranslate></AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
                 </select>
               </div>
               <div className="form-group">
-                <label>
-                  <AutoTranslate>Laboratory Division</AutoTranslate>
-                </label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option><AutoTranslate>Biology</AutoTranslate></option>
-                  <option><AutoTranslate>Cyber</AutoTranslate></option>
-                  <option><AutoTranslate>Fingerprint</AutoTranslate></option>
-                </select>
+                <label><AutoTranslate>Address </AutoTranslate></label>
+                <textarea id="" rows="2"></textarea>
               </div>
               <div className="form-group">
-                <label>
-                  <AutoTranslate>Priority</AutoTranslate>
-                </label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option><AutoTranslate>Normal</AutoTranslate></option>
-                  <option><AutoTranslate>High</AutoTranslate></option>
-                  <option><AutoTranslate>Urgent</AutoTranslate></option>
-                </select>
+                <label><AutoTranslate>Contact Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
               </div>
 
               <div className="form-group">
-                <label><AutoTranslate>Date Received</AutoTranslate></label>
+                <label><AutoTranslate>Email</AutoTranslate></label>
+                <input type="email" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Forwarding Letter Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Forwarding Date</AutoTranslate></label>
+                <input type="date" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Forwarding Letter</AutoTranslate></label>
+                <input type="file" placeholder="" name="" value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Mode of Submission</AutoTranslate></label>
+                <select value={submission} onChange={(e) => setSubmission(e.target.value)}>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  {/* <option value=""><AutoTranslate>Hand Delivered </AutoTranslate></option> */}
+                  <option value="ifMessenger"><AutoTranslate>Authorized Messenger</AutoTranslate></option>
+                  <option value="ifCourier"><AutoTranslate>Courier </AutoTranslate></option>
+                  {/* <option value=""><AutoTranslate>Post</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Electronic / Digital</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Other </AutoTranslate></option> */}
+                </select>
+              </div>
+
+{/* If Courier:  */}
+{submission === "ifCourier" && (
+  <>
+    <div className="form-group">
+                <label><AutoTranslate>Courier Agency</AutoTranslate></label>
+                <input type="text" placeholder="" name=""value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>AWB / Consignment Number</AutoTranslate></label>
+                <input type="text" placeholder="" name=""value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Booking Date </AutoTranslate></label>
                 <input type="date" placeholder="" name=""value="" required  />
               </div>
-
-
-              {/* <div className="form-group">
-                <label>
-                  <AutoTranslate>Case No.</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <input
-                  type="text"
-                  placeholder={getFallbackTranslation('Enter File No.', currentLanguage)}
-                  name="fileNo"
-                  value={formData.fileNo || ''}
-                  onChange={(e) => setFormData({ ...formData, fileNo: e.target.value })}
-                  disabled={isMetadataDisabled()}
-                  maxLength={20}
-                  minLength={3}
-                  required
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                />
-                {isDocumentSaved && (
-                  <p className="text-xs text-blue-500 mt-1">
-                    <AutoTranslate>Document already created. You can only add new files.</AutoTranslate>
-                  </p>
-                )}
-              </div> */}
-
-              
-
-             
-
               <div className="form-group">
-                <label>
-                  <AutoTranslate>Evidence Category</AutoTranslate>
-                  {isDocumentSaved && <span className="text-xs text-gray-400 ml-1">(read-only)</span>}
-                </label>
-                <select
-                  name="category"
-                  value={formData.category?.id || ""}
-                  onChange={handleCategoryChange}
-                  disabled={isMetadataDisabled()}
-                  className={isMetadataDisabled() ? 'bg-gray-100 cursor-not-allowed' : ''}
-                >
-                  <option value=""><AutoTranslate>Select Evidence Category</AutoTranslate></option>
-                  {categoryOptions.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                <label><AutoTranslate>Dispatch Date</AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
               </div>
               <div className="form-group">
-                <label>
-                  <AutoTranslate>Evidence Type</AutoTranslate>
-                </label>
+                <label><AutoTranslate>Expected Delivery Date </AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Actual Delivery Date </AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Parcel ID</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Parcel Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Number of Exhibits</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Package Type </AutoTranslate></label>
                 <select>
-                  <option value=""><AutoTranslate>Select Evidence Type</AutoTranslate></option>
-                  <option><AutoTranslate>Crime Scene Photograph</AutoTranslate></option>
-                  <option><AutoTranslate>CCTV Footage</AutoTranslate></option>
-                  <option><AutoTranslate>DNA Sample</AutoTranslate></option>
-                  <option><AutoTranslate>DNA Report</AutoTranslate></option>
-                  <option><AutoTranslate>Voice Recording</AutoTranslate></option>
-                  <option><AutoTranslate>Fingerprint Image</AutoTranslate></option>
-                  <option><AutoTranslate>Chemical Report</AutoTranslate></option>
-                  <option><AutoTranslate>Ballistic Report</AutoTranslate></option>
-                  <option><AutoTranslate>Seizure Memo</AutoTranslate></option>
-                  <option><AutoTranslate>Court Order</AutoTranslate></option>
-                  <option><AutoTranslate>Mobile Extraction</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate></AutoTranslate></option>
                 </select>
               </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Seal Number </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Seal Description</AutoTranslate></label>
+                <textarea id="" rows="2"></textarea>
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Seal Condition </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Package Condition </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Received Date </AutoTranslate></label>
+                <input type="date" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Received Time</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Received By </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Remarks</AutoTranslate></label>
+                <textarea id="" rows="2" required></textarea>
+              </div>
+  </>
+)}
+
+      {/* If Messenger:   */}
+      {submission === "ifMessenger" && (
+        <>
+          <div className="form-group">
+                <label><AutoTranslate>Messenger Name</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Designation</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Organization </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>ID / Reference Number</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Date & Time of Handover</AutoTranslate></label>
+                <input type="date" placeholder="" name="" value="" required  />
+              </div>
+        </>
+      )}
+     
             </div>
 
-            {isDocumentSaved && hasApprovedFiles && (
-              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-700">
-                  <span className="font-bold">ℹ️</span>
-                  <AutoTranslate>
-                    This document has approved files. You can add new files with different years or versions.
-                    To edit document metadata, please contact an administrator.
-                  </AutoTranslate>
-                </p>
-              </div>
-            )}
           </div>
+{/* Forwarding Authority Details end */}
+
+
+<div className="cardLight">
+            <h2 className="flex align-center gap-2">🔍 <AutoTranslate>Evidence Metadata</AutoTranslate><span className="text-red-500">*</span></h2>
+
+
+            <div className="grid grid-col-4 mb-4">
+            <div className="form-group">
+                <label><AutoTranslate>Evidence ID  </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Exhibit Number </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Evidence Category</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Physical Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Digital Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Biological Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Documentary Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Audio Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Video Evidence</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Image Evidence</AutoTranslate></option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Evidence Type</AutoTranslate></label>
+                <select>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  <option value=""><AutoTranslate>CCTV Footage</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Mobile Phone</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Hard Disk </AutoTranslate></option>
+                  <option value=""><AutoTranslate>Blood Sample</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Hair Sample</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Firearm</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Ammunition</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Fingerprint</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Voice Recording </AutoTranslate></option>
+                  <option value=""><AutoTranslate>Questioned Document</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Soil Sample</AutoTranslate></option>
+                  <option value=""><AutoTranslate>Chemical Substance</AutoTranslate></option>
+                  <option value=""><AutoTranslate>DNA Sample</AutoTranslate></option>
+                </select>
+              </div>  
+
+              <div className="form-group">
+                <label><AutoTranslate>Evidence Description  </AutoTranslate></label>
+                <textarea id="" rows="2" required></textarea>
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Source</AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Collection Location </AutoTranslate></label>
+                <input type="text" placeholder="" name="" value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>Collection Date </AutoTranslate></label>
+                <input type="date" placeholder="" name="" value="" required  />
+              </div>
+
+              <div className="form-group">
+                <label><AutoTranslate>Remarks </AutoTranslate></label>
+                <textarea id="" rows="2" required></textarea>
+              </div>
+          </div>
+         
+</div>
+
 
           {/* ========== ADDITIONAL METADATA ========== */}
           <div className="metaDataCard">
@@ -1601,6 +1730,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               <FiPlus /> <AutoTranslate>Add Metadata</AutoTranslate>
             </button>
           </div>
+
 
           {/* ========== FILE METADATA ========== */}
           <div className="cardLight">
