@@ -9,6 +9,7 @@ import PageNotFound from "./Pages/PageNotFound";
 import LoginPage from "./Pages/LoginPage";
 import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
+import PreExamLayout from "./Pages/PreExamLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -150,10 +151,12 @@ function App() {
                 <Route path="/import" element={<Imports />} />
                 <Route path="/LanguageMaster" element={<LanguageMasters />} />
                 <Route path="/trash-documents" element={<TrashDocs />} />
-
                 <Route path="/duplicate-files" element={<DuplicateFilesPages />} />
-
                 <Route path="/shared-documents" element={<SharedDocuments />} />
+
+                {/* Examination */}
+                <Route path="/pre-examination" element={<PreExamLayout/>} />
+                
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />

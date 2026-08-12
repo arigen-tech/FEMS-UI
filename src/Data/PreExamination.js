@@ -19,7 +19,7 @@ import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 import { useLanguage } from '../i18n/LanguageContext'; // Import useLanguage hook
 import Popup from '../Components/Popup';
 
-const Approve = () => {
+const PreExamination = () => {
   // Get language context
   const {
     currentLanguage,
@@ -548,7 +548,7 @@ const Approve = () => {
   return (
     <div className="">
       <div className="title">
-        <h1><AutoTranslate>Pending Evidence</AutoTranslate></h1>
+        <h1><AutoTranslate>Pre-Examination</AutoTranslate></h1>
       </div>
 
       {popupMessage && (
@@ -560,7 +560,22 @@ const Approve = () => {
       )}
 
       <div className="card">
-        <div className="grid grid-col-4 mb-4">
+
+       <div className="grid grid-col-4 mb-4">
+             <div className="form-group">
+                <label><AutoTranslate>From Date</AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+              <div className="form-group">
+                <label><AutoTranslate>To Date</AutoTranslate></label>
+                <input type="date" placeholder="" name=""value="" required  />
+              </div>
+     
+            </div>
+
+
+
+        <div className="grid grid-col-4 mb-4 pt-4">
           {/* Items Per Page (50%) */}
           <div className="form-group ">
             <label htmlFor="itemsPerPage">
@@ -1232,4 +1247,6 @@ const Approve = () => {
   );
 };
 
-export default Approve;
+export default PreExamination;
+
+

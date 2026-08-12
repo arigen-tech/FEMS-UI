@@ -10,7 +10,6 @@ import { MdEditDocument } from "react-icons/md";
 import { HiDocumentSearch } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
 
-
 import {
   InboxIcon,
   ChevronDownIcon,
@@ -480,6 +479,7 @@ function Sidebar({ roleChanged }) {
       Access: IoDocumentLock,
       Rights: RiUserSettingsFill,
       "User Reports": TbReport,
+      "Examination": TbReportSearch,
     };
 
     return iconMap[name] || null; // Return null if icon not found
