@@ -1825,7 +1825,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             <div className="col-span-full mt-4">
               <div
                 {...getRootProps()}
-                className={`upload-box border-2 border-dashed rounded-lg p-6 cursor-pointer transition
+                className={`upload-box border-2 border-dashed rounded-lg p-6 cursor-pointer transition inputPosition
                   ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-100"}`}
               >
                 <input {...getInputProps()} />
