@@ -574,7 +574,7 @@ const DuplicateFilesPage = () => {
   return (
     <div className="px-2-">
       <div className="title">
-        <h1><AutoTranslate>Duplicate Case</AutoTranslate></h1>
+        <h1><AutoTranslate>Duplicate File</AutoTranslate></h1>
       </div>
 
       {popupMessage && (

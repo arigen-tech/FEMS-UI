@@ -452,7 +452,7 @@ function Sidebar({ roleChanged }) {
       "assign applications": UserIcon,
       "Role Rights": UserIcon,
       "Files Types": GiFiles,
-      Document: IoDocumentText,
+      "Case Management": IoDocumentText,
       "Pending Approvals": IoDocumentLock,
       "Approved Document": DocumentCheckIcon,
       "Rejected Document": DocumentMinusIcon,
@@ -479,7 +479,7 @@ function Sidebar({ roleChanged }) {
       Access: IoDocumentLock,
       Rights: RiUserSettingsFill,
       "User Reports": TbReport,
-      "Examination": TbReportSearch,
+      "Pre-Examination": TbReportSearch,
     };
 
     return iconMap[name] || null; // Return null if icon not found
