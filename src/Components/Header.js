@@ -19,6 +19,33 @@ import AutoTranslate from '../i18n/AutoTranslate';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getFallbackTranslation } from '../i18n/autoTranslator';
 
+// Dynamically formats any role string coming from the API into Title Case
+// e.g. "SCIENTIFIC OFFICER" -> "Scientific Officer"
+// e.g. "LABORATORY ADMINISTRATOR / DIRECTOR" -> "Laboratory Administrator / Director"
+// e.g. "CASE & EVIDENCE OFFICER" -> "Case & Evidence Officer"
+const formatRoleName = (role) => {
+  if (!role) return "";
+  return role
+    .toLowerCase()
+    .split(" ")
+    .map((word) =>
+      word === "&" || word === "/"
+        ? word
+        : word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
+};
+
+// Icon mapping kept separate since icons can't be derived from API strings
+const ROLE_ICON_MAP = {
+  [SYSTEM_ADMIN]: TbPasswordUser,
+  [BRANCH_ADMIN]: TbUserCog,
+  [DEPARTMENT_ADMIN]: PiUserCircleGear,
+  [USER]: FiUser,
+};
+
+const getRoleIcon = (roleItem) => ROLE_ICON_MAP[roleItem] || FiUser;
+
 const DropdownMenu = ({ items, onSelect, emptyMessage, className }) => (
   <div className={`absolute right-0 mt-0.5 w-48 bg-white rounded-md shadow-lg z-10 dropDownMenu ${className}`}>
     {items && items.length > 0 ? (
@@ -263,19 +290,13 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
     }
   };
 
-  // Get display role name (shows actual role, not just "Role")
+  // Get display role name (shows actual role, formatted dynamically from API data)
   const getDisplayRoleName = () => {
     if (isLoadingRoles) {
       return <AutoTranslate>Loading...</AutoTranslate>;
     }
     if (currentRole && currentRole !== "") {
-      // Format role name for display (remove underscores, capitalize)
-      let displayRole = currentRole;
-      if (currentRole === "SYSTEM_ADMIN") displayRole = "System Admin";
-      else if (currentRole === "BRANCH_ADMIN") displayRole = "Branch Admin";
-      else if (currentRole === "DEPARTMENT_ADMIN") displayRole = "Department Admin";
-      else if (currentRole === "USER") displayRole = "User";
-      return displayRole;
+      return formatRoleName(currentRole);
     }
     return <AutoTranslate>Role</AutoTranslate>;
   };
@@ -340,7 +361,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
           />
         </div>
 
-        {/* Role Dropdown - Shows actual role instead of just "Role" */}
+        {/* Role Dropdown - Shows actual role, formatted dynamically from API data */}
         <div className="dropdown-toggle">
           <button className="dropDownIcon" onClick={() => setDropdownRoleOpen(!dropdownRoleOpen)}>
             <span className="iconBg">
@@ -356,22 +377,8 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
                 ? roleName
                   .filter((roleItem) => roleItem !== currentRole)
                   .map((roleItem) => {
-                    let IconComponent = FiUser;
-                    let displayRoleName = roleItem;
-                    
-                    if (roleItem === SYSTEM_ADMIN) {
-                      IconComponent = TbPasswordUser;
-                      displayRoleName = "System Admin";
-                    } else if (roleItem === BRANCH_ADMIN) {
-                      IconComponent = TbUserCog;
-                      displayRoleName = "Branch Admin";
-                    } else if (roleItem === DEPARTMENT_ADMIN) {
-                      IconComponent = PiUserCircleGear;
-                      displayRoleName = "Department Admin";
-                    } else if (roleItem === USER) {
-                      IconComponent = FiUser;
-                      displayRoleName = "User";
-                    }
+                    const IconComponent = getRoleIcon(roleItem);
+                    const displayRoleName = formatRoleName(roleItem);
 
                     return {
                       label: (
@@ -448,12 +455,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
             </h2>
             <p className="text-gray-700 mb-6">
               <AutoTranslate>Are you sure you want to switch to the role:</AutoTranslate>{" "}
-              <strong>
-                {targetRoleName === SYSTEM_ADMIN ? "System Admin" :
-                 targetRoleName === BRANCH_ADMIN ? "Branch Admin" :
-                 targetRoleName === DEPARTMENT_ADMIN ? "Department Admin" :
-                 targetRoleName === USER ? "User" : targetRoleName}
-              </strong>?
+              <strong>{formatRoleName(targetRoleName)}</strong>?
             </p>
             <div className="flex justify-end space-x-4">
               <button
