@@ -337,7 +337,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
             <span>{getCurrentLanguageName()}</span>
           </button>
           <DropdownMenu 
-            className="max-h-48 overflow-y-auto"
+            className="max-h-48- overflow-y-auto"
             items={
               availableLanguages && availableLanguages.length > 0
                 ? availableLanguages
@@ -371,7 +371,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
           </button>
 
           <DropdownMenu
-            className="max-h-48 overflow-y-auto"
+            className="max-h-48- overflow-y-auto autoWidth"
             items={
               Array.isArray(roleName) && roleName.length > 0
                 ? roleName

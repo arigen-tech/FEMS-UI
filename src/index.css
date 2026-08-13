@@ -476,6 +476,9 @@ header {
         }
     }
 }
+.autoWidth{
+    width: 285px !important;
+}
 
 /* top menu end here */
 
