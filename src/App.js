@@ -10,6 +10,9 @@ import LoginPage from "./Pages/LoginPage";
 import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import PreExamLayout from "./Pages/PreExamLayout";
+import ReportEntryLayout from "./Pages/ReportEntryLayout";
+import ReportUploadLayout from "./Pages/ReportUploadLayout";
+import ReportDispatchLayout from "./Pages/ReportDispatchLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -156,7 +159,9 @@ function App() {
 
                 {/* Examination */}
                 <Route path="/pre-examination" element={<PreExamLayout/>} />
-                
+                <Route path="/report-entry" element={<ReportEntryLayout/>} />
+                <Route path="/report-upload" element={<ReportUploadLayout/>} />
+                <Route path="/report-dispatch" element={<ReportDispatchLayout/>} />
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />

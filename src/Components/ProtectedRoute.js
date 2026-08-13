@@ -64,7 +64,10 @@ const validRoutes = [
   "/documents-retrive-report",
   "/documents-trash-report",
   "/documents-audit-report",
-  "/pre-examination"
+  "/pre-examination",
+  "/report-entry",
+  "/report-upload",
+  "/report-dispatch",
 ];
 
 const NotAuthorized = () => {

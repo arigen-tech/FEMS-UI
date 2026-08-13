@@ -9,6 +9,9 @@ import { TbReportSearch, TbReport } from "react-icons/tb";
 import { MdEditDocument } from "react-icons/md";
 import { HiDocumentSearch } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
+import { LuNotebookPen } from "react-icons/lu";
+import { LiaFileUploadSolid } from "react-icons/lia";
+import { FaShippingFast } from "react-icons/fa";
 
 import {
   InboxIcon,
@@ -480,6 +483,10 @@ function Sidebar({ roleChanged }) {
       Rights: RiUserSettingsFill,
       "User Reports": TbReport,
       "Pre-Examination": TbReportSearch,
+
+      "Report Entry": LuNotebookPen,
+      "Report Upload": LiaFileUploadSolid,
+      "Report Dispatch": FaShippingFast,
     };
 
     return iconMap[name] || null; // Return null if icon not found
