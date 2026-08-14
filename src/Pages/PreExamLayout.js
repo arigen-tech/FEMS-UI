@@ -1,11 +1,11 @@
-import React from 'react'
-import Layout from '../Components/Layout'
-import PreExamination from '../Data/PreExamination'
+import React from 'react';
+import Layout from '../Components/Layout';
+import PreExaminationModule from '../Data/PreExaminationModule';
 
 const PreExamLayout = () => {
   return (
     <Layout>
-      <PreExamination/>
+      <PreExaminationModule />
     </Layout>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { MdRemoveRedEye, MdOutlineClose } from "react-icons/md";
 
@@ -19,7 +19,7 @@ import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 import { useLanguage } from '../i18n/LanguageContext'; // Import useLanguage hook
 import Popup from '../Components/Popup';
 
-const PreExamination = () => {
+const PreExamination = ({setShowPreExamine}) => {
   // Get language context
   const {
     currentLanguage,
@@ -546,11 +546,7 @@ const PreExamination = () => {
   }
 
   return (
-    <div className="">
-      <div className="title">
-        <h1><AutoTranslate>Pre-Examination</AutoTranslate></h1>
-      </div>
-
+    <>
       {popupMessage && (
         <Popup
           message={popupMessage.message}
@@ -660,7 +656,8 @@ const PreExamination = () => {
           </div>
         </div>
 
-        <div className="table-wrapper">
+{/* Main Table comment by aanand */}
+        <div className="table-wrapper" style={{display:"none"}}>
           <table className="">
             <thead>
               <tr>
@@ -758,10 +755,56 @@ const PreExamination = () => {
               )}
 
             </tbody>
+            
           </table>
         </div>
+
+        <div className="table-wrapper mb-8">
+          <table className="">
+            <thead>
+              <tr>
+                <th className="text-center"><AutoTranslate>SN</AutoTranslate></th>
+                <th><AutoTranslate>Case No</AutoTranslate></th>
+                <th><AutoTranslate>Case Title</AutoTranslate></th>
+                <th><AutoTranslate>FIR</AutoTranslate></th>
+                <th><AutoTranslate>Police Station</AutoTranslate></th>
+                <th><AutoTranslate>Evidence Count</AutoTranslate></th>
+                <th><AutoTranslate>Priority</AutoTranslate></th>
+                <th className="text-center"><AutoTranslate>Status</AutoTranslate></th>
+                <th className="text-center"><AutoTranslate>Action</AutoTranslate></th>
+              </tr>
+            </thead>
+
+            <tbody>
+             <tr>
+              <td className="text-center">1</td>
+              <td>FSL/2026/00145</td>
+              <td>Bhubaneswar ATM Fraud Case</td>
+              <td>145/2026</td>
+              <td>Saheed Nagar PS</td>
+              <td className="text-center">6</td>
+              <td>High</td>
+              <td className="text-center"><span className="pending">Pre-Examination Pending</span></td>
+              <td className="text-center"><button class="btnTable" onClick={() => setShowPreExamine(true)}>View & Pre-Examine</button></td>
+             </tr>
+             <tr>
+              <td className="text-center">2</td>
+              <td>FSL/2026/00146</td>
+              <td>Assault Investigation</td>
+              <td>146/2026</td>
+              <td>Kharavel Nagar PS</td>
+              <td className="text-center">4</td>
+              <td>Normal</td>
+              <td className="text-center"><span className="pending">Pre-Examination Pending</span></td>
+              <td className="text-center"><button class="btnTable" onClick={() => setShowPreExamine(true)}>View & Pre-Examine</button></td>
+             </tr>
+            </tbody>
+            
+          </table>
+        </div>
+
         {/* Pagination Controls */}
-        <div className="paginationWp">
+        <div className="paginationWp mb-20">
           <div className="items">
             <div className="paginationText">
               <span className="text-sm text-gray-700">
@@ -809,6 +852,8 @@ const PreExamination = () => {
             </div>
           </div>
         </div>
+
+
 
         <>
           {isOpen && selectedDoc && (
@@ -1243,7 +1288,7 @@ const PreExamination = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

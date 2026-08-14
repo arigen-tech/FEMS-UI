@@ -112,10 +112,10 @@ button {
     border-radius: 6px;
     font-size: 16px;
     color: var(--white-color);
+    font-weight: 500;
     padding: 7px 15px;
     border: solid 1px var(--secondary-color);
     transition: all 0.35s ease-in-out;
-
     &:hover {
         background-color: var(--secondary-color-hover);
         border: solid 1px var(--secondary-color-hover);
@@ -2030,6 +2030,77 @@ h2 {
 /* mulity select dropdown css end here */
 
 
+/* **********----Buttons beginning here----************* */
+.btnBackTop{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    & h2{
+        margin: 0;
+    }
+}
+.btnBack{
+	background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+	border: 1px solid #d1d5db;
+	text-shadow: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 30px;
+}
+.btnBack:hover{
+	background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+}
+
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn{
+	width: auto;
+	cursor: pointer;
+	border-radius: 6px;
+	font-size: 16px;
+	font-weight: 500;
+	padding: 7px 15px;
+	transition: all 0.35s ease-in-out;
+	border: 0;
+	text-shadow: 1px 1px 2px rgb(0 0 0/0.6);
+	text-transform: none;
+}
+.btn:hover{
+	box-shadow:0 5px 8px rgba(30,136,229,.35);
+}
+
+.btn-outline{
+	background: transparent;
+	color: var(--secondary-color);
+	border: 1px solid var(--secondary-color);
+	text-shadow: none;
+}
+.btn-outline:hover{
+	background: var(--secondary-color);
+    color: var(--white-color);
+	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+}
+
+.btn-back{
+	background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+	color: #374151;
+	border: 1px solid #d1d5db;
+	padding-left: 30px;
+	text-shadow: none;
+}
+.btn-back:hover{
+	background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+}
+
+/* *********----Buttons end---******** */
+
+/* ************************ */
 .mb-5{
     margin-bottom: 5px;
 }
@@ -2039,3 +2110,4 @@ h2 {
 .mb-20{
     margin-bottom: 20px;
 }
+

@@ -9,10 +9,6 @@ import PageNotFound from "./Pages/PageNotFound";
 import LoginPage from "./Pages/LoginPage";
 import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
-import PreExamLayout from "./Pages/PreExamLayout";
-import ReportEntryLayout from "./Pages/ReportEntryLayout";
-import ReportUploadLayout from "./Pages/ReportUploadLayout";
-import ReportDispatchLayout from "./Pages/ReportDispatchLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -74,6 +70,10 @@ const DocumentRetriveReports = React.lazy(() => import("./Pages/ReportsP/Documen
 const DocumentsTrashedReports = React.lazy(() => import("./Pages/ReportsP/DocumentTrashedReports"));
 const DocumentsAuditReports = React.lazy(() => import("./Pages/ReportsP/DocumentsAuditReports"));
 
+const PreExamLayout = React.lazy(() => import("./Pages/PreExamLayout"));
+const ReportEntryLayout = React.lazy(() => import("./Pages/ReportEntryLayout"));
+const ReportUploadLayout = React.lazy(() => import("./Pages/ReportUploadLayout"));
+const ReportDispatchLayout = React.lazy(() => import("./Pages/ReportDispatchLayout"));
 
 function App() {
   return (
