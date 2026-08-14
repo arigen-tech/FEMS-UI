@@ -1214,7 +1214,7 @@ h2 {
             height: 30px;
             font-size: 14px;
             padding: 4px 30px 4px 8px;
-        }
+        }        
     }
 
     & .status {
@@ -1233,7 +1233,28 @@ h2 {
     & .pending {
         background: var(--pending-gb);
         color: var(--pending-color);
+        padding: 2px 10px;
+        border-radius: 30px;
     }
+    & .approved {
+        background: var(--approved-bg);
+        color: var(--approved-color);
+        padding: 2px 10px;
+        border-radius: 30px;
+    }
+    & .rejected {
+        background: var(--rejected-bg);
+        color: var(--rejected-color);
+        padding: 2px 10px;
+        border-radius: 30px;
+    }
+    /* --pending-color: #cd8100;
+    --approved-color: #16a34a;
+    --rejected-color: #dc2626;
+
+    --pending-gb: #FEF3C7;
+    --approved-bg: #D1FAE5;
+    --rejected-bg: #FEE2E2; */
 
     & .denied {
         background: var(--rejected-bg);
@@ -1245,6 +1266,19 @@ h2 {
         color: var(--rejected-color);
         background-color: rgb(219 234 254 / 1);
         color: rgb(30 64 175 / 1);
+    }
+}
+
+.btnTable{
+    background-color: var(--secondary-color);
+    border-radius: 30px;
+    color: var(--white-color);
+    padding: 2px 10px;
+    border: solid 1px var(--secondary-color);
+    transition: all 0.35s ease-in-out;
+    &:hover {
+        background-color: var(--secondary-color-hover);
+        border: solid 1px var(--secondary-color-hover);
     }
 }
 
@@ -1994,3 +2028,14 @@ h2 {
   cursor: pointer;
 }
 /* mulity select dropdown css end here */
+
+
+.mb-5{
+    margin-bottom: 5px;
+}
+.mb-8{
+    margin-bottom: 8px;
+}
+.mb-20{
+    margin-bottom: 20px;
+}

@@ -31,6 +31,9 @@ import {
   PrinterIcon,
 } from "@heroicons/react/24/solid";
 import { API_HOST, DOCUMENTHEADER_API, FILETYPE_API } from "../API/apiConfig";
+import CaseInformation from "./CaseInformation";
+import ForwardingAuthorityDetails from "./ForwardingAuthorityDetails";
+import EvidenceMetadata from "./EvidenceMetadata";
 
 const DocumentManagement = ({ fieldsDisabled }) => {
   // Get language context
@@ -49,7 +52,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   const navigate = useNavigate();
   const params = useParams();
   const data = location.state;
-  
+
   // ============ STATE DECLARATIONS ============
   const [formData, setFormData] = useState({
     fileNo: "",
@@ -60,7 +63,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     year: null,
     uploadedFilePaths: [],
   });
-  
+
   const [scaleValue, setScaleValue] = useState("2");
   const [uploadedFileNames, setUploadedFileNames] = useState([]);
   const [uploadedFilePath, setUploadedFilePath] = useState([]);
@@ -112,8 +115,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     { id: "", key: "", value: "" }
   ]);
   const [deletedMetaDataIds, setDeletedMetaDataIds] = useState([]);
-
-  const [submission, setSubmission] = useState("");
 
   // ============ SAFE ACCESS UTILITIES ============
   const safeGet = (obj, path, defaultValue = '') => {
@@ -854,12 +855,12 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
     try {
       setLoading(true);
-      
+
       const validDocs = selectedDocuments.filter(doc => doc !== undefined && doc !== null);
-      
+
       const processedDocuments = validDocs.map((doc, index) => {
         const fileName = doc.displayName || doc.fileName || doc.documentName || `file_${index + 1}`;
-        
+
         return {
           path: doc.waitingRoomPath || doc.path || '',
           version: metadata.version || doc.version || '1.0',
@@ -990,7 +991,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       setUploadedFilePath([]);
       setUploadedFileNames([]);
       setSelectedFiles([]);
-      
+
       if (response.data?.response?.documentHeader) {
         setEditingDoc(response.data.response.documentHeader);
         setFormData(prev => ({
@@ -1004,19 +1005,19 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           version: prev.version || '',
         }));
       }
-      
+
       setDynamicMetadata([{ key: "", value: "" }]);
       fetchDocuments();
-      
+
       showPopup(
         "✅ File added successfully! You can add more files with different years.",
         "success"
       );
-      
+
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
       }
-      
+
     } catch (error) {
       console.error("Error saving document:", error);
       showPopup("Document save failed: " + error.message, "warning");
@@ -1028,7 +1029,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   // ============ EDIT DOCUMENT ============
   const handleEditDocument = (doc) => {
     if (!doc) return;
-    
+
     setHandleEditDocumentActive(true);
     setEditingDoc(doc);
 
@@ -1065,7 +1066,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
     setUploadedFileNames(existingFiles.map((file) => file.name));
     setUploadedFilePath(existingFiles);
-    
+
     const backendMetadata = doc.metadataList || [];
     const formattedMetadata = backendMetadata
       .filter(item => item !== undefined && item !== null)
@@ -1151,7 +1152,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
 
       showPopup(response?.data?.response?.msg || "Document updated successfully!", "success");
-      
+
       setUploadedFilePath([]);
       setUploadedFileNames([]);
       setSelectedFiles([]);
@@ -1165,7 +1166,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         year: null,
         uploadedFilePaths: [],
       });
-      
+
       fetchDocuments();
     } catch (error) {
       console.error("Error updating document:", error);
@@ -1288,31 +1289,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
   const hasApprovedFile = uploadedFilePath?.some(file => file?.status === "APPROVED");
 
-  const evidenceCategories = [
-  "Physical Evidence",
-  "Digital Evidence",
-  "Biological Evidence",
-  "Documentary Evidence",
-  "Audio Evidence",
-  "Video Evidence",
-  "Image Evidence",
-];
-
-  const [isOpenDropdown, setisOpenDropdown] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const handleSelect = (category) => {
-    setSelectedCategories((prev) => {
-      if (prev.includes(category)) {
-        // Remove if already selected
-        return prev.filter((item) => item !== category);
-      }
-
-      // Add if not selected
-      return [...prev, category];
-    });
-  };
-
 
   // ============ LOADING ============
   if (loading) {
@@ -1335,390 +1311,15 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           />
         )}
         <div ref={formSectionRef} className="">
-{/* Case Information section */}
- <div className="cardLight">
-            <h2 className="flex align-center gap-2">📝 <AutoTranslate>Case Information</AutoTranslate> <span className="text-red-500">*</span></h2>
 
+          {/* Case Information component */}
+          <CaseInformation />
 
+          {/* Forwarding Authority Details component */}
+          <ForwardingAuthorityDetails />
 
-
-
-
-
-
-
-            <div className="grid grid-col-4 mb-4">
-            <div className="form-group">
-                <label><AutoTranslate>Case ID</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Case Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Case Title</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>FIR Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>FIR Date</AutoTranslate></label>
-                <input type="date" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Case Type</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Crime Type</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label><AutoTranslate>State</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>District</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Police Station</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Investigating Officer</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Court Reference</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Priority </AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Normal</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Urgent</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Critical</AutoTranslate></option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Date of Incident</AutoTranslate></label>
-                <input type="date" placeholder="" name=""value="" required  />
-              </div>
-
-             <div className="form-group">
-                <label><AutoTranslate>Incident Location</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>     
-            </div>
-          </div>
-{/* Case Information section end */}
-
-{/* Forwarding Authority Details */}
-<div className="cardLight">
-            <h2 className="flex align-center gap-2">📤 <AutoTranslate>Forwarding Authority Details</AutoTranslate> <span className="text-red-500">*</span></h2>
-
-            <div className="grid grid-col-4 mb-4">
-
-            <div className="form-group">
-                <label><AutoTranslate>Forwarding Authority Type</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Authority Name</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Designation</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Organisation </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>District </AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Address </AutoTranslate></label>
-                <textarea id="" rows="2"></textarea>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Contact Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Email</AutoTranslate></label>
-                <input type="email" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Forwarding Letter Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Forwarding Date</AutoTranslate></label>
-                <input type="date" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Forwarding Letter</AutoTranslate></label>
-                <input type="file" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Mode of Submission</AutoTranslate></label>
-                <select value={submission} onChange={(e) => setSubmission(e.target.value)}>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  {/* <option value=""><AutoTranslate>Hand Delivered </AutoTranslate></option> */}
-                  <option value="ifMessenger"><AutoTranslate>Authorized Messenger</AutoTranslate></option>
-                  <option value="ifCourier"><AutoTranslate>Courier </AutoTranslate></option>
-                  {/* <option value=""><AutoTranslate>Post</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Electronic / Digital</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Other </AutoTranslate></option> */}
-                </select>
-              </div>
-
-{/* If Courier:  */}
-{submission === "ifCourier" && (
-  <>
-    <div className="form-group">
-                <label><AutoTranslate>Courier Agency</AutoTranslate></label>
-                <input type="text" placeholder="" name=""value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>AWB / Consignment Number</AutoTranslate></label>
-                <input type="text" placeholder="" name=""value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Booking Date </AutoTranslate></label>
-                <input type="date" placeholder="" name=""value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Dispatch Date</AutoTranslate></label>
-                <input type="date" placeholder="" name=""value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Expected Delivery Date </AutoTranslate></label>
-                <input type="date" placeholder="" name=""value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Actual Delivery Date </AutoTranslate></label>
-                <input type="date" placeholder="" name=""value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Parcel ID</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Parcel Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Number of Exhibits</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Package Type </AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate></AutoTranslate></option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Seal Number </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Seal Description</AutoTranslate></label>
-                <textarea id="" rows="2"></textarea>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Seal Condition </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Package Condition </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Received Date </AutoTranslate></label>
-                <input type="date" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Received Time</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Received By </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Remarks</AutoTranslate></label>
-                <textarea id="" rows="2" required></textarea>
-              </div>
-  </>
-)}
-
-      {/* If Messenger:   */}
-      {submission === "ifMessenger" && (
-        <>
-          <div className="form-group">
-                <label><AutoTranslate>Messenger Name</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Designation</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Organization </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>ID / Reference Number</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Date & Time of Handover</AutoTranslate></label>
-                <input type="date" placeholder="" name="" value="" required  />
-              </div>
-        </>
-      )}
-     
-            </div>
-
-          </div>
-{/* Forwarding Authority Details end */}
-
-
-<div className="cardLight">
-            <h2 className="flex align-center gap-2">🔍 <AutoTranslate>Evidence Metadata</AutoTranslate><span className="text-red-500">*</span></h2>
-
-
-            <div className="grid grid-col-4 mb-4">
-            <div className="form-group">
-                <label><AutoTranslate>Evidence ID  </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Exhibit Number </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-              <div className="evidence-category">
-      <label>Evidence Category</label>
-      {/* Dropdown button */}
-      <div className={`dropdown-select ${isOpenDropdown ? "active" : ""}`}
-        onClick={() => setisOpenDropdown(!isOpenDropdown)}>
-        <span>
-          {selectedCategories.length === 0
-            ? "Select"
-            : `${selectedCategories.length} Selected`}
-        </span>
-        <span className="dropdown-arrow">▼</span>
-      </div>
-
-      {/* Dropdown options */}
-      {isOpenDropdown && (
-        <div className="dropdown-options">
-          {evidenceCategories.map((category) => (
-            <label key={category} className="dropdown-option" onClick={(e) => e.stopPropagation()}>
-              <input
-                type="checkbox"
-                checked={selectedCategories.includes(category)}
-                onChange={() => handleSelect(category)}
-              />
-              <span>{category}</span>
-            </label>
-          ))}
-        </div>
-      )}
-    </div>
-                {/* <label><AutoTranslate>Evidence Category</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>           
-                  <option value=""><AutoTranslate>Physical Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Digital Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Biological Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Documentary Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Audio Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Video Evidence</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Image Evidence</AutoTranslate></option>
-                </select> */}
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Evidence Type</AutoTranslate></label>
-                <select>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  <option value=""><AutoTranslate>CCTV Footage</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Mobile Phone</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Hard Disk </AutoTranslate></option>
-                  <option value=""><AutoTranslate>Blood Sample</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Hair Sample</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Firearm</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Ammunition</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Fingerprint</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Voice Recording </AutoTranslate></option>
-                  <option value=""><AutoTranslate>Questioned Document</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Soil Sample</AutoTranslate></option>
-                  <option value=""><AutoTranslate>Chemical Substance</AutoTranslate></option>
-                  <option value=""><AutoTranslate>DNA Sample</AutoTranslate></option>
-                </select>
-              </div>  
-
-              <div className="form-group">
-                <label><AutoTranslate>Evidence Description  </AutoTranslate></label>
-                <textarea id="" rows="2" required></textarea>
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Source</AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Collection Location </AutoTranslate></label>
-                <input type="text" placeholder="" name="" value="" required  />
-              </div>
-              <div className="form-group">
-                <label><AutoTranslate>Collection Date </AutoTranslate></label>
-                <input type="date" placeholder="" name="" value="" required  />
-              </div>
-
-              <div className="form-group">
-                <label><AutoTranslate>Remarks </AutoTranslate></label>
-                <textarea id="" rows="2" required></textarea>
-              </div>
-          </div>
-         
-</div>
+          {/* Evidence Metadata component */}
+          <EvidenceMetadata />
 
 
           {/* ========== ADDITIONAL METADATA ========== */}
@@ -1790,8 +1391,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               ))}
             </div>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setDynamicMetadata([...dynamicMetadata, { id: "", key: "", value: "" }])}
               className="btn-add"
             >
@@ -1810,7 +1411,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 </span>
               )}
             </h2>
-            
+
             <div className="grid grid-col-4">
               <div className="form-group">
                 <label>
@@ -1906,7 +1507,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <p className="text-sm text-gray-500 mt-2">
                   <AutoTranslate>Drag & drop {folderUpload ? "folders" : "files"} here, or choose from your device.</AutoTranslate>
                 </p>
-                
+
                 {uploadedFilePath.length > 0 && (
                   <div className="mt-2 p-2 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-700">
@@ -1924,11 +1525,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   type="button"
                   onClick={() => setIsWaitingRoomModalOpen(true)}
                   disabled={!isMetadataComplete || selectedFiles.length > 0}
-                  className={`px-6 h-14 rounded-xl transition-all ${
-                    (!isMetadataComplete || selectedFiles.length > 0)
+                  className={`px-6 h-14 rounded-xl transition-all ${(!isMetadataComplete || selectedFiles.length > 0)
                       ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                       : "bg-blue-500 text-white"
-                  }`}
+                    }`}
                 >
                   <AutoTranslate>Choose From Waiting Room</AutoTranslate>
                 </button>
@@ -1952,15 +1552,14 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <button
                   onClick={handleUploadDocument}
                   disabled={isUploading || selectedFiles.length === 0 || !formData.version}
-                  className={`flex-1 min-w-[200px] text-white rounded-xl h-14 flex items-center justify-center relative transition-all duration-300 ${
-                    isUploading ? "bg-blue-600 cursor-not-allowed" : "bg-blue-900"
-                  }`}
+                  className={`flex-1 min-w-[200px] text-white rounded-xl h-14 flex items-center justify-center relative transition-all duration-300 ${isUploading ? "bg-blue-600 cursor-not-allowed" : "bg-blue-900"
+                    }`}
                 >
                   {isUploading ? (
                     <>
                       <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
                       <AutoTranslate>Uploading... {uploadProgress}%</AutoTranslate>
                     </>
@@ -1998,10 +1597,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   </span>
                 )}
               </h3>
-              
+
               {(() => {
                 const validFiles = uploadedFilePath.filter(file => file !== undefined && file !== null);
-                
+
                 if (validFiles.length === 0) {
                   return (
                     <div className="text-center py-4 text-gray-500">
@@ -2009,7 +1608,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     </div>
                   );
                 }
-                
+
                 const groupedFiles = validFiles.reduce((acc, file, index) => {
                   if (!file) return acc;
                   const year = getSafeYear(file);
@@ -2017,7 +1616,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   acc[year].push({ file, index });
                   return acc;
                 }, {});
-                
+
                 return Object.entries(groupedFiles).map(([year, files]) => (
                   <div key={year} className="mb-4">
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">
@@ -2041,7 +1640,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                             const status = getSafeStatus(file);
                             const filePath = getSafePath(file);
                             const isWaitingRoomFile = file?.isWaitingRoomFile || false;
-                            
+
                             return (
                               <tr key={index} className="border-t hover:bg-gray-50">
                                 <td className="px-3 py-2">{index + 1}</td>
@@ -2058,7 +1657,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium
                                     ${status === 'APPROVED' ? 'bg-green-100 text-green-700' :
                                       status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                      'bg-yellow-100 text-yellow-700'}`}
+                                        'bg-yellow-100 text-yellow-700'}`}
                                   >
                                     {status}
                                   </span>
@@ -2094,7 +1693,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   </div>
                 ));
               })()}
-              
+
               <button
                 onClick={handleDiscardAll}
                 className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
@@ -2202,8 +1801,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   <td>{formatDate(doc.createdOn)}</td>
                   <td>
                     <div className="btn-center">
-                      <button 
-                        onClick={() => handleEditDocument(doc)} 
+                      <button
+                        onClick={() => handleEditDocument(doc)}
                         disabled={doc.isActive === 0}
                         className={`viewBtn ${doc.isActive === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
@@ -2249,9 +1848,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <IoIosArrowBack />
               </button>
               {totalPages > 0 && getPageNumbers().map((page) => (
-                <button 
-                  key={page} 
-                  onClick={() => setCurrentPage(page)} 
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
                   className={`${currentPage === page ? "active" : ""}`}
                 >
                   {page}
@@ -2387,7 +1986,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                     ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
                                       file.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                                      "bg-yellow-100 text-yellow-800"}`}
+                                        "bg-yellow-100 text-yellow-800"}`}
                                   >
                                     {file.status || <AutoTranslate>PENDING</AutoTranslate>}
                                   </span>
@@ -2431,7 +2030,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2
                                     ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
                                       file.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                                      "bg-yellow-100 text-yellow-800"}`}
+                                        "bg-yellow-100 text-yellow-800"}`}
                                   >
                                     {file.status || <AutoTranslate>PENDING</AutoTranslate>}
                                   </span>
