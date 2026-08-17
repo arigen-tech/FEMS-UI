@@ -35,6 +35,80 @@ import CaseInformation from "./CaseInformation";
 import ForwardingAuthorityDetails from "./ForwardingAuthorityDetails";
 import EvidenceMetadata from "./EvidenceMetadata";
 
+// ============ INITIAL FORM DATA ============
+// Kept as one function so both the initial useState and every
+// post-save/update reset stay in sync automatically.
+const getInitialFormData = () => ({
+  fileNo: "",
+  title: "",
+  subject: "",
+  version: "",
+  category: null,
+  year: null,
+  uploadedFilePaths: [],
+
+  // Case Information (CaseInformation.jsx)
+  caseId: "",
+  firNumber: "",
+  firDate: "",
+  caseTypeId: "",
+  crimeTypeId: "",
+  stateId: "",
+  districtId: "",
+  policeStation: "",
+  investigatingOfficer: "",
+  courtReference: "",
+  priorityId: "",
+  dateOfIncident: "",
+  incidentLocation: "",
+
+  // Forwarding Authority Details (ForwardingAuthorityDetails.jsx)
+  forwardingAuthorityTypeId: "",
+  authorityName: "",
+  designation: "",
+  organisation: "",
+  forwardingDistrictId: "",
+  address: "",
+  contactNumber: "",
+  email: "",
+  forwardingLetterNumber: "",
+  forwardingDate: "",
+  forwardingLetterFile: null,
+  modeOfSubmissionId: "",
+  courierAgency: "",
+  awbNumber: "",
+  bookingDate: "",
+  dispatchDate: "",
+  expectedDeliveryDate: "",
+  actualDeliveryDate: "",
+  parcelId: "",
+  parcelNumber: "",
+  numberOfExhibits: "",
+  packageTypeId: "",
+  sealNumber: "",
+  sealDescription: "",
+  sealCondition: "",
+  packageCondition: "",
+  receivedDate: "",
+  receivedTime: "",
+  receivedBy: "",
+  forwardingRemarks: "",
+  messengerName: "",
+  messengerDesignation: "",
+  messengerOrganization: "",
+  messengerIdRef: "",
+  handoverDateTime: "",
+
+  // Evidence Metadata (EvidenceMetadata.jsx)
+  evidenceId: "",
+  exhibitNumber: "",
+  evidenceTypeId: "",
+  evidenceSource: "",
+  collectionLocation: "",
+  collectionDate: "",
+  evidenceRemarks: "",
+});
+
 const DocumentManagement = ({ fieldsDisabled }) => {
   // Get language context
   const {
@@ -54,15 +128,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   const data = location.state;
 
   // ============ STATE DECLARATIONS ============
-  const [formData, setFormData] = useState({
-    fileNo: "",
-    title: "",
-    subject: "",
-    version: "",
-    category: null,
-    year: null,
-    uploadedFilePaths: [],
-  });
+  const [formData, setFormData] = useState(getInitialFormData());
 
   const [scaleValue, setScaleValue] = useState("2");
   const [uploadedFileNames, setUploadedFileNames] = useState([]);
@@ -219,6 +285,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         setPopupMessage(null);
       }
     });
+  };
+
+  // ============ FIELD CHANGE HELPER ============
+  // Single handler shared by CaseInformation, ForwardingAuthorityDetails,
+  // and EvidenceMetadata so every new field lands in the same formData object.
+  const handleFieldChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // ============ API CALLS ============
@@ -961,6 +1034,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
     });
 
+    // NOTE: /api/documents/save must be updated on the backend to accept
+    // these extra fields on documentHeader (and a nested forwardingAuthority
+    // object) before they'll actually persist.
     const payload = {
       documentHeader: {
         id: formData.id || null,
@@ -971,6 +1047,61 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         employee: { id: parseInt(UserId, 10) },
         qrPath: formData.qrPath || null,
         archive: false,
+
+        // Case Information
+        caseId: formData.caseId || null,
+        firNumber: formData.firNumber || null,
+        firDate: formData.firDate || null,
+        caseTypeId: formData.caseTypeId || null,
+        crimeTypeId: formData.crimeTypeId || null,
+        stateId: formData.stateId || null,
+        districtId: formData.districtId || null,
+        policeStation: formData.policeStation || null,
+        investigatingOfficer: formData.investigatingOfficer || null,
+        courtReference: formData.courtReference || null,
+        priorityId: formData.priorityId || null,
+        dateOfIncident: formData.dateOfIncident || null,
+        incidentLocation: formData.incidentLocation || null,
+
+        // Evidence Metadata
+        evidenceId: formData.evidenceId || null,
+        exhibitNumber: formData.exhibitNumber || null,
+        evidenceTypeId: formData.evidenceTypeId || null,
+        source: formData.evidenceSource || null,
+        collectionLocation: formData.collectionLocation || null,
+        collectionDate: formData.collectionDate || null,
+        evidenceRemarks: formData.evidenceRemarks || null,
+      },
+      forwardingAuthority: {
+        forwardingAuthorityTypeId: formData.forwardingAuthorityTypeId || null,
+        authorityName: formData.authorityName || null,
+        designation: formData.designation || null,
+        organisation: formData.organisation || null,
+        districtId: formData.forwardingDistrictId || null,
+        address: formData.address || null,
+        contactNumber: formData.contactNumber || null,
+        email: formData.email || null,
+        forwardingLetterNumber: formData.forwardingLetterNumber || null,
+        forwardingDate: formData.forwardingDate || null,
+        modeOfSubmissionId: formData.modeOfSubmissionId || null,
+        courierAgency: formData.courierAgency || null,
+        awbConsignmentNumber: formData.awbNumber || null,
+        bookingDate: formData.bookingDate || null,
+        dispatchDate: formData.dispatchDate || null,
+        expectedDeliveryDate: formData.expectedDeliveryDate || null,
+        actualDeliveryDate: formData.actualDeliveryDate || null,
+        parcelId: formData.parcelId || null,
+        parcelNumber: formData.parcelNumber || null,
+        numberOfExhibits: formData.numberOfExhibits || null,
+        packageTypeId: formData.packageTypeId || null,
+        sealNumber: formData.sealNumber || null,
+        sealDescription: formData.sealDescription || null,
+        sealCondition: formData.sealCondition || null,
+        packageCondition: formData.packageCondition || null,
+        receivedDate: formData.receivedDate || null,
+        receivedTime: formData.receivedTime || null,
+        receivedBy: formData.receivedBy || null,
+        remarks: formData.forwardingRemarks || null,
       },
       filePaths: versionedFilePaths,
       metadata: metadataObject,
@@ -978,7 +1109,21 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
     try {
       setBProcess(true);
-      const response = await apiClient.post("/api/documents/save", payload);
+
+      // If a Forwarding Letter file was chosen, send it as multipart
+      // alongside the JSON payload. Adjust the field name / endpoint
+      // to match whatever your backend expects for this upload.
+      let response;
+      if (formData.forwardingLetterFile) {
+        const multipartData = new FormData();
+        multipartData.append("payload", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        multipartData.append("forwardingLetter", formData.forwardingLetterFile);
+        response = await apiClient.post("/api/documents/save", multipartData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await apiClient.post("/api/documents/save", payload);
+      }
 
       if (response?.status !== 200 || response?.data?.status === 409) {
         const errorMessage = response?.data?.response?.msg || response?.data?.message || "Unknown error";
@@ -1053,7 +1198,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         isExisting: true,
       }));
 
+    // Start from the same shape as a fresh form, then overlay whatever
+    // the backend actually returned for this document (falls back to
+    // '' for any new field the GET response doesn't include yet).
     setFormData({
+      ...getInitialFormData(),
       id: doc.id,
       fileNo: doc.fileNo || '',
       title: doc.title || '',
@@ -1062,6 +1211,58 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       category: doc.categoryMaster || null,
       year: null,
       uploadedFilePaths: [],
+
+      caseId: doc.caseId || '',
+      firNumber: doc.firNumber || '',
+      firDate: doc.firDate || '',
+      caseTypeId: doc.caseTypeId || '',
+      crimeTypeId: doc.crimeTypeId || '',
+      stateId: doc.stateId || '',
+      districtId: doc.districtId || '',
+      policeStation: doc.policeStation || '',
+      investigatingOfficer: doc.investigatingOfficer || '',
+      courtReference: doc.courtReference || '',
+      priorityId: doc.priorityId || '',
+      dateOfIncident: doc.dateOfIncident || '',
+      incidentLocation: doc.incidentLocation || '',
+
+      evidenceId: doc.evidenceId || '',
+      exhibitNumber: doc.exhibitNumber || '',
+      evidenceTypeId: doc.evidenceTypeId || '',
+      evidenceSource: doc.source || '',
+      collectionLocation: doc.collectionLocation || '',
+      collectionDate: doc.collectionDate || '',
+      evidenceRemarks: doc.evidenceRemarks || '',
+
+      forwardingAuthorityTypeId: doc.forwardingAuthority?.forwardingAuthorityTypeId || '',
+      authorityName: doc.forwardingAuthority?.authorityName || '',
+      designation: doc.forwardingAuthority?.designation || '',
+      organisation: doc.forwardingAuthority?.organisation || '',
+      forwardingDistrictId: doc.forwardingAuthority?.districtId || '',
+      address: doc.forwardingAuthority?.address || '',
+      contactNumber: doc.forwardingAuthority?.contactNumber || '',
+      email: doc.forwardingAuthority?.email || '',
+      forwardingLetterNumber: doc.forwardingAuthority?.forwardingLetterNumber || '',
+      forwardingDate: doc.forwardingAuthority?.forwardingDate || '',
+      modeOfSubmissionId: doc.forwardingAuthority?.modeOfSubmissionId || '',
+      courierAgency: doc.forwardingAuthority?.courierAgency || '',
+      awbNumber: doc.forwardingAuthority?.awbConsignmentNumber || '',
+      bookingDate: doc.forwardingAuthority?.bookingDate || '',
+      dispatchDate: doc.forwardingAuthority?.dispatchDate || '',
+      expectedDeliveryDate: doc.forwardingAuthority?.expectedDeliveryDate || '',
+      actualDeliveryDate: doc.forwardingAuthority?.actualDeliveryDate || '',
+      parcelId: doc.forwardingAuthority?.parcelId || '',
+      parcelNumber: doc.forwardingAuthority?.parcelNumber || '',
+      numberOfExhibits: doc.forwardingAuthority?.numberOfExhibits || '',
+      packageTypeId: doc.forwardingAuthority?.packageTypeId || '',
+      sealNumber: doc.forwardingAuthority?.sealNumber || '',
+      sealDescription: doc.forwardingAuthority?.sealDescription || '',
+      sealCondition: doc.forwardingAuthority?.sealCondition || '',
+      packageCondition: doc.forwardingAuthority?.packageCondition || '',
+      receivedDate: doc.forwardingAuthority?.receivedDate || '',
+      receivedTime: doc.forwardingAuthority?.receivedTime || '',
+      receivedBy: doc.forwardingAuthority?.receivedBy || '',
+      forwardingRemarks: doc.forwardingAuthority?.remarks || '',
     });
 
     setUploadedFileNames(existingFiles.map((file) => file.name));
@@ -1127,6 +1328,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       };
     });
 
+    // NOTE: /api/documents/update must be updated on the backend to accept
+    // these extra fields the same way /api/documents/save does.
     const payload = {
       documentHeader: {
         id: editingDoc.id,
@@ -1135,6 +1338,59 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         subject,
         categoryMaster: { id: category.id },
         employee: { id: parseInt(userId, 10) },
+
+        caseId: formData.caseId || null,
+        firNumber: formData.firNumber || null,
+        firDate: formData.firDate || null,
+        caseTypeId: formData.caseTypeId || null,
+        crimeTypeId: formData.crimeTypeId || null,
+        stateId: formData.stateId || null,
+        districtId: formData.districtId || null,
+        policeStation: formData.policeStation || null,
+        investigatingOfficer: formData.investigatingOfficer || null,
+        courtReference: formData.courtReference || null,
+        priorityId: formData.priorityId || null,
+        dateOfIncident: formData.dateOfIncident || null,
+        incidentLocation: formData.incidentLocation || null,
+
+        evidenceId: formData.evidenceId || null,
+        exhibitNumber: formData.exhibitNumber || null,
+        evidenceTypeId: formData.evidenceTypeId || null,
+        source: formData.evidenceSource || null,
+        collectionLocation: formData.collectionLocation || null,
+        collectionDate: formData.collectionDate || null,
+        evidenceRemarks: formData.evidenceRemarks || null,
+      },
+      forwardingAuthority: {
+        forwardingAuthorityTypeId: formData.forwardingAuthorityTypeId || null,
+        authorityName: formData.authorityName || null,
+        designation: formData.designation || null,
+        organisation: formData.organisation || null,
+        districtId: formData.forwardingDistrictId || null,
+        address: formData.address || null,
+        contactNumber: formData.contactNumber || null,
+        email: formData.email || null,
+        forwardingLetterNumber: formData.forwardingLetterNumber || null,
+        forwardingDate: formData.forwardingDate || null,
+        modeOfSubmissionId: formData.modeOfSubmissionId || null,
+        courierAgency: formData.courierAgency || null,
+        awbConsignmentNumber: formData.awbNumber || null,
+        bookingDate: formData.bookingDate || null,
+        dispatchDate: formData.dispatchDate || null,
+        expectedDeliveryDate: formData.expectedDeliveryDate || null,
+        actualDeliveryDate: formData.actualDeliveryDate || null,
+        parcelId: formData.parcelId || null,
+        parcelNumber: formData.parcelNumber || null,
+        numberOfExhibits: formData.numberOfExhibits || null,
+        packageTypeId: formData.packageTypeId || null,
+        sealNumber: formData.sealNumber || null,
+        sealDescription: formData.sealDescription || null,
+        sealCondition: formData.sealCondition || null,
+        packageCondition: formData.packageCondition || null,
+        receivedDate: formData.receivedDate || null,
+        receivedTime: formData.receivedTime || null,
+        receivedBy: formData.receivedBy || null,
+        remarks: formData.forwardingRemarks || null,
       },
       filePaths: versionedFilePaths,
       metadata: metadataObject,
@@ -1143,7 +1399,18 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
     try {
       setBProcess(true);
-      const response = await apiClient.put(`/api/documents/update`, payload);
+
+      let response;
+      if (formData.forwardingLetterFile) {
+        const multipartData = new FormData();
+        multipartData.append("payload", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        multipartData.append("forwardingLetter", formData.forwardingLetterFile);
+        response = await apiClient.put(`/api/documents/update`, multipartData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await apiClient.put(`/api/documents/update`, payload);
+      }
 
       if (response?.status !== 200 || response?.data?.status === 409) {
         const warningMessage = response?.data?.response?.msg || response?.data?.message || "Unknown error occurred";
@@ -1157,15 +1424,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       setUploadedFileNames([]);
       setSelectedFiles([]);
       setEditingDoc(null);
-      setFormData({
-        fileNo: "",
-        title: "",
-        subject: "",
-        version: "",
-        category: null,
-        year: null,
-        uploadedFilePaths: [],
-      });
+      setFormData(getInitialFormData());
 
       fetchDocuments();
     } catch (error) {
@@ -1313,13 +1572,18 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         <div ref={formSectionRef} className="">
 
           {/* Case Information component */}
-          <CaseInformation />
+          <CaseInformation formData={formData} onChange={handleFieldChange} />
 
           {/* Forwarding Authority Details component */}
-          <ForwardingAuthorityDetails />
+          <ForwardingAuthorityDetails formData={formData} onChange={handleFieldChange} />
 
           {/* Evidence Metadata component */}
-          <EvidenceMetadata />
+          <EvidenceMetadata
+            formData={formData}
+            onChange={handleFieldChange}
+            categoryOptions={categoryOptions}
+            onCategoryChange={handleCategoryChange}
+          />
 
 
           {/* ========== ADDITIONAL METADATA ========== */}

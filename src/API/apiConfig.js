@@ -62,6 +62,16 @@ export const ROLE_TEMPLATE=`/dynamic-sidebar/role-template`;
 export const EXPORT_API = `${API_HOST}/export`;
 
 
+export const MASTER_API = `${API_HOST}/master`;
+
+
+
+
+
+
+
+
+
 export const P5_APIS = "/p5/apis";
 
 
