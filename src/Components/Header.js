@@ -325,7 +325,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
           <CgMenuRight />
         </button>
         <div className="mainHeading">
-          <AutoTranslate>Forensic Evidence & Data Management System</AutoTranslate>
+          <AutoTranslate>Forensic Data Management System</AutoTranslate>
         </div>
       </div>
 

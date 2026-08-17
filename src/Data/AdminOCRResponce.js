@@ -499,13 +499,13 @@ const fetchQRCode = async (documentId) => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="mt-6 text-left">
                       {[
-                        { label: "Branch", value: selectedDoc?.data?.employee?.branch?.name },
-                        { label: "Department", value: selectedDoc?.data?.employee?.department?.name },
+                        { label: "Laboratories", value: selectedDoc?.data?.employee?.branch?.name },
+                        { label: "Division", value: selectedDoc?.data?.employee?.department?.name },
                         { label: "Case No.", value: selectedDoc?.data?.fileNo },
-                        { label: "Title", value: selectedDoc?.data?.title },
-                        { label: "Subject", value: selectedDoc?.data?.subject },
-                        { label: "Category", value: selectedDoc?.data?.categoryMaster?.name || "No Category" },
-                        { label: "File Year", value: selectedDoc?.data?.yearMaster?.name },
+                        { label: "Case Title", value: selectedDoc?.data?.title },
+                        { label: "Case Description", value: selectedDoc?.data?.subject },
+                        { label: "Evidence Category", value: selectedDoc?.data?.categoryMaster?.name || "No Category" },
+                        { label: "Case Year", value: selectedDoc?.data?.yearMaster?.name },
                         { label: "Status", value: selectedDoc?.data?.approvalStatus },
                         { label: "Upload By", value: selectedDoc?.data?.employee?.name },
                       ].map((item, idx) => (

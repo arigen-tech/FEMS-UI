@@ -1096,12 +1096,12 @@ const Search = () => {
               <div className="info-card">
                 <div className="info-grid">
                   {[
-                    { label: "Branch", value: selectedDoc?.employee?.branch?.name },
-                    { label: "Department", value: selectedDoc?.employee?.department?.name },
+                    { label: "Laboratories", value: selectedDoc?.employee?.branch?.name },
+                    { label: "Division", value: selectedDoc?.employee?.department?.name },
                     { label: "Case No.", value: selectedDoc?.fileNo },
-                    { label: "Title", value: selectedDoc?.title },
-                    { label: "Subject", value: selectedDoc?.subject },
-                    { label: "Category", value: selectedDoc?.categoryMaster?.name || "No Category" },
+                    { label: "Case Title", value: selectedDoc?.title },
+                    { label: "Case Description", value: selectedDoc?.subject },
+                    { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || "No Category" },
                     { label: "Upload By", value: selectedDoc?.employee?.name },
                   ].map((item, idx) => (
                     <p key={idx} className="text-md text-gray-700">

@@ -1032,7 +1032,7 @@ const SharedDocs = () => {
                     <span className="text-lg font-bold">D</span>
                     <span className="text-lg font-bold">MS</span>
                   </div>
-                  <h2><AutoTranslate>Document Details</AutoTranslate></h2>
+                  <h2><AutoTranslate>Evidence Details</AutoTranslate></h2>
                 </div>
                 <div className="headerRight">
                   {/* Print Button */}
@@ -1054,12 +1054,12 @@ const SharedDocs = () => {
                     <div className="info-card">
                       <div className="info-grid">
                         {[
-                          { label: "Branch", value: selectedDoc.documentHeader?.employee?.branch?.name || selectedDoc.documentHeader?.branchName },
-                          { label: "Department", value: selectedDoc.documentHeader?.employee?.department?.name || selectedDoc.documentHeader?.departmentName },
+                          { label: "Laboratories", value: selectedDoc.documentHeader?.employee?.branch?.name || selectedDoc.documentHeader?.branchName },
+                          { label: "Division", value: selectedDoc.documentHeader?.employee?.department?.name || selectedDoc.documentHeader?.departmentName },
                           { label: "Case No.", value: selectedDoc.documentHeader?.fileNo },
-                          { label: "Title", value: selectedDoc.documentHeader?.title },
-                          { label: "Subject", value: selectedDoc.documentHeader?.subject },
-                          { label: "Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Evidence Category</AutoTranslate> },
+                          { label: "Case Title", value: selectedDoc.documentHeader?.title },
+                          { label: "Case Description", value: selectedDoc.documentHeader?.subject },
+                          { label: "Evidence Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Evidence Category</AutoTranslate> },
                           { label: "Status", value: selectedDoc.documentHeader?.approvalStatus },
                           { label: "Shared By", value: selectedDoc.sharedByName },
                           { label: "Shared Date", value: formatDateArray(selectedDoc.sharedDate) },

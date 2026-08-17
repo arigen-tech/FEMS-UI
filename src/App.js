@@ -73,7 +73,7 @@ const DocumentsAuditReports = React.lazy(() => import("./Pages/ReportsP/Document
 const PreExamLayout = React.lazy(() => import("./Pages/PreExamLayout"));
 const ReportEntryLayout = React.lazy(() => import("./Pages/ReportEntryLayout"));
 const ReportUploadLayout = React.lazy(() => import("./Pages/ReportUploadLayout"));
-const ReportDispatchLayout = React.lazy(() => import("./Pages/ReportDispatchLayout"));
+const DispatchLayout = React.lazy(() => import("./Pages/DispatchLayout"));
 
 function App() {
   return (
@@ -161,7 +161,7 @@ function App() {
                 <Route path="/pre-examination" element={<PreExamLayout/>} />
                 <Route path="/report-entry" element={<ReportEntryLayout/>} />
                 <Route path="/report-upload" element={<ReportUploadLayout/>} />
-                <Route path="/report-dispatch" element={<ReportDispatchLayout/>} />
+                <Route path="/dispatch" element={<DispatchLayout/>} />
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />
