@@ -107,11 +107,11 @@ function FormData() {
             </div>
             <div className="flex flex-col col-span-1">
               <label htmlFor="fileNo" className="block text-sm font-medium leading-6 text-gray-900 mt-0">
-                File No.
+                Case No.
               </label>
               <input
                 type="text"
-                placeholder="File No."
+                placeholder="Case No."
                 className="w-full text-black py-2 my-0 shadow-sm ring-1 ring-inset ring-gray-300 bg-white border-0 border-gray-400 outline-none focus:outline-none px-4 rounded-md"
                 value={fileNo}
                 onChange={(e) => setFileNo(e.target.value)}

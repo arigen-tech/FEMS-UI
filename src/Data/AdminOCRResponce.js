@@ -413,7 +413,7 @@ const fetchQRCode = async (documentId) => {
                 <tr className="bg-slate-100">
                   <th className="border p-2 text-left">S.N.</th>
                   <th className="border p-2 text-left">Case Title</th>
-                  <th className="border p-2 text-left">File No</th>
+                  <th className="border p-2 text-left">Case No</th>
                   <th className="border p-2 text-left">Case Description</th>
                   {/* <th className="border p-2 text-left">Case year</th> */}
                   <th className="border p-2 text-left">Evidence Category</th>
@@ -501,7 +501,7 @@ const fetchQRCode = async (documentId) => {
                       {[
                         { label: "Branch", value: selectedDoc?.data?.employee?.branch?.name },
                         { label: "Department", value: selectedDoc?.data?.employee?.department?.name },
-                        { label: "File No.", value: selectedDoc?.data?.fileNo },
+                        { label: "Case No.", value: selectedDoc?.data?.fileNo },
                         { label: "Title", value: selectedDoc?.data?.title },
                         { label: "Subject", value: selectedDoc?.data?.subject },
                         { label: "Category", value: selectedDoc?.data?.categoryMaster?.name || "No Category" },

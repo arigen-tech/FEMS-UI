@@ -956,7 +956,7 @@ const Search = () => {
                 <thead>
                   <tr>
                     <th className="text-center"><AutoTranslate>SN</AutoTranslate></th>
-                    <th><AutoTranslate>File No</AutoTranslate></th>
+                    <th><AutoTranslate>Case No</AutoTranslate></th>
                     <th><AutoTranslate>Case Title</AutoTranslate></th>
                     <th><AutoTranslate>Case Description</AutoTranslate></th>
                     <th><AutoTranslate>Evidence Category</AutoTranslate></th>
@@ -1098,7 +1098,7 @@ const Search = () => {
                   {[
                     { label: "Branch", value: selectedDoc?.employee?.branch?.name },
                     { label: "Department", value: selectedDoc?.employee?.department?.name },
-                    { label: "File No.", value: selectedDoc?.fileNo },
+                    { label: "Case No.", value: selectedDoc?.fileNo },
                     { label: "Title", value: selectedDoc?.title },
                     { label: "Subject", value: selectedDoc?.subject },
                     { label: "Category", value: selectedDoc?.categoryMaster?.name || "No Category" },

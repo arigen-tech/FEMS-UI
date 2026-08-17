@@ -2029,7 +2029,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           <div className="form-group">
             <input
               type="text"
-              placeholder={getFallbackTranslation('Search by title, subject, or file no', currentLanguage)}
+              placeholder={getFallbackTranslation('Search by title, subject, or case no', currentLanguage)}
               className="searchIcon"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

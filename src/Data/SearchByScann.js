@@ -481,7 +481,7 @@ const SearchByScan = () => {
         if (error.response.status === 401) {
           errorMessage = "Unauthorized. Please login again.";
         } else if (error.response.status === 404) {
-          errorMessage = "File not found on server.";
+          errorMessage = "Case not found on server.";
         } else if (error.response.status === 403) {
           errorMessage = "You don't have permission to access this file.";
         }
@@ -622,7 +622,7 @@ const SearchByScan = () => {
             // Ignore parsing errors
           }
         } else if (error.response.status === 404) {
-          errorMessage = "File not found on server.";
+          errorMessage = "Case not found on server.";
         } else if (error.response.status === 400) {
           errorMessage = "Bad request. The file path might be incorrect.";
         }

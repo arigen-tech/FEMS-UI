@@ -796,7 +796,7 @@ const SharedDocs = () => {
                   <AutoTranslate>SN</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>File No</AutoTranslate>
+                  <AutoTranslate>Case No</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Case Title</AutoTranslate>
@@ -1056,7 +1056,7 @@ const SharedDocs = () => {
                         {[
                           { label: "Branch", value: selectedDoc.documentHeader?.employee?.branch?.name || selectedDoc.documentHeader?.branchName },
                           { label: "Department", value: selectedDoc.documentHeader?.employee?.department?.name || selectedDoc.documentHeader?.departmentName },
-                          { label: "File No.", value: selectedDoc.documentHeader?.fileNo },
+                          { label: "Case No.", value: selectedDoc.documentHeader?.fileNo },
                           { label: "Title", value: selectedDoc.documentHeader?.title },
                           { label: "Subject", value: selectedDoc.documentHeader?.subject },
                           { label: "Category", value: selectedDoc.documentHeader?.categoryMaster?.name || selectedDoc.documentHeader?.categoryName || <AutoTranslate>No Evidence Category</AutoTranslate> },
