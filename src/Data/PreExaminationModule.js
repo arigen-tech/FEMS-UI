@@ -9,12 +9,12 @@ const PreExaminationModule = () => {
         <div className="">
             <div className="title">
                 <h1><AutoTranslate>Pre-Examination</AutoTranslate></h1>
-
-                {!showPreExamine && <PreExamination setShowPreExamine={setShowPreExamine} />}
-
-                {showPreExamine && <PreExamine setShowPreExamine={setShowPreExamine} />}
-
             </div>
+
+            {!showPreExamine && <PreExamination setShowPreExamine={setShowPreExamine} />}
+
+            {showPreExamine && <PreExamine setShowPreExamine={setShowPreExamine} />}
+
         </div>
     )
 }

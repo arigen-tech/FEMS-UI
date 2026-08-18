@@ -956,7 +956,7 @@ const Search = () => {
                 <thead>
                   <tr>
                     <th className="text-center"><AutoTranslate>SN</AutoTranslate></th>
-                    <th><AutoTranslate>File No</AutoTranslate></th>
+                    <th><AutoTranslate>Case No</AutoTranslate></th>
                     <th><AutoTranslate>Case Title</AutoTranslate></th>
                     <th><AutoTranslate>Case Description</AutoTranslate></th>
                     <th><AutoTranslate>Evidence Category</AutoTranslate></th>
@@ -1096,12 +1096,12 @@ const Search = () => {
               <div className="info-card">
                 <div className="info-grid">
                   {[
-                    { label: "Branch", value: selectedDoc?.employee?.branch?.name },
-                    { label: "Department", value: selectedDoc?.employee?.department?.name },
-                    { label: "File No.", value: selectedDoc?.fileNo },
-                    { label: "Title", value: selectedDoc?.title },
-                    { label: "Subject", value: selectedDoc?.subject },
-                    { label: "Category", value: selectedDoc?.categoryMaster?.name || "No Category" },
+                    { label: "Laboratories", value: selectedDoc?.employee?.branch?.name },
+                    { label: "Division", value: selectedDoc?.employee?.department?.name },
+                    { label: "Case No.", value: selectedDoc?.fileNo },
+                    { label: "Case Title", value: selectedDoc?.title },
+                    { label: "Case Description", value: selectedDoc?.subject },
+                    { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || "No Category" },
                     { label: "Upload By", value: selectedDoc?.employee?.name },
                   ].map((item, idx) => (
                     <p key={idx} className="text-md text-gray-700">

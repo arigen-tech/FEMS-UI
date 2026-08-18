@@ -1,7 +1,7 @@
 import React from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 
-const ReportDispatch = () => {
+const Dispatch = () => {
   return (
     <div className="">
       <div className="title">
@@ -16,4 +16,4 @@ const ReportDispatch = () => {
   )
 }
 
-export default ReportDispatch;
+export default Dispatch;

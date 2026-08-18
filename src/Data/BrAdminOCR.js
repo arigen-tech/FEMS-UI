@@ -491,7 +491,7 @@ const BrAdminOCR = () => {
                       <AutoTranslate>Case Title</AutoTranslate>
                     </th>
                     <th>
-                      <AutoTranslate>File No</AutoTranslate>
+                      <AutoTranslate>Case No</AutoTranslate>
                     </th>
                     <th>
                       <AutoTranslate>Case Description</AutoTranslate>
