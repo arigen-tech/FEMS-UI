@@ -30,7 +30,7 @@ import {
   DocumentIcon,
   PrinterIcon,
 } from "@heroicons/react/24/solid";
-import { API_HOST, DOCUMENTHEADER_API, FILETYPE_API } from "../API/apiConfig";
+import { API_HOST, DOCUMENTHEADER_API, FILETYPE_API, MASTER_API } from "../API/apiConfig";
 import CaseInformation from "./CaseInformation";
 import ForwardingAuthorityDetails from "./ForwardingAuthorityDetails";
 import EvidenceMetadata from "./EvidenceMetadata";
@@ -48,7 +48,6 @@ const getInitialFormData = () => ({
   uploadedFilePaths: [],
 
   // Case Information (CaseInformation.jsx)
-  caseId: "",
   firNumber: "",
   firDate: "",
   caseTypeId: "",
@@ -142,6 +141,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   const [printTrue, setPrintTrue] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [yearOptions, setYearOptions] = useState([]);
+  const [caseTypeOptions, setCaseTypeOptions] = useState([]);
+  const [crimeTypeOptions, setCrimeTypeOptions] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [userBranch, setUserBranch] = useState("");
   const [userDep, setUserDep] = useState("");
@@ -246,6 +247,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     fetchYear();
     fetchDocuments();
     fetchUser();
+    fetchCaseTypeOptions();
+    fetchCrimeTypeOptions();
   }, []);
 
   useEffect(() => {
@@ -333,6 +336,40 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     } catch (error) {
       console.error(<AutoTranslate>Error fetching user branch:</AutoTranslate>, error);
     }
+  };
+
+  const fetchCaseTypeOptions = async () => {
+    try {
+      const response = await apiClient.get(`${MASTER_API}/case-type/getAll/1`);
+      setCaseTypeOptions(response.data || []);
+    } catch (error) {
+      console.error('Error fetching case types:', error);
+      setCaseTypeOptions([]);
+    }
+  };
+
+  const fetchCrimeTypeOptions = async () => {
+    try {
+      const response = await apiClient.get(`${MASTER_API}/crime-type/getAll/1`);
+      setCrimeTypeOptions(response.data || []);
+    } catch (error) {
+      console.error('Error fetching crime types:', error);
+      setCrimeTypeOptions([]);
+    }
+  };
+
+  // Resolve a name for the results table whether the backend sends a nested
+  // object (doc.caseType.name) or a raw id (doc.caseTypeId) — works either way.
+  const getCaseTypeName = (doc) => {
+    if (doc?.caseType?.name) return doc.caseType.name;
+    const match = caseTypeOptions.find((item) => item.id === doc?.caseTypeId);
+    return match?.name || '--';
+  };
+
+  const getCrimeTypeName = (doc) => {
+    if (doc?.crimeType?.name) return doc.crimeType.name;
+    const match = crimeTypeOptions.find((item) => item.id === doc?.crimeTypeId);
+    return match?.name || '--';
   };
 
   const fetchDocuments = async () => {
@@ -1049,7 +1086,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         archive: false,
 
         // Case Information
-        caseId: formData.caseId || null,
         firNumber: formData.firNumber || null,
         firDate: formData.firDate || null,
         caseTypeId: formData.caseTypeId || null,
@@ -1339,7 +1375,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         categoryMaster: { id: category.id },
         employee: { id: parseInt(userId, 10) },
 
-        caseId: formData.caseId || null,
+        caseId: formData.caseId || null, // read-only, kept for reference — backend ignores this on update anyway
         firNumber: formData.firNumber || null,
         firDate: formData.firDate || null,
         caseTypeId: formData.caseTypeId || null,
@@ -2045,7 +2081,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
                 <th><AutoTranslate>Case No</AutoTranslate></th>
                 <th><AutoTranslate>Case Title</AutoTranslate></th>
-                <th><AutoTranslate>Case Description</AutoTranslate></th>
+                <th><AutoTranslate>Case Type</AutoTranslate></th>
+                <th><AutoTranslate>Crime Type</AutoTranslate></th>
                 <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
                 <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
@@ -2059,7 +2096,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>{doc.fileNo || '--'}</td>
                   <td>{doc.title || '--'}</td>
-                  <td>{doc.subject || '--'}</td>
+                  <td>{getCaseTypeName(doc)}</td>
+                  <td>{getCrimeTypeName(doc)}</td>
                   <td>{doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}</td>
                   <td>{doc?.documentDetails?.length || 0}</td>
                   <td>{formatDate(doc.createdOn)}</td>

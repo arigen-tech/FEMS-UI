@@ -79,10 +79,6 @@ const CaseInformation = ({ formData = {}, onChange }) => {
 
       <div className="grid grid-col-4 mb-4">
         <div className="form-group">
-          <label><AutoTranslate>Case ID</AutoTranslate></label>
-          <input type="text" value={formData.caseId || ''} onChange={handleChange('caseId')} required />
-        </div>
-        <div className="form-group">
           <label><AutoTranslate>Case Number</AutoTranslate></label>
           <input type="text" value={formData.fileNo || ''} onChange={handleChange('fileNo')} />
         </div>
