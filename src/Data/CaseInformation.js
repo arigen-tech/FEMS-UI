@@ -78,6 +78,10 @@ const CaseInformation = ({ formData = {}, onChange }) => {
       <h2 className="flex align-center gap-2">📝 <AutoTranslate>Case Information</AutoTranslate> <span className="text-red-500">*</span></h2>
 
       <div className="grid grid-col-4 mb-4">
+        {/* <div className="form-group">
+          <label><AutoTranslate>Case ID</AutoTranslate></label>
+          <input type="text" value={formData.caseId || ''} onChange={handleChange('caseId')} required />
+        </div> */}
         <div className="form-group">
           <label><AutoTranslate>Case Number</AutoTranslate></label>
           <input type="text" value={formData.fileNo || ''} onChange={handleChange('fileNo')} />

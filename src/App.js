@@ -9,6 +9,7 @@ import PageNotFound from "./Pages/PageNotFound";
 import LoginPage from "./Pages/LoginPage";
 import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
+import ReportReviewLayout from "./Pages/ReportReviewLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -162,6 +163,7 @@ function App() {
                 <Route path="/report-entry" element={<ReportEntryLayout/>} />
                 <Route path="/report-upload" element={<ReportUploadLayout/>} />
                 <Route path="/dispatch" element={<DispatchLayout/>} />
+                <Route path="/report-review" element={<ReportReviewLayout />} />
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />

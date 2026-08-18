@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ReportEntryComponent = ({setShowPreExamine}) => {
+const ReportEntryComponent = ({setShowViewExamine}) => {
   return (
     <div class="card">
         
@@ -23,7 +23,6 @@ const ReportEntryComponent = ({setShowPreExamine}) => {
                     <th class="text-center">
                     <input type="checkbox" title="Select all documents" />
                     </th>
-                    <th class="text-center"><span class="">SN</span></th>
                     <th><span class="">Case No</span></th>
                     <th><span class="">Case Title</span></th>
                     <th><span class="">Case Description</span></th>
@@ -35,24 +34,22 @@ const ReportEntryComponent = ({setShowPreExamine}) => {
             <tbody>
                 <tr>
                 <td><input type="checkbox" title="Select all documents" /></td>
-                <td>1</td>
                 <td>FSL/2026/00145</td>
                 <td>Bhubaneswar</td>
                 <td>Case Description...</td>                
                 <td class="text-center">6</td>
                 <td class="text-center"><span class="pending">Pending</span></td>
-                <td class="text-center"><button class="btnTable" onClick={() => setShowPreExamine(true)}>View &amp; Examine</button></td>             
+                <td class="text-center"><button class="btnTable" onClick={() => setShowViewExamine(true)}>View &amp; Examine</button></td>             
                     {/* <td colspan="10" class="text-center"><span class="">No data found.</span></td> */}
                 </tr>
                 <tr>
                 <td><input type="checkbox" title="Select all documents" /></td>
-                <td>1</td>
                 <td>FSL/2026/00145</td>
                 <td>Bhubaneswar</td>
                 <td>Case Description...</td>                
                 <td class="text-center">6</td>
                 <td class="text-center"><span class="pending">Pending</span></td>
-                <td class="text-center"><button class="btnTable" onClick={() => setShowPreExamine(true)}>View &amp; Examine</button></td>
+                <td class="text-center"><button class="btnTable" onClick={() => setShowViewExamine(true)}>View &amp; Examine</button></td>
                 </tr>
                 <tr>
                   {/* <td colspan="10" class="text-center"><span class="">No data found.</span></td> */}

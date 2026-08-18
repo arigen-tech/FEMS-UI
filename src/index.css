@@ -116,6 +116,7 @@ button {
     padding: 7px 15px;
     border: solid 1px var(--secondary-color);
     transition: all 0.35s ease-in-out;
+
     &:hover {
         background-color: var(--secondary-color-hover);
         border: solid 1px var(--secondary-color-hover);
@@ -147,6 +148,7 @@ button {
     color: var(--black-color-60);
     padding: 5px;
     transition: all .25s ease-in-out;
+
     &:hover {
         background-color: var(--close-color);
         color: var(--white-color);
@@ -234,6 +236,7 @@ a:focus {
         color: rgba(15, 27, 33, 0.40);
     }
 
+    & textarea[readonly],
     & input:read-only,
     & input[readonly] {
         background-color: rgb(0 0 0/ 0.05);
@@ -476,7 +479,8 @@ header {
         }
     }
 }
-.autoWidth{
+
+.autoWidth {
     width: 285px !important;
 }
 
@@ -1214,7 +1218,7 @@ h2 {
             height: 30px;
             font-size: 14px;
             padding: 4px 30px 4px 8px;
-        }        
+        }
     }
 
     & .status {
@@ -1236,18 +1240,21 @@ h2 {
         padding: 2px 10px;
         border-radius: 30px;
     }
+
     & .approved {
         background: var(--approved-bg);
         color: var(--approved-color);
         padding: 2px 10px;
         border-radius: 30px;
     }
+
     & .rejected {
         background: var(--rejected-bg);
         color: var(--rejected-color);
         padding: 2px 10px;
         border-radius: 30px;
     }
+
     /* --pending-color: #cd8100;
     --approved-color: #16a34a;
     --rejected-color: #dc2626;
@@ -1269,13 +1276,14 @@ h2 {
     }
 }
 
-.btnTable{
+.btnTable {
     background-color: var(--secondary-color);
     border-radius: 30px;
     color: var(--white-color);
     padding: 2px 10px;
     border: solid 1px var(--secondary-color);
     transition: all 0.35s ease-in-out;
+
     &:hover {
         background-color: var(--secondary-color-hover);
         border: solid 1px var(--secondary-color-hover);
@@ -1882,10 +1890,11 @@ h2 {
     background-color: var(--bgdashColor);
 }
 
-.inputPosition{
+.inputPosition {
     position: relative;
 }
-.inputPosition > input{
+
+.inputPosition>input {
     position: absolute;
     top: 0;
     left: 0;
@@ -1955,159 +1964,188 @@ h2 {
 /* *************************** */
 /* mulity select dropdown css beginning here */
 .evidence-category {
-  position: relative;
-  width: 300px;
-  font-family: Arial, sans-serif;
+    position: relative;
+    width: 300px;
+    font-family: Arial, sans-serif;
 }
+
 .evidence-category label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 16px;
-  color: #222;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #222;
 }
+
 /* Main dropdown */
 .dropdown-select {
-  height: 40px;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color-15);
-  border-radius: 6px;
-  background: #fff;
-  padding: 0 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  font-size: 16px;
+    height: 40px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color-15);
+    border-radius: 6px;
+    background: #fff;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 16px;
 }
+
 .dropdown-select:hover {
-  border-color: #2196f3;
+    border-color: #2196f3;
 }
+
 .dropdown-select.active {
-  border: 2px solid #90caf9;
+    border: 2px solid #90caf9;
 }
+
 /* Arrow */
 .dropdown-arrow {
-  color: #1e88e5;
-  font-size: 14px;
+    color: #1e88e5;
+    font-size: 14px;
 }
+
 /* Options container */
 .dropdown-options {
-  position: absolute;
-  top: 70px;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid #aaa;
-  border-radius: 0 0 6px 6px;
-  max-height: 250px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #aaa;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Individual option */
 .dropdown-option {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  margin: 0 !important;
-  cursor: pointer;
-  font-size: 16px;
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    margin: 0 !important;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 .dropdown-option:hover {
-  background-color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 /* Checkbox */
 .dropdown-option input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
 }
+
 /* mulity select dropdown css end here */
 
 
 /* **********----Buttons beginning here----************* */
-.btnBackTop{
+.btnBackTop {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 15px;
-    & h2{
+
+    & h2 {
         margin: 0;
     }
 }
-.btnBack{
-	background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
-	border: 1px solid #d1d5db;
-	text-shadow: none;
+
+.btnBack {
+    background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+    border: 1px solid #d1d5db;
+    text-shadow: none;
     width: 36px;
     height: 36px;
     border-radius: 30px;
 }
-.btnBack:hover{
-	background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
-	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+
+.btnBack:hover {
+    background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+    box-shadow: 0 5px 8px rgba(0 0 0/0.1);
 }
 
 .btn-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.btn{
-	width: auto;
-	cursor: pointer;
-	border-radius: 6px;
-	font-size: 16px;
-	font-weight: 500;
-	padding: 7px 15px;
-	transition: all 0.35s ease-in-out;
-	border: 0;
-	text-shadow: 1px 1px 2px rgb(0 0 0/0.6);
-	text-transform: none;
-}
-.btn:hover{
-	box-shadow:0 5px 8px rgba(30,136,229,.35);
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.btn-outline{
-	background: transparent;
-	color: var(--secondary-color);
-	border: 1px solid var(--secondary-color);
-	text-shadow: none;
+.btn {
+    width: auto;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 7px 15px;
+    transition: all 0.35s ease-in-out;
+    border: 0;
+    text-shadow: 1px 1px 2px rgb(0 0 0/0.6);
+    text-transform: none;
 }
-.btn-outline:hover{
-	background: var(--secondary-color);
+
+.btn:hover {
+    box-shadow: 0 5px 8px rgba(30, 136, 229, .35);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    text-shadow: none;
+}
+
+.btn-outline:hover {
+    background: var(--secondary-color);
     color: var(--white-color);
-	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+    box-shadow: 0 5px 8px rgba(0 0 0/0.1);
 }
 
-.btn-back{
-	background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
-	color: #374151;
-	border: 1px solid #d1d5db;
-	padding-left: 30px;
-	text-shadow: none;
+.btn-back {
+    background: #e5e7eb url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding-left: 30px;
+    text-shadow: none;
 }
-.btn-back:hover{
-	background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
-	box-shadow:0 5px 8px rgba(0 0 0/0.1);
+
+.btn-back:hover {
+    background: #d1d5db url(./Assets/icons/arrow-back-icon.svg) no-repeat left center;
+    box-shadow: 0 5px 8px rgba(0 0 0/0.1);
+}
+
+.viewDoc {
+    background-color: transparent;
+    border: solid 1px var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 7px 12px;
+    border-radius: 6px;
+    width: 100%;
+    display: block;
+}
+.viewDoc:hover{
+    background-color: rgb(0 0 0/ 0.06);
+    box-shadow: 0 5px 8px rgba(0 0 0/0.1);
 }
 
 /* *********----Buttons end---******** */
 
 /* ************************ */
-.mb-5{
+.mb-5 {
     margin-bottom: 5px;
 }
-.mb-8{
+
+.mb-8 {
     margin-bottom: 8px;
 }
-.mb-20{
+
+.mb-20 {
     margin-bottom: 20px;
 }
-

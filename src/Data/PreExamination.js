@@ -763,7 +763,7 @@ const PreExamination = ({setShowPreExamine}) => {
           <table className="">
             <thead>
               <tr>
-                <th className="text-center"><AutoTranslate>SN</AutoTranslate></th>
+                {/* <th className="text-center"><AutoTranslate>SN</AutoTranslate></th> */}
                 <th><AutoTranslate>Case No</AutoTranslate></th>
                 <th><AutoTranslate>Case Title</AutoTranslate></th>
                 <th><AutoTranslate>FIR</AutoTranslate></th>
@@ -777,7 +777,7 @@ const PreExamination = ({setShowPreExamine}) => {
 
             <tbody>
              <tr>
-              <td className="text-center">1</td>
+              {/* <td className="text-center">1</td> */}
               <td>FSL/2026/00145</td>
               <td>Bhubaneswar ATM Fraud Case</td>
               <td>145/2026</td>
@@ -788,7 +788,7 @@ const PreExamination = ({setShowPreExamine}) => {
               <td className="text-center"><button class="btnTable" onClick={() => setShowPreExamine(true)}>View & Pre-Examine</button></td>
              </tr>
              <tr>
-              <td className="text-center">2</td>
+              {/* <td className="text-center">2</td> */}
               <td>FSL/2026/00146</td>
               <td>Assault Investigation</td>
               <td>146/2026</td>

@@ -648,14 +648,6 @@ const PreExamine = ({ setShowPreExamine }) => {
                                     </div>
 
 
-                                    <div className='tableInner'>
-                                        <table>
-                                            <thead>
-
-                                            </thead>
-                                        </table>
-                                    </div>
-
                                 </div>
 
                             </div>

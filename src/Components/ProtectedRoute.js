@@ -68,6 +68,7 @@ const validRoutes = [
   "/report-entry",
   "/report-upload",
   "/dispatch",
+  "/report-review",
 ];
 
 const NotAuthorized = () => {
