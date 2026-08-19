@@ -126,7 +126,7 @@ const ReviewComponent = ({ setShowReviewReport }) => {
         </div>
 
         <div className="cardLight">
-          <h2 className="flex align-center gap-2"><AutoTranslate>Report</AutoTranslate></h2>
+          <h2 className="flex align-center gap-2 mb-5"><AutoTranslate>Report</AutoTranslate></h2>
 
           <div className="grid grid-col-4 mb-4">
 
@@ -138,25 +138,23 @@ const ReviewComponent = ({ setShowReviewReport }) => {
             <div className="form-group">
               <label><AutoTranslate>Report Title</AutoTranslate></label>
               <input type="text" placeholder="" name="" required readOnly />
-            </div>
+            </div> 
             <div className="form-group">
-              <label><AutoTranslate>Report Summary </AutoTranslate></label>
-              <textarea id="" rows="2" required readOnly></textarea>
-            </div>
-
-            <div className="form-group">
-              <label><AutoTranslate>Uploaded Scientific Report</AutoTranslate></label>
-              {/* <input type="file" placeholder="" name="" required /> */}
-              <a href="javascript:void(0)" className='viewDoc' title='Budget_Allocation_Report.jpeg'>Budget_Allocation_Report.jpeg</a>
+              <label><AutoTranslate>Scientific Report</AutoTranslate></label>
+              <button class="btn btn-view w-100"><MdRemoveRedEye /> <AutoTranslate>View & Download</AutoTranslate></button>
             </div>
             <div className="form-group">
               <label><AutoTranslate>Supporting Documents</AutoTranslate></label>
-              <a href="javascript:void(0)" className='viewDoc' title='Budget_Allocation_Report.jpeg'>Budget_Allocation_Report.jpeg</a>
+              <button class="btn btn-view w-100"><MdRemoveRedEye /> <AutoTranslate>View & Download</AutoTranslate></button>
+            </div>
+            <div className="form-group col-span-2">
+              <label><AutoTranslate>Report Summary </AutoTranslate></label>
+              <textarea id="" rows="2" required readOnly></textarea>
             </div>
           </div>
 
         </div>
-        <div className="grid grid-col-4 mb-4">
+        <div className="grid grid-col-2 mb-4">
           <div className="form-group">
             <label><AutoTranslate>Remarks</AutoTranslate></label>
             <textarea id="" rows="2" required></textarea>
