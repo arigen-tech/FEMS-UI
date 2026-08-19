@@ -1,22 +1,21 @@
 import React from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
+import { MdRemoveRedEye, MdOutlineClose } from "react-icons/md";
 
-const ReferralTransfer = () => {
-  return (
-    <div className="">
-      <div className="title">
-        <h1><AutoTranslate>Referral / Transfer</AutoTranslate></h1>
-      </div>
-
-      <div class="card">
+const DispatchComponent = ({ setShowDispatchView }) => {
+    return (
+        <div class="card">
 
             <div class="grid grid-col-4 mb-4">
-                <div class="form-group"><label for="itemsPerPage"><span class="">Show:</span></label><select id="itemsPerPage">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select></div>
+                <div class="form-group">
+                    <label for="itemsPerPage"><span class="">Show:</span></label>
+                    <select id="itemsPerPage">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
                 <div class="form-group"><label for="searchId"><span class="">Search</span></label>
                     <input type="text" id="searchId" placeholder="Search..." class="searchIcon" value="" />
                 </div>
@@ -26,23 +25,24 @@ const ReferralTransfer = () => {
                 <table class="">
                     <thead>
                         <tr>
-                            <th><AutoTranslate>Case No.</AutoTranslate></th>
-                            <th><AutoTranslate>From</AutoTranslate></th>
-                            <th><AutoTranslate>To</AutoTranslate></th>
-                            <th><AutoTranslate>Evidence</AutoTranslate></th>
-                            <th><AutoTranslate>Date</AutoTranslate></th>
+                            <th><AutoTranslate>Case Number</AutoTranslate></th>
+                            <th><AutoTranslate>FIR Number</AutoTranslate></th>
+                            <th><AutoTranslate>Report Number</AutoTranslate></th>
+                            <th><AutoTranslate>Division</AutoTranslate></th>
+                            <th><AutoTranslate>Approved Date</AutoTranslate></th>
                             <th><AutoTranslate>Status</AutoTranslate></th>
-                         </tr>
+                            <th><AutoTranslate>Action</AutoTranslate></th>
+                        </tr>
                     </thead>
-
                     <tbody>
                         <tr>
-                            <td><AutoTranslate>DFSL/145/2026</AutoTranslate></td>
-                            <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
-                            <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
+                            <td><AutoTranslate>SFSL/145/2026</AutoTranslate></td>
+                            <td><AutoTranslate>145/2026</AutoTranslate></td>
+                            <td><AutoTranslate>RPT-001</AutoTranslate></td>
                             <td><AutoTranslate>DNA</AutoTranslate></td>
-                            <td><AutoTranslate>18-Aug</AutoTranslate></td>
-                            <td><span className='pending'>Pending</span></td>                         
+                            <td><AutoTranslate>18-Aug-2026</AutoTranslate></td>
+                            <td><span className='pending'>Pending</span></td>
+                            <td class="text-center"><button class="btnTable" onClick={() => setShowDispatchView(true)}><AutoTranslate>View</AutoTranslate></button></td>
                         </tr>
                         {/* <tr>
                             <td colspan="10" class="text-center"><span class="">No data found.</span></td>
@@ -50,7 +50,7 @@ const ReferralTransfer = () => {
                     </tbody>
                 </table>
             </div>
- 
+
             {/* Pagination Controls */}
             <div class="paginationWp">
                 <div class="items">
@@ -77,10 +77,8 @@ const ReferralTransfer = () => {
                 </div>
             </div>
 
-        </div>     
-
-    </div>
-  )
+        </div>
+    )
 }
 
-export default ReferralTransfer;
+export default DispatchComponent
