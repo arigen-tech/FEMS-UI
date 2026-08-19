@@ -1772,7 +1772,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                 </div>
               )}
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label className="block text-md font-medium text-gray-700">
                   <AutoTranslate>Bulk Evidence Upload</AutoTranslate>
                 </label>
@@ -1787,10 +1787,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     {folderUpload ? <AutoTranslate>Enable</AutoTranslate> : <AutoTranslate>Disable</AutoTranslate>}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            <div className="col-span-full mt-4">
+            {/* <div className="col-span-full mt-4">
               <div
                 {...getRootProps()}
                 className={`upload-box border-2 border-dashed rounded-lg p-6 cursor-pointer transition inputPosition
@@ -1821,7 +1821,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             <div className="col-span-full mt-6">
               <div className="flex flex-wrap items-end gap-4">

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import AutoTranslate from '../i18n/AutoTranslate';
 import apiClient from '../API/apiClient';
 import { MASTER_API } from '../API/apiConfig';
+import { TrashIcon } from "@heroicons/react/24/solid";
+import { FiPlus } from "react-icons/fi";
 
 const EvidenceMetadata = ({ formData = {}, onChange, categoryOptions = [], onCategoryChange }) => {
   const [evidenceTypes, setEvidenceTypes] = useState([]);
@@ -42,7 +44,56 @@ const EvidenceMetadata = ({ formData = {}, onChange, categoryOptions = [], onCat
     <div className="cardLight">
       <h2 className="flex align-center gap-2">🔍 <AutoTranslate>Evidence Metadata</AutoTranslate><span className="text-red-500">*</span></h2>
 
-      <div className="grid grid-col-4 mb-4">
+      <div class="table-wrapper">
+        <table class="mb-10">
+          <thead>
+            <tr>
+              <th style={{width: "20%"}}><AutoTranslate>Evidence Category</AutoTranslate></th>
+              <th style={{width: "20%"}}><AutoTranslate>Evidence Type</AutoTranslate></th>
+              <th style={{width: "35%"}}><AutoTranslate>Evidence Description</AutoTranslate></th>
+              <th style={{width: "20%"}}><AutoTranslate>Choose File</AutoTranslate></th>
+              <th style={{width: "5%"}}><AutoTranslate>Action</AutoTranslate></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select value={formData.category?.id || ''} onChange={onCategoryChange}>
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  {categoryOptions.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select></td>
+              <td>
+                <select
+                  value={formData.evidenceTypeId || ''}
+                  onChange={handleChange('evidenceTypeId')}
+                  disabled={evidenceTypesLoading}
+                >
+                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                  {evidenceTypes.map((item) => (
+                    <option key={item.id} value={item.id}>{item.name}</option>
+                  ))}
+                </select></td>
+              <td>
+                <textarea rows="2" value={formData.subject || ''} onChange={handleChange('subject')} style={{height:"40px"}} required></textarea></td>
+              <td><input type="file" required="" /></td>
+              <td>
+                <div className='items-center'>
+                  <button type="button" className="btn-del"><TrashIcon /></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" className="btn-add">
+          <FiPlus /> <AutoTranslate>Add</AutoTranslate>
+        </button>
+      </div>
+
+
+
+      {/* <div className="grid grid-col-4 mb-4">
         <div className="form-group">
           <label><AutoTranslate>Evidence ID  </AutoTranslate></label>
           <input type="text" value={formData.evidenceId || ''} onChange={handleChange('evidenceId')} required />
@@ -97,7 +148,8 @@ const EvidenceMetadata = ({ formData = {}, onChange, categoryOptions = [], onCat
           <label><AutoTranslate>Remarks </AutoTranslate></label>
           <textarea rows="2" value={formData.evidenceRemarks || ''} onChange={handleChange('evidenceRemarks')} required></textarea>
         </div>
-      </div>
+      </div> */}
+
     </div>
   );
 };

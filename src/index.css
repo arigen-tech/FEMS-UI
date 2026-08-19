@@ -1292,14 +1292,6 @@ h2 {
         border-radius: 30px;
     }
 
-    /* --pending-color: #cd8100;
-    --approved-color: #16a34a;
-    --rejected-color: #dc2626;
-
-    --pending-gb: #FEF3C7;
-    --approved-bg: #D1FAE5;
-    --rejected-bg: #FEE2E2; */
-
     & .denied {
         background: var(--rejected-bg);
         color: var(--rejected-color);
@@ -1311,7 +1303,45 @@ h2 {
         background-color: rgb(219 234 254 / 1);
         color: rgb(30 64 175 / 1);
     }
+    & input,
+    & select,
+    & textarea {
+        background: var(--white-color);
+        border: solid 1px var(--border-color-15);
+        display: block;
+        width: 100%;
+        font-size: 16px;
+        color: var(--black-color-80);
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: 5px;
+        padding: 8px 12px;
+    }
+
+    & input,
+    & select {
+        height: 40px;
+    }
+
+    & input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    & select {
+        background: var(--white-color) url(../src/Assets/icons/arrow-down-icon.svg) no-repeat right center;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        padding-right: 38px;
+    }
 }
+
+.tableFrom {
+
+}
+
+/* 111111aaanand */
 
 .btnTable {
     background-color: var(--secondary-color);
@@ -1320,7 +1350,6 @@ h2 {
     padding: 2px 10px;
     border: solid 1px var(--secondary-color);
     transition: all 0.35s ease-in-out;
-
     &:hover {
         background-color: var(--secondary-color-hover);
         border: solid 1px var(--secondary-color-hover);
@@ -2176,6 +2205,13 @@ h2 {
 /* *********----Buttons end---******** */
 
 /* ************************ */
+
+.items-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .w-100 {
     width: 100%;
 }
@@ -2189,7 +2225,7 @@ h2 {
 }
 
 .mb-10 {
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
 }
 
 .mb-8 {
