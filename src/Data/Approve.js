@@ -10,6 +10,8 @@ import {
   PrinterIcon,
   XMarkIcon,
   EyeIcon,
+  CheckCircleIcon,
+  XCircleIcon,
 } from "@heroicons/react/24/solid";
 import { API_HOST, DOCUMENTHEADER_API, BRANCH_API, DEPAETMENT_API } from "../API/apiConfig";
 import FilePreviewModal from "../Components/FilePreviewModal";
@@ -50,6 +52,7 @@ const Approve = () => {
   const [selectedDoc, setSelectedDoc] = useState({ paths: [] });
   const [openingFiles, setOpeningFiles] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  // documentToApprove now always holds a DOCUMENT HEADER (a "case"), never a single file.
   const [documentToApprove, setDocumentToApprove] = useState(null);
   const [isRejectReasonModalOpen, setIsRejectReasonModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -66,6 +69,7 @@ const Approve = () => {
   const [openingFileIndex, setOpeningFileIndex] = useState(null);
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [popupMessage, setPopupMessage] = useState(null);
+  const [actionProcessing, setActionProcessing] = useState(false);
 
   // Debug language status
   useEffect(() => {
@@ -357,9 +361,19 @@ const Approve = () => {
     });
   }, [selectedDoc, searchFileTerm]);
 
-  const handleStatusChange = (doc, status) => {
+  // ============ HEADER-LEVEL APPROVE / REJECT ============
+  // `doc` here is always the DOCUMENT HEADER (the case) — never an individual file.
+  // The backend now approves/rejects the whole case in one action and cascades
+  // that status to every attached file automatically.
+  const handleCaseStatusChange = (doc, status) => {
+    if (!doc || !doc.id) {
+      showPopup("Unable to determine which case to update.", "error");
+      return;
+    }
     if (status === "REJECTED") {
       setDocumentToApprove(doc);
+      setRejectReason("");
+      setRejectReasonError(false);
       setIsRejectReasonModalOpen(true);
     } else if (status === "APPROVED") {
       setDocumentToApprove(doc);
@@ -368,6 +382,8 @@ const Approve = () => {
   };
 
   const approveDocument = async () => {
+    if (!documentToApprove?.id) return;
+    setActionProcessing(true);
     try {
       const employeeId = localStorage.getItem("id");
 
@@ -386,13 +402,23 @@ const Approve = () => {
 
       console.log("Approval response:", response.data);
 
-      setSuccessMessage("Document Approved Successfully");
+      setSuccessMessage("Case Approved Successfully");
       setIsConfirmModalOpen(false);
+
+      // Case is no longer pending → close the details modal and refresh the list
+      setIsOpen(false);
+      setSelectedDoc({ paths: [] });
       fetchDocuments();
 
       setIsSuccessModalOpen(true);
     } catch (error) {
-      console.error("Error approving document:", error);
+      console.error("Error approving case:", error);
+      showPopup(
+        error?.response?.data?.message || "Failed to approve the case.",
+        "error"
+      );
+    } finally {
+      setActionProcessing(false);
     }
   };
 
@@ -400,6 +426,8 @@ const Approve = () => {
 
 
   const handleRejectDocument = async () => {
+    if (!documentToApprove?.id) return;
+    setActionProcessing(true);
     try {
       const employeeId = localStorage.getItem("id");
 
@@ -419,15 +447,25 @@ const Approve = () => {
 
       console.log("Rejection response:", response.data);
 
-      setSuccessMessage("Document Rejected Successfully");
+      setSuccessMessage("Case Rejected Successfully");
       setIsRejectReasonModalOpen(false);
       setRejectReason("");
+
+      // Case is no longer pending → close the details modal and refresh the list
+      setIsOpen(false);
+      setSelectedDoc({ paths: [] });
       fetchDocuments();
 
       setIsConfirmModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (error) {
-      console.error("Error rejecting document:", error);
+      console.error("Error rejecting case:", error);
+      showPopup(
+        error?.response?.data?.message || "Failed to reject the case.",
+        "error"
+      );
+    } finally {
+      setActionProcessing(false);
     }
   };
 
@@ -682,6 +720,9 @@ const Approve = () => {
                 <th className="text-center">
                   <AutoTranslate>View</AutoTranslate>
                 </th>
+                <th className="text-center">
+                  <AutoTranslate>Action</AutoTranslate>
+                </th>
               </tr>
             </thead>
 
@@ -732,11 +773,29 @@ const Approve = () => {
                         </button>
                       </div>
                     </td>
+                    <td className="text-center">
+                      <div className="btn-center gap-2 flex justify-center">
+                        <button
+                          title="Approve Case"
+                          className="text-green-600 hover:text-green-800"
+                          onClick={() => handleCaseStatusChange(doc, "APPROVED")}
+                        >
+                          <CheckCircleIcon className="h-6 w-6" />
+                        </button>
+                        <button
+                          title="Reject Case"
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => handleCaseStatusChange(doc, "REJECTED")}
+                        >
+                          <XCircleIcon className="h-6 w-6" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="11" className="text-center">
+                  <td colSpan="12" className="text-center">
                     <AutoTranslate>No data found.</AutoTranslate>
                   </td>
                 </tr>
@@ -812,6 +871,25 @@ const Approve = () => {
                     <p className="text-sm text-gray-600 mt-2 sm:mt-0">
                       <strong><AutoTranslate>Uploaded Date:</AutoTranslate></strong> {formatDate(selectedDoc?.createdOn)}
                     </p>
+
+                    {/* Case-level Approve / Reject */}
+                    <button
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-1 no-print"
+                      onClick={() => handleCaseStatusChange(selectedDoc, "APPROVED")}
+                      title="Approve Case"
+                    >
+                      <CheckCircleIcon className="h-4 w-4" />
+                      <AutoTranslate>Approve</AutoTranslate>
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-1 no-print"
+                      onClick={() => handleCaseStatusChange(selectedDoc, "REJECTED")}
+                      title="Reject Case"
+                    >
+                      <XCircleIcon className="h-4 w-4" />
+                      <AutoTranslate>Reject</AutoTranslate>
+                    </button>
+
                     {/* Print Button */}
                     <button className="printBtn" onClick={printPage} title="Print">
                       <PrinterIcon className="h-6 w-6" />
@@ -840,7 +918,7 @@ const Approve = () => {
                               label: "Evidence Category",
                               value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>,
                             },
-                            // { label: "Status", value: selectedDoc?.approvalStatus },
+                            { label: "Status", value: selectedDoc?.approvalStatus },
                             { label: "Upload By", value: selectedDoc?.employee?.name },
                           ].map((item, idx) => (
                             <p key={idx} className="text-md text-gray-700">
@@ -904,7 +982,7 @@ const Approve = () => {
                           <div
                             className="hidden md:grid bg-gray-100 text-gray-700 font-semibold text-sm px-4 py-2 sticky top-0"
                             style={{
-                              gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(120px, 1fr) minmax(80px, 0.8fr)"
+                              gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(80px, 0.8fr)"
                             }}
                           >
                             <span className="text-left">
@@ -920,14 +998,13 @@ const Approve = () => {
                               <AutoTranslate>Status</AutoTranslate>
                             </span>
                             <span className="text-center no-print">
-                              <AutoTranslate>Action</AutoTranslate>
-                            </span>
-                            <span className="text-center no-print">
                               <AutoTranslate>Open</AutoTranslate>
                             </span>
                           </div>
 
-                          {/* File List */}
+                          {/* File List — read-only. Approval is decided once for the
+                              whole case using the Approve / Reject buttons above;
+                              individual files simply reflect that case decision. */}
                           <ul
                             className={`divide-y divide-gray-200 ${printTrue === false && filteredDocFiles.length > 5
                               ? "max-h-72 overflow-y-auto print:max-h-none print:overflow-visible"
@@ -943,7 +1020,7 @@ const Approve = () => {
                                 <div
                                   className="hidden md:grid items-center px-4 py-3"
                                   style={{
-                                    gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(120px, 1fr) minmax(80px, 0.8fr)"
+                                    gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(80px, 0.8fr)"
                                   }}
                                 >
                                   {/* File Name */}
@@ -971,19 +1048,6 @@ const Approve = () => {
                                     >
                                       {file.status || <AutoTranslate>PENDING</AutoTranslate>}
                                     </span>
-                                  </div>
-
-                                  {/* Select Dropdown */}
-                                  <div className="text-center no-print">
-                                    <select
-                                      className="border px-2 py-1 rounded-md text-sm w-full max-w-[100px]"
-                                      onChange={(e) => handleStatusChange(file, e.target.value)}
-                                      disabled={file.status === "APPROVED" || file.status === "REJECTED"}
-                                    >
-                                      <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                                      <option value="APPROVED"><AutoTranslate>APPROVED</AutoTranslate></option>
-                                      <option value="REJECTED"><AutoTranslate>REJECTED</AutoTranslate></option>
-                                    </select>
                                   </div>
 
                                   {/* Open Button */}
@@ -1054,17 +1118,7 @@ const Approve = () => {
                                     </div>
                                   </div>
 
-                                  <div className="mt-3 flex gap-2 no-print">
-                                    <select
-                                      className="flex-1 border px-2 py-1.5 rounded-md text-sm"
-                                      onChange={(e) => handleStatusChange(file, e.target.value)}
-                                      disabled={file.status === "APPROVED" || file.status === "REJECTED"}
-                                    >
-                                      <option value=""><AutoTranslate>Select Action</AutoTranslate></option>
-                                      <option value="APPROVED"><AutoTranslate>APPROVED</AutoTranslate></option>
-                                      <option value="REJECTED"><AutoTranslate>REJECTED</AutoTranslate></option>
-                                    </select>
-
+                                  <div className="mt-3 flex justify-end no-print">
                                     <button
                                       onClick={() => {
                                         setOpeningFileIndex(index);
@@ -1132,15 +1186,30 @@ const Approve = () => {
             {/* Modal body Content */}
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
-                <p><AutoTranslate>Are you sure you want to approve this evidence?</AutoTranslate></p>
+                <p>
+                  <AutoTranslate>Are you sure you want to approve this case?</AutoTranslate>
+                  {documentToApprove?.fileNo ? ` (${documentToApprove.fileNo})` : ""}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  <AutoTranslate>This will approve all attached files under this case.</AutoTranslate>
+                </p>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="bg-green-500 text-white p-2 rounded-md mr-2"
+                    className="bg-green-500 text-white p-2 rounded-md mr-2 disabled:opacity-50"
                     onClick={approveDocument}
+                    disabled={actionProcessing}
                   >
-                    <AutoTranslate>Yes, Approve</AutoTranslate>
+                    {actionProcessing ? (
+                      <AutoTranslate>Approving...</AutoTranslate>
+                    ) : (
+                      <AutoTranslate>Yes, Approve</AutoTranslate>
+                    )}
                   </button>
-                  <button className="btn-cancel" onClick={() => setIsConfirmModalOpen(false)}>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => setIsConfirmModalOpen(false)}
+                    disabled={actionProcessing}
+                  >
                     <AutoTranslate>Cancel</AutoTranslate>
                   </button>
                 </div>
@@ -1165,6 +1234,10 @@ const Approve = () => {
             {/* Modal body Content */}
             <div className="modal-body">
               <div className="bodyScroller print:overflow-visible print:max-h-none">
+                <p className="text-sm text-gray-500 mb-2">
+                  <AutoTranslate>This will reject all attached files under this case.</AutoTranslate>
+                  {documentToApprove?.fileNo ? ` (${documentToApprove.fileNo})` : ""}
+                </p>
                 <textarea
                   className="w-full border p-2 mb-2"
                   rows="4"
@@ -1182,7 +1255,7 @@ const Approve = () => {
 
                 <div className="flex justify-end">
                   <button
-                    className="bg-red-500 text-white p-2 rounded-md mr-2"
+                    className="bg-red-500 text-white p-2 rounded-md mr-2 disabled:opacity-50"
                     onClick={() => {
                       if (rejectReason.trim().length < 10) {
                         setRejectReasonError(true);
@@ -1191,8 +1264,13 @@ const Approve = () => {
                         handleRejectDocument();
                       }
                     }}
+                    disabled={actionProcessing}
                   >
-                    <AutoTranslate>Submit</AutoTranslate>
+                    {actionProcessing ? (
+                      <AutoTranslate>Submitting...</AutoTranslate>
+                    ) : (
+                      <AutoTranslate>Submit</AutoTranslate>
+                    )}
                   </button>
                   <button
                     className="btn-cancel"
@@ -1200,6 +1278,7 @@ const Approve = () => {
                       setRejectReasonError(false);
                       setIsRejectReasonModalOpen(false);
                     }}
+                    disabled={actionProcessing}
                   >
                     <AutoTranslate>Cancel</AutoTranslate>
                   </button>

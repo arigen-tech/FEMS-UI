@@ -36,8 +36,6 @@ import ForwardingAuthorityDetails from "./ForwardingAuthorityDetails";
 import EvidenceMetadata from "./EvidenceMetadata";
 
 // ============ INITIAL FORM DATA ============
-// Kept as one function so both the initial useState and every
-// post-save/update reset stay in sync automatically.
 const getInitialFormData = () => ({
   fileNo: "",
   title: "",
@@ -67,12 +65,14 @@ const getInitialFormData = () => ({
   designation: "",
   organisation: "",
   forwardingDistrictId: "",
+  cityId: "",
   address: "",
   contactNumber: "",
   email: "",
   forwardingLetterNumber: "",
   forwardingDate: "",
   forwardingLetterFile: null,
+  forwardingLetterPath: "",
   modeOfSubmissionId: "",
   courierAgency: "",
   awbNumber: "",
@@ -249,6 +249,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     fetchUser();
     fetchCaseTypeOptions();
     fetchCrimeTypeOptions();
+    fetchFilesType();
   }, []);
 
   useEffect(() => {
@@ -291,8 +292,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   };
 
   // ============ FIELD CHANGE HELPER ============
-  // Single handler shared by CaseInformation, ForwardingAuthorityDetails,
-  // and EvidenceMetadata so every new field lands in the same formData object.
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -358,8 +357,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-  // Resolve a name for the results table whether the backend sends a nested
-  // object (doc.caseType.name) or a raw id (doc.caseTypeId) — works either way.
   const getCaseTypeName = (doc) => {
     if (doc?.caseType?.name) return doc.caseType.name;
     const match = caseTypeOptions.find((item) => item.id === doc?.caseTypeId);
@@ -1027,7 +1024,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-  // ============ SAVE DOCUMENT ============
+    // ============ SAVE DOCUMENT ============
   const handleAddDocument = async () => {
     if (
       !formData.fileNo ||
@@ -1071,9 +1068,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
     });
 
-    // NOTE: /api/documents/save must be updated on the backend to accept
-    // these extra fields on documentHeader (and a nested forwardingAuthority
-    // object) before they'll actually persist.
     const payload = {
       documentHeader: {
         id: formData.id || null,
@@ -1114,11 +1108,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         designation: formData.designation || null,
         organisation: formData.organisation || null,
         districtId: formData.forwardingDistrictId || null,
+        cityId: formData.cityId || null,
         address: formData.address || null,
         contactNumber: formData.contactNumber || null,
         email: formData.email || null,
         forwardingLetterNumber: formData.forwardingLetterNumber || null,
         forwardingDate: formData.forwardingDate || null,
+        forwardingLetterPath: formData.forwardingLetterPath || null,
         modeOfSubmissionId: formData.modeOfSubmissionId || null,
         courierAgency: formData.courierAgency || null,
         awbConsignmentNumber: formData.awbNumber || null,
@@ -1146,20 +1142,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     try {
       setBProcess(true);
 
-      // If a Forwarding Letter file was chosen, send it as multipart
-      // alongside the JSON payload. Adjust the field name / endpoint
-      // to match whatever your backend expects for this upload.
-      let response;
-      if (formData.forwardingLetterFile) {
-        const multipartData = new FormData();
-        multipartData.append("payload", new Blob([JSON.stringify(payload)], { type: "application/json" }));
-        multipartData.append("forwardingLetter", formData.forwardingLetterFile);
-        response = await apiClient.post("/api/documents/save", multipartData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        response = await apiClient.post("/api/documents/save", payload);
-      }
+      // Always use the existing /save endpoint
+      const response = await apiClient.post("/api/documents/save", payload);
 
       if (response?.status !== 200 || response?.data?.status === 409) {
         const errorMessage = response?.data?.response?.msg || response?.data?.message || "Unknown error";
@@ -1167,37 +1151,48 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         return;
       }
 
+      // If forwarding letter file exists, upload it after document is saved
+      if (formData.forwardingLetterFile && response.data?.response?.documentHeader?.id) {
+        const documentId = response.data.response.documentHeader.id;
+        const fileFormData = new FormData();
+        fileFormData.append("file", formData.forwardingLetterFile);
+        fileFormData.append("documentId", documentId);
+
+        try {
+          await apiClient.post("/api/documents/upload-forwarding-letter", fileFormData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          console.log("Forwarding letter uploaded successfully");
+        } catch (uploadError) {
+          console.error("Failed to upload forwarding letter:", uploadError);
+          showPopup("Document saved but forwarding letter upload failed", "warning");
+        }
+      }
+
       showPopup(response?.data?.response?.msg || "Document saved successfully", "success");
 
+      // Complete form reset
       setUploadedFilePath([]);
       setUploadedFileNames([]);
       setSelectedFiles([]);
-
-      if (response.data?.response?.documentHeader) {
-        setEditingDoc(response.data.response.documentHeader);
-        setFormData(prev => ({
-          ...prev,
-          id: response.data.response.documentHeader.id,
-          fileNo: response.data.response.documentHeader.fileNo || prev.fileNo,
-          title: response.data.response.documentHeader.title || prev.title,
-          subject: response.data.response.documentHeader.subject || prev.subject,
-          category: response.data.response.documentHeader.categoryMaster || prev.category,
-          uploadedFilePaths: [],
-          version: prev.version || '',
-        }));
-      }
-
+      setFormData(getInitialFormData());
       setDynamicMetadata([{ key: "", value: "" }]);
-      fetchDocuments();
-
-      showPopup(
-        "✅ File added successfully! You can add more files with different years.",
-        "success"
-      );
-
+      setDeletedMetaDataIds([]);
+      setCurrYear(null);
+      setScaleValue("2");
+      setFolderUpload(false);
+      setEditingDoc(null);
+      setHandleEditDocumentActive(false);
+      setUnsportFile(false);
+      setUploadProgress(0);
+      
+      // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
       }
+      
+      // Fetch fresh documents list
+      fetchDocuments();
 
     } catch (error) {
       console.error("Error saving document:", error);
@@ -1234,9 +1229,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         isExisting: true,
       }));
 
-    // Start from the same shape as a fresh form, then overlay whatever
-    // the backend actually returned for this document (falls back to
-    // '' for any new field the GET response doesn't include yet).
     setFormData({
       ...getInitialFormData(),
       id: doc.id,
@@ -1270,17 +1262,19 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       collectionDate: doc.collectionDate || '',
       evidenceRemarks: doc.evidenceRemarks || '',
 
-      forwardingAuthorityTypeId: doc.forwardingAuthority?.forwardingAuthorityTypeId || '',
+      forwardingAuthorityTypeId: doc.forwardingAuthority?.forwardingAuthorityType?.id || doc.forwardingAuthority?.forwardingAuthorityTypeId || '',
       authorityName: doc.forwardingAuthority?.authorityName || '',
       designation: doc.forwardingAuthority?.designation || '',
       organisation: doc.forwardingAuthority?.organisation || '',
-      forwardingDistrictId: doc.forwardingAuthority?.districtId || '',
+      forwardingDistrictId: doc.forwardingAuthority?.district?.id || doc.forwardingAuthority?.districtId || '',
+      cityId: doc.forwardingAuthority?.city?.id || doc.forwardingAuthority?.cityId || '',
       address: doc.forwardingAuthority?.address || '',
       contactNumber: doc.forwardingAuthority?.contactNumber || '',
       email: doc.forwardingAuthority?.email || '',
       forwardingLetterNumber: doc.forwardingAuthority?.forwardingLetterNumber || '',
       forwardingDate: doc.forwardingAuthority?.forwardingDate || '',
-      modeOfSubmissionId: doc.forwardingAuthority?.modeOfSubmissionId || '',
+      forwardingLetterPath: doc.forwardingAuthority?.forwardingLetterPath || '',
+      modeOfSubmissionId: doc.forwardingAuthority?.modeOfSubmission?.id || doc.forwardingAuthority?.modeOfSubmissionId || '',
       courierAgency: doc.forwardingAuthority?.courierAgency || '',
       awbNumber: doc.forwardingAuthority?.awbConsignmentNumber || '',
       bookingDate: doc.forwardingAuthority?.bookingDate || '',
@@ -1290,7 +1284,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       parcelId: doc.forwardingAuthority?.parcelId || '',
       parcelNumber: doc.forwardingAuthority?.parcelNumber || '',
       numberOfExhibits: doc.forwardingAuthority?.numberOfExhibits || '',
-      packageTypeId: doc.forwardingAuthority?.packageTypeId || '',
+      packageTypeId: doc.forwardingAuthority?.packageType?.id || doc.forwardingAuthority?.packageTypeId || '',
       sealNumber: doc.forwardingAuthority?.sealNumber || '',
       sealDescription: doc.forwardingAuthority?.sealDescription || '',
       sealCondition: doc.forwardingAuthority?.sealCondition || '',
@@ -1319,7 +1313,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-  // ============ UPDATE DOCUMENT ============
+    // ============ UPDATE DOCUMENT ============
   const handleSaveEdit = async () => {
     const userId = localStorage.getItem("id");
     if (!userId) {
@@ -1364,8 +1358,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       };
     });
 
-    // NOTE: /api/documents/update must be updated on the backend to accept
-    // these extra fields the same way /api/documents/save does.
     const payload = {
       documentHeader: {
         id: editingDoc.id,
@@ -1375,7 +1367,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         categoryMaster: { id: category.id },
         employee: { id: parseInt(userId, 10) },
 
-        caseId: formData.caseId || null, // read-only, kept for reference — backend ignores this on update anyway
+        caseId: formData.caseId || null,
         firNumber: formData.firNumber || null,
         firDate: formData.firDate || null,
         caseTypeId: formData.caseTypeId || null,
@@ -1403,11 +1395,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         designation: formData.designation || null,
         organisation: formData.organisation || null,
         districtId: formData.forwardingDistrictId || null,
+        cityId: formData.cityId || null,
         address: formData.address || null,
         contactNumber: formData.contactNumber || null,
         email: formData.email || null,
         forwardingLetterNumber: formData.forwardingLetterNumber || null,
         forwardingDate: formData.forwardingDate || null,
+        forwardingLetterPath: formData.forwardingLetterPath || null,
         modeOfSubmissionId: formData.modeOfSubmissionId || null,
         courierAgency: formData.courierAgency || null,
         awbConsignmentNumber: formData.awbNumber || null,
@@ -1436,17 +1430,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     try {
       setBProcess(true);
 
-      let response;
-      if (formData.forwardingLetterFile) {
-        const multipartData = new FormData();
-        multipartData.append("payload", new Blob([JSON.stringify(payload)], { type: "application/json" }));
-        multipartData.append("forwardingLetter", formData.forwardingLetterFile);
-        response = await apiClient.put(`/api/documents/update`, multipartData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        response = await apiClient.put(`/api/documents/update`, payload);
-      }
+      // Always use the existing /update endpoint
+      const response = await apiClient.put(`/api/documents/update`, payload);
 
       if (response?.status !== 200 || response?.data?.status === 409) {
         const warningMessage = response?.data?.response?.msg || response?.data?.message || "Unknown error occurred";
@@ -1454,13 +1439,43 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         return;
       }
 
+      // If forwarding letter file exists, upload it after document is updated
+      if (formData.forwardingLetterFile && editingDoc?.id) {
+        const fileFormData = new FormData();
+        fileFormData.append("file", formData.forwardingLetterFile);
+        fileFormData.append("documentId", editingDoc.id);
+
+        try {
+          await apiClient.post("/api/documents/upload-forwarding-letter", fileFormData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          console.log("Forwarding letter uploaded successfully");
+        } catch (uploadError) {
+          console.error("Failed to upload forwarding letter:", uploadError);
+          showPopup("Document updated but forwarding letter upload failed", "warning");
+        }
+      }
+
       showPopup(response?.data?.response?.msg || "Document updated successfully!", "success");
 
+      // Complete form reset
       setUploadedFilePath([]);
       setUploadedFileNames([]);
       setSelectedFiles([]);
       setEditingDoc(null);
+      setHandleEditDocumentActive(false);
       setFormData(getInitialFormData());
+      setDynamicMetadata([{ key: "", value: "" }]);
+      setDeletedMetaDataIds([]);
+      setCurrYear(null);
+      setScaleValue("2");
+      setFolderUpload(false);
+      setUploadProgress(0);
+      
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
 
       fetchDocuments();
     } catch (error) {
@@ -1529,14 +1544,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     return date.toLocaleString("en-GB", options).replace(",", "");
   };
 
-  const generateFileNameFromMetadata = (originalName, index, metadata) => {
-    const now = new Date();
-    const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-    const baseName = metadata.fileNo ? metadata.fileNo.substring(0, 3) : 'DOC';
-    const originalExtension = originalName.split('.').pop() || 'pdf';
-    return `${baseName}_${metadata.branch}_${metadata.department}_${metadata.year}_${metadata.category}_${metadata.version}_${timestamp}_${index + 1}.${originalExtension}`;
-  };
-
   // ============ PAGINATION ============
   const getPageNumbers = () => {
     const maxPageNumbers = 5;
@@ -1568,8 +1575,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   );
 
   const filteredFiles = (filesType ?? []).filter((file) =>
-    file.filetype?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    file.extension?.toLowerCase().includes(searchTerm.toLowerCase())
+    file.filetype?.toLowerCase().includes(searchFileTerm.toLowerCase()) ||
+    file.extension?.toLowerCase().includes(searchFileTerm.toLowerCase())
   );
 
   const filteredDocFiles = useMemo(() => {
@@ -1583,7 +1590,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   }, [selectedDoc, searchFileTerm]);
 
   const hasApprovedFile = uploadedFilePath?.some(file => file?.status === "APPROVED");
-
 
   // ============ LOADING ============
   if (loading) {
@@ -1620,7 +1626,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             categoryOptions={categoryOptions}
             onCategoryChange={handleCategoryChange}
           />
-
 
           {/* ========== ADDITIONAL METADATA ========== */}
           <div className="metaDataCard">
@@ -1699,7 +1704,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               <FiPlus /> <AutoTranslate>Add Metadata</AutoTranslate>
             </button>
           </div>
-
 
           {/* ========== FILE METADATA ========== */}
           <div className="cardLight">
@@ -1826,8 +1830,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   onClick={() => setIsWaitingRoomModalOpen(true)}
                   disabled={!isMetadataComplete || selectedFiles.length > 0}
                   className={`px-6 h-14 rounded-xl transition-all ${(!isMetadataComplete || selectedFiles.length > 0)
-                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                      : "bg-blue-500 text-white"
+                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : "bg-blue-500 text-white"
                     }`}
                 >
                   <AutoTranslate>Choose From Waiting Room</AutoTranslate>
@@ -2436,7 +2440,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               <input
                 type="text"
                 placeholder={getFallbackTranslation('Search file type...', currentLanguage)}
-                value={searchTerm}
+                value={searchFileTerm}
                 onChange={(e) => setSearchFileTerm(e.target.value)}
                 maxLength={20}
                 className="w-full p-2 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
