@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 import ReportReviewComponent from './ReportReviewComponent';
 import ReviewComponent from './ReviewComponent';
+import FinalReviewComponent from './FinalReviewComponent';
 
 const ReportReview = () => {
-  const [showReviewReport, setShowReviewReport] = useState(false);
+  const [activeComponent, setActiveComponent] = useState("A");
   return (
     <div className="">
       <div className="title">
         <h1><AutoTranslate>Report Review</AutoTranslate></h1>
       </div>
 
-      {!showReviewReport && <ReportReviewComponent setShowReviewReport={setShowReviewReport} />}
+      {activeComponent === "A" && (
+        <ReportReviewComponent onView={() => setActiveComponent("B")} />
+      )}
 
-      {showReviewReport && <ReviewComponent setShowReviewReport={setShowReviewReport} />}
+      {activeComponent === "B" && (
+        <ReviewComponent onView={() => setActiveComponent("C")} onBack={() => setActiveComponent("A")} />
+      )}
+
+      {activeComponent === "C" && (
+        <FinalReviewComponent onBack={() => setActiveComponent("B")} />
+      )}
 
     </div>
   )

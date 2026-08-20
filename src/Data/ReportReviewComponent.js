@@ -1,7 +1,7 @@
 import React from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 
-const ReportReviewComponent = ({ setShowReviewReport }) => {
+const ReportReviewComponent = ({ onView }) => {
     return (
         <div class="card">
 
@@ -23,13 +23,13 @@ const ReportReviewComponent = ({ setShowReviewReport }) => {
                         <tr>
                             <th><AutoTranslate>Case No.</AutoTranslate></th>
                             <th><AutoTranslate>FIR No.</AutoTranslate></th>
-                            <th><AutoTranslate>Evidence ID</AutoTranslate></th>
-                            <th><AutoTranslate>Division</AutoTranslate></th>
+                            <th><AutoTranslate>No. of Evidence</AutoTranslate></th>
+                            {/* <th><AutoTranslate>Division</AutoTranslate></th>
                             <th><AutoTranslate>Scientific Officer</AutoTranslate></th>
-                            <th><AutoTranslate>Report No.</AutoTranslate></th>
+                            <th><AutoTranslate>Report No.</AutoTranslate></th> */}
                             <th><AutoTranslate>Submitted Date</AutoTranslate></th>
-                            <th><AutoTranslate>Status</AutoTranslate></th>
-                            <th><AutoTranslate>Action</AutoTranslate></th>
+                            <th><AutoTranslate>Case Status</AutoTranslate></th>
+                            <th className='text-center'><AutoTranslate>Action</AutoTranslate></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,25 +37,25 @@ const ReportReviewComponent = ({ setShowReviewReport }) => {
                             <td><AutoTranslate>SFSL/2026/0145</AutoTranslate></td>
                             <td><AutoTranslate>145/2026</AutoTranslate></td>
                             <td><AutoTranslate>EVD-001</AutoTranslate></td>
-                            <td><AutoTranslate>DNA</AutoTranslate></td>
+                            {/* <td><AutoTranslate>DNA</AutoTranslate></td>
                             <td><AutoTranslate>Officer A</AutoTranslate></td>
-                            <td><AutoTranslate>RPT-001</AutoTranslate></td>
+                            <td><AutoTranslate>RPT-001</AutoTranslate></td> */}
                             <td><AutoTranslate>18-Aug-26</AutoTranslate></td>
                             <td><span className='pending'>Pending for Review</span></td>
-                            <td class="text-center"><button class="btnTable" onClick={() => setShowReviewReport(true)}><AutoTranslate>View</AutoTranslate></button></td>
+                            <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
                         </tr>
 
                         <tr>
                             <td><AutoTranslate>SFSL/2026/0146</AutoTranslate></td>
                             <td><AutoTranslate>146/2026</AutoTranslate></td>
                             <td><AutoTranslate>EVD-002</AutoTranslate></td>
-                            <td><AutoTranslate>Cyber</AutoTranslate></td>
+                            {/* <td><AutoTranslate>Cyber</AutoTranslate></td>
                             <td><AutoTranslate>Officer B</AutoTranslate></td>
-                            <td><AutoTranslate>RPT-002</AutoTranslate></td>
+                            <td><AutoTranslate>RPT-002</AutoTranslate></td> */}
                             <td><AutoTranslate>18-Aug-26</AutoTranslate></td>
                        
                             <td><span className='pending'>Pending for Review</span></td>
-                            <td class="text-center"><button class="btnTable" onClick={() => setShowReviewReport(true)}><AutoTranslate>View</AutoTranslate></button></td>
+                            <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
                         </tr>
 
                         {/* <tr>
