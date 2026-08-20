@@ -5,15 +5,19 @@ import { MASTER_API } from '../API/apiConfig';
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { FiPlus } from "react-icons/fi";
 
-const EvidenceMetadata = ({ formData = {}, onChange, categoryOptions = [], onCategoryChange }) => {
+const EvidenceMetadata = ({
+  category,
+  onCategoryChange,
+  categoryOptions = [],
+  evidenceRows = [],
+  onEvidenceRowsChange,
+}) => {
   const [evidenceTypes, setEvidenceTypes] = useState([]);
   const [evidenceTypesLoading, setEvidenceTypesLoading] = useState(false);
 
-  // Evidence Type cascades off the selected Evidence Category
-  // (the same category already used elsewhere in this form: formData.category)
   useEffect(() => {
     let cancelled = false;
-    const categoryId = formData.category?.id;
+    const categoryId = category?.id;
 
     setEvidenceTypesLoading(true);
     const url = categoryId
@@ -36,120 +40,161 @@ const EvidenceMetadata = ({ formData = {}, onChange, categoryOptions = [], onCat
     return () => {
       cancelled = true;
     };
-  }, [formData.category?.id]);
+  }, [category?.id]);
 
-  const handleChange = (field) => (e) => onChange(field, e.target.value);
+  const updateRow = (index, field, value) => {
+    const updated = evidenceRows.map((row, i) =>
+      i === index ? { ...row, [field]: value } : row
+    );
+    onEvidenceRowsChange(updated);
+  };
+
+  const addRow = () => {
+    onEvidenceRowsChange([
+      ...evidenceRows,
+      { id: `row_${Date.now()}`, categoryId: category?.id || '', evidenceTypeId: '', description: '', file: null },
+    ]);
+  };
+
+  const removeRow = (index) => {
+    if (evidenceRows.length <= 1) return;
+    onEvidenceRowsChange(evidenceRows.filter((_, i) => i !== index));
+  };
+
+  // ✅ CRITICAL FIX: Pass a proper synthetic event to onCategoryChange
+  const handleCategorySelect = (e) => {
+    const selectedId = e.target.value;
+    
+    // 1. Pass the event to the parent's handleCategoryChange
+    if (onCategoryChange) {
+      onCategoryChange(e);
+    }
+
+    // 2. Update all rows to store this categoryId
+    const updatedRows = evidenceRows.map((r) => ({
+      ...r,
+      categoryId: selectedId
+    }));
+    onEvidenceRowsChange(updatedRows);
+  };
 
   return (
     <div className="cardLight">
-      <h2 className="flex align-center gap-2">🔍 <AutoTranslate>Evidence Metadata</AutoTranslate><span className="text-red-500">*</span></h2>
+      <h2 className="flex align-center gap-2 mb-4">
+        🔍 <AutoTranslate>Evidence Metadata</AutoTranslate><span className="text-red-500">*</span>
+      </h2>
 
-      <div class="table-wrapper">
-        <table class="mb-10">
+      <div className="overflow-x-auto">
+        <table className="min-w-full mb-4 border-collapse">
           <thead>
-            <tr>
-              <th style={{width: "20%"}}><AutoTranslate>Evidence Category</AutoTranslate></th>
-              <th style={{width: "20%"}}><AutoTranslate>Evidence Type</AutoTranslate></th>
-              <th style={{width: "35%"}}><AutoTranslate>Evidence Description</AutoTranslate></th>
-              <th style={{width: "20%"}}><AutoTranslate>Choose File</AutoTranslate></th>
-              <th style={{width: "5%"}}><AutoTranslate>Action</AutoTranslate></th>
+            <tr className="bg-gray-50 border-b">
+              <th className="p-3 text-left font-medium text-gray-700" style={{ width: "20%" }}>
+                <AutoTranslate>Evidence Category</AutoTranslate>
+              </th>
+              <th className="p-3 text-left font-medium text-gray-700" style={{ width: "20%" }}>
+                <AutoTranslate>Evidence Type</AutoTranslate>
+              </th>
+              <th className="p-3 text-left font-medium text-gray-700" style={{ width: "35%" }}>
+                <AutoTranslate>Evidence Description</AutoTranslate>
+              </th>
+              <th className="p-3 text-left font-medium text-gray-700" style={{ width: "20%" }}>
+                <AutoTranslate>Choose File</AutoTranslate>
+              </th>
+              <th className="p-3 text-center font-medium text-gray-700" style={{ width: "5%" }}>
+                <AutoTranslate>Action</AutoTranslate>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <select value={formData.category?.id || ''} onChange={onCategoryChange}>
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  {categoryOptions.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select></td>
-              <td>
-                <select
-                  value={formData.evidenceTypeId || ''}
-                  onChange={handleChange('evidenceTypeId')}
-                  disabled={evidenceTypesLoading}
-                >
-                  <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                  {evidenceTypes.map((item) => (
-                    <option key={item.id} value={item.id}>{item.name}</option>
-                  ))}
-                </select></td>
-              <td>
-                <textarea rows="2" value={formData.subject || ''} onChange={handleChange('subject')} style={{height:"40px"}} required></textarea></td>
-              <td><input type="file" required="" /></td>
-              <td>
-                <div className='items-center'>
-                  <button type="button" className="btn-del"><TrashIcon /></button>
-                </div>
-              </td>
-            </tr>
+            {evidenceRows.map((row, index) => {
+              const isFirstRow = index === 0;
+
+              return (
+                <tr key={row.id} className="border-b border-gray-100">
+                  
+                  {/* EVIDENCE CATEGORY - Separate cell for each row */}
+                  <td className="p-3">
+                    <select
+                      className={`w-full p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        ${!isFirstRow ? 'bg-gray-100 text-gray-600 cursor-not-allowed border-gray-200' : 'bg-white border-gray-300'}`}
+                      value={category?.id || ''}
+                      disabled={!isFirstRow}
+                      onChange={handleCategorySelect}
+                    >
+                      <option value=""><AutoTranslate>Select Category</AutoTranslate></option>
+                      {categoryOptions.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </td>
+
+                  {/* EVIDENCE TYPE - Always Active */}
+                  <td className="p-3">
+                    <select
+                      className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={row.evidenceTypeId || ''}
+                      onChange={(e) => updateRow(index, 'evidenceTypeId', e.target.value)}
+                      disabled={evidenceTypesLoading}
+                    >
+                      <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                      {evidenceTypes.map((item) => (
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                      ))}
+                    </select>
+                  </td>
+
+                  {/* EVIDENCE DESCRIPTION - Always Active */}
+                  <td className="p-3">
+                    <input
+                      type="text"
+                      className="w-full p-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter description"
+                      value={row.description || ''}
+                      onChange={(e) => updateRow(index, 'description', e.target.value)}
+                      required
+                    />
+                  </td>
+
+                  {/* CHOOSE FILE - Always Active */}
+                  <td className="p-3">
+                    <input
+                      type="file"
+                      className="w-full p-1.5 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required={!row.file}
+                      onChange={(e) => updateRow(index, 'file', e.target.files?.[0] || null)}
+                    />
+                    {row.file && (
+                      <div className="text-xs text-gray-500 mt-1 truncate max-w-[200px]">
+                        {row.file.name}
+                      </div>
+                    )}
+                  </td>
+
+                  {/* ACTION - Delete */}
+                  <td className="p-3 text-center">
+                    <button
+                      type="button"
+                      className="text-red-500 hover:text-red-700 transition p-1 rounded-full hover:bg-red-50"
+                      onClick={() => removeRow(index)}
+                      disabled={evidenceRows.length <= 1}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
-        <button type="button" className="btn-add">
+
+        <button 
+          type="button" 
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center gap-2 text-sm font-medium"
+          onClick={addRow}
+        >
           <FiPlus /> <AutoTranslate>Add</AutoTranslate>
         </button>
       </div>
-
-
-
-      {/* <div className="grid grid-col-4 mb-4">
-        <div className="form-group">
-          <label><AutoTranslate>Evidence ID  </AutoTranslate></label>
-          <input type="text" value={formData.evidenceId || ''} onChange={handleChange('evidenceId')} required />
-        </div>
-        <div className="form-group">
-          <label><AutoTranslate>Exhibit Number </AutoTranslate></label>
-          <input type="text" value={formData.exhibitNumber || ''} onChange={handleChange('exhibitNumber')} required />
-        </div>
-
-        <div className="form-group">
-          <label><AutoTranslate>Evidence Category</AutoTranslate></label>
-          <select value={formData.category?.id || ''} onChange={onCategoryChange}>
-            <option value=""><AutoTranslate>Select</AutoTranslate></option>
-            {categoryOptions.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label><AutoTranslate>Evidence Type</AutoTranslate></label>
-          <select
-            value={formData.evidenceTypeId || ''}
-            onChange={handleChange('evidenceTypeId')}
-            disabled={evidenceTypesLoading}
-          >
-            <option value=""><AutoTranslate>Select</AutoTranslate></option>
-            {evidenceTypes.map((item) => (
-              <option key={item.id} value={item.id}>{item.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label><AutoTranslate>Evidence Description  </AutoTranslate></label>
-          <textarea rows="2" value={formData.subject || ''} onChange={handleChange('subject')} required></textarea>
-        </div>
-        <div className="form-group">
-          <label><AutoTranslate>Source</AutoTranslate></label>
-          <input type="text" value={formData.evidenceSource || ''} onChange={handleChange('evidenceSource')} required />
-        </div>
-        <div className="form-group">
-          <label><AutoTranslate>Collection Location </AutoTranslate></label>
-          <input type="text" value={formData.collectionLocation || ''} onChange={handleChange('collectionLocation')} required />
-        </div>
-        <div className="form-group">
-          <label><AutoTranslate>Collection Date </AutoTranslate></label>
-          <input type="date" value={formData.collectionDate || ''} onChange={handleChange('collectionDate')} required />
-        </div>
-
-        <div className="form-group">
-          <label><AutoTranslate>Remarks </AutoTranslate></label>
-          <textarea rows="2" value={formData.evidenceRemarks || ''} onChange={handleChange('evidenceRemarks')} required></textarea>
-        </div>
-      </div> */}
-
     </div>
   );
 };

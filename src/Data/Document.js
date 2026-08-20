@@ -39,7 +39,7 @@ import EvidenceMetadata from "./EvidenceMetadata";
 const getInitialFormData = () => ({
   fileNo: "",
   title: "",
-  subject: "",
+  subject: null,
   version: "",
   category: null,
   year: null,
@@ -98,14 +98,9 @@ const getInitialFormData = () => ({
   messengerIdRef: "",
   handoverDateTime: "",
 
-  // Evidence Metadata (EvidenceMetadata.jsx)
+  // Evidence Metadata (EvidenceMetadata.jsx) — header-level only now
   evidenceId: "",
   exhibitNumber: "",
-  evidenceTypeId: "",
-  evidenceSource: "",
-  collectionLocation: "",
-  collectionDate: "",
-  evidenceRemarks: "",
 });
 
 const DocumentManagement = ({ fieldsDisabled }) => {
@@ -132,7 +127,15 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   const [scaleValue, setScaleValue] = useState("2");
   const [uploadedFileNames, setUploadedFileNames] = useState([]);
   const [uploadedFilePath, setUploadedFilePath] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  // ✅ Evidence rows now drive file selection + per-file evidence type/description.
+  // selectedFiles is derived from evidenceRows for backward compatibility with
+  // the rest of the upload pipeline below.
+  const [evidenceRows, setEvidenceRows] = useState([
+    { id: 'row_initial', evidenceTypeId: '', description: '', file: null },
+  ]);
+  const selectedFiles = evidenceRows.filter((r) => r.file).map((r) => r.file);
+
   const [handleEditDocumentActive, setHandleEditDocumentActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -460,9 +463,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     setScaleValue(e.target.value);
   };
 
+  // ⚠️ File selection now happens per evidence row via EvidenceMetadata.
+  // This handler is kept only so the (currently commented-out) bulk file
+  // input in the JSX below doesn't break if re-enabled.
   const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files);
+    console.warn('handleFileSelect called but file selection now happens via evidence rows.');
   };
 
   const handleVersionChange = (index, newVersion) => {
@@ -734,31 +739,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   };
 
   // ============ DROPZONE ============
+  // ⚠️ Bulk drag-and-drop is currently unused; files are chosen per evidence row
+  // in EvidenceMetadata. Kept as a no-op so useDropzone below doesn't error.
   const onDrop = useCallback(
     async (acceptedFiles, event) => {
-      let isFolderDropped = false;
-      acceptedFiles.forEach((file) => {
-        const path = file.path || file.webkitRelativePath || file.name;
-        const slashCount = (path.match(/[\\/]/g) || []).length;
-        if (slashCount > 1) isFolderDropped = true;
-      });
-
-      if (isFolderDropped && !folderUpload) {
-        showPopup("Please enable 'folderUpload' to upload folders", "warning");
-        return;
-      }
-
-      if (!isFolderDropped && folderUpload) {
-        showPopup("Please disable 'folderUpload' to upload files.", "warning");
-        return;
-      }
-
-      setSelectedFiles(acceptedFiles);
-      const dataTransfer = new DataTransfer();
-      acceptedFiles.forEach((file) => dataTransfer.items.add(file));
-      if (fileInputRef.current) {
-        fileInputRef.current.files = dataTransfer.files;
-      }
+      // no-op: file selection now happens via evidenceRows
     },
     [folderUpload]
   );
@@ -774,6 +759,15 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   const handleUploadDocument = async () => {
     if (selectedFiles.length === 0) {
       showPopup("Please select at least one file to upload.", "warning");
+      return;
+    }
+
+    // ✅ Every file row must have Evidence Type + Description filled in
+    const incompleteRow = evidenceRows.find(
+      (r) => r.file && (!r.evidenceTypeId || !r.description?.trim())
+    );
+    if (incompleteRow) {
+      showPopup("Please select an Evidence Type and enter a Description for every file.", "warning");
       return;
     }
 
@@ -874,6 +868,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
 
       if (result.uploadedFiles?.length > 0) {
+        // ✅ Match each uploaded file back to its originating evidence row
+        // (same order as selectedFiles / renamedFiles, since both were built
+        // from evidenceRows.filter(r => r.file) in the same order).
+        const rowsWithFiles = evidenceRows.filter((r) => r.file);
+
         const mappedFiles = result.uploadedFiles
           .filter(fileObj => fileObj !== undefined && fileObj !== null)
           .map((fileObj, index) => ({
@@ -887,6 +886,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             mimeType: fileObj.contentType || null,
             pageCounts: fileObj.pageCount || null,
             displayName: renamedFiles[index]?.renamed || fileObj.originalName || `file_${index + 1}`,
+            evidenceTypeId: rowsWithFiles[index]?.evidenceTypeId || null,
+            evidenceDescription: rowsWithFiles[index]?.description || null,
           }));
 
         setUploadedFilePath(prev => {
@@ -906,6 +907,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         if (fileInputRef.current) {
           fileInputRef.current.value = null;
         }
+
+        // ✅ Reset evidence rows for the next batch of files
+        setEvidenceRows([{ id: `row_${Date.now()}`, evidenceTypeId: '', description: '', file: null }]);
 
         showPopup("Files uploaded successfully!", "success");
       }
@@ -1024,19 +1028,48 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-    // ============ SAVE DOCUMENT ============
+  // ============ SAVE DOCUMENT ============
   const handleAddDocument = async () => {
+    // ==========================================
+    // 🔍 DEBUG: Print current state values to Console (F12)
+    // ==========================================
+    console.log("=== 🔍 DEBUG: handleAddDocument Validation Check ===");
+    console.log("1. formData.fileNo:", formData.fileNo);
+    console.log("2. formData.title:", formData.title);
+    console.log("3. formData.subject:", formData.subject);
+    console.log("4. formData.category:", formData.category);
+    console.log("5. formData.year:", formData.year);
+    console.log("6. formData.version:", formData.version);
+    console.log("7. formData.uploadedFilePaths length:", formData.uploadedFilePaths.length);
+    console.log("=====================================================");
+
+    // ==========================================
+    // ✅ REMOVED SUBJECT VALIDATION
+    // ==========================================
     if (
       !formData.fileNo ||
       !formData.title ||
-      !formData.subject ||
+      // !formData.subject ||  <-- REMOVED: Subject is now optional
       !formData.category ||
+      !formData.year ||
+      !formData.version ||
       formData.uploadedFilePaths.length === 0
     ) {
+      console.error("=== ❌ VALIDATION FAILED ===");
+      if (!formData.fileNo) console.error("❌ File No is missing");
+      if (!formData.title) console.error("❌ Title is missing");
+      if (!formData.category) console.error("❌ Category is missing");
+      if (!formData.year) console.error("❌ Year is missing");
+      if (!formData.version) console.error("❌ Version is missing");
+      if (formData.uploadedFilePaths.length === 0) console.error("❌ No uploaded files found");
+
       showPopup("Please fill in all the required fields and upload a file.", "error");
       return;
     }
 
+    // ==========================================
+    // REST OF YOUR EXISTING CODE (Keep everything below this)
+    // ==========================================
     const versionedFilePaths = formData.uploadedFilePaths.map((file) => {
       const { version = formData.version || "1.0", yearMaster, displayName } = file;
       const filePath = file.isWaitingRoomFile ? file.displayName : file.path;
@@ -1052,6 +1085,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         waitingRoomId: file.waitingRoomId || null,
         isWaitingRoomFile: file.isWaitingRoomFile || false,
         displayName: displayName || filePath?.split("/").pop() || 'unknown',
+        evidenceTypeId: file.evidenceTypeId || null,
+        evidenceDescription: file.evidenceDescription || null,
       };
     });
 
@@ -1073,7 +1108,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         id: formData.id || null,
         fileNo: formData.fileNo,
         title: formData.title,
-        subject: formData.subject,
+        subject: formData.subject || "", // If empty, send empty string
         categoryMaster: { id: formData.category.id },
         employee: { id: parseInt(UserId, 10) },
         qrPath: formData.qrPath || null,
@@ -1096,11 +1131,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         // Evidence Metadata
         evidenceId: formData.evidenceId || null,
         exhibitNumber: formData.exhibitNumber || null,
-        evidenceTypeId: formData.evidenceTypeId || null,
-        source: formData.evidenceSource || null,
-        collectionLocation: formData.collectionLocation || null,
-        collectionDate: formData.collectionDate || null,
-        evidenceRemarks: formData.evidenceRemarks || null,
       },
       forwardingAuthority: {
         forwardingAuthorityTypeId: formData.forwardingAuthorityTypeId || null,
@@ -1174,7 +1204,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       // Complete form reset
       setUploadedFilePath([]);
       setUploadedFileNames([]);
-      setSelectedFiles([]);
+      setEvidenceRows([{ id: `row_${Date.now()}`, evidenceTypeId: '', description: '', file: null }]);
       setFormData(getInitialFormData());
       setDynamicMetadata([{ key: "", value: "" }]);
       setDeletedMetaDataIds([]);
@@ -1185,12 +1215,12 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       setHandleEditDocumentActive(false);
       setUnsportFile(false);
       setUploadProgress(0);
-      
+
       // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
       }
-      
+
       // Fetch fresh documents list
       fetchDocuments();
 
@@ -1226,6 +1256,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         fileSizeBytes: detail.fileSizeBytes || null,
         fileSizeHuman: detail.fileSizeHuman || null,
         pageCounts: detail.pageCounts || null,
+        // ✅ per-file evidence metadata carried through for update round-trip
+        evidenceTypeId: detail.evidenceTypeId ?? '',
+        evidenceDescription: detail.evidenceDescription ?? '',
         isExisting: true,
       }));
 
@@ -1254,13 +1287,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       dateOfIncident: doc.dateOfIncident || '',
       incidentLocation: doc.incidentLocation || '',
 
+      // Evidence Metadata — header-level only now
       evidenceId: doc.evidenceId || '',
       exhibitNumber: doc.exhibitNumber || '',
-      evidenceTypeId: doc.evidenceTypeId || '',
-      evidenceSource: doc.source || '',
-      collectionLocation: doc.collectionLocation || '',
-      collectionDate: doc.collectionDate || '',
-      evidenceRemarks: doc.evidenceRemarks || '',
 
       forwardingAuthorityTypeId: doc.forwardingAuthority?.forwardingAuthorityType?.id || doc.forwardingAuthority?.forwardingAuthorityTypeId || '',
       authorityName: doc.forwardingAuthority?.authorityName || '',
@@ -1298,6 +1327,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     setUploadedFileNames(existingFiles.map((file) => file.name));
     setUploadedFilePath(existingFiles);
 
+    // ✅ Fresh row for adding new files while editing this case
+    setEvidenceRows([{ id: `row_${Date.now()}`, evidenceTypeId: '', description: '', file: null }]);
+
     const backendMetadata = doc.metadataList || [];
     const formattedMetadata = backendMetadata
       .filter(item => item !== undefined && item !== null)
@@ -1313,7 +1345,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-    // ============ UPDATE DOCUMENT ============
+  // ============ UPDATE DOCUMENT ============
   const handleSaveEdit = async () => {
     const userId = localStorage.getItem("id");
     if (!userId) {
@@ -1355,6 +1387,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         waitingRoomId: file.waitingRoomId || null,
         isWaitingRoomFile: file.isWaitingRoomFile || false,
         displayName: displayName || filePath?.split("/").pop() || 'unknown',
+        evidenceTypeId: file.evidenceTypeId || null,
+        evidenceDescription: file.evidenceDescription || null,
       };
     });
 
@@ -1383,11 +1417,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
         evidenceId: formData.evidenceId || null,
         exhibitNumber: formData.exhibitNumber || null,
-        evidenceTypeId: formData.evidenceTypeId || null,
-        source: formData.evidenceSource || null,
-        collectionLocation: formData.collectionLocation || null,
-        collectionDate: formData.collectionDate || null,
-        evidenceRemarks: formData.evidenceRemarks || null,
       },
       forwardingAuthority: {
         forwardingAuthorityTypeId: formData.forwardingAuthorityTypeId || null,
@@ -1461,7 +1490,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       // Complete form reset
       setUploadedFilePath([]);
       setUploadedFileNames([]);
-      setSelectedFiles([]);
+      setEvidenceRows([{ id: `row_${Date.now()}`, evidenceTypeId: '', description: '', file: null }]);
       setEditingDoc(null);
       setHandleEditDocumentActive(false);
       setFormData(getInitialFormData());
@@ -1471,7 +1500,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       setScaleValue("2");
       setFolderUpload(false);
       setUploadProgress(0);
-      
+
       // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
@@ -1619,12 +1648,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           {/* Forwarding Authority Details component */}
           <ForwardingAuthorityDetails formData={formData} onChange={handleFieldChange} />
 
-          {/* Evidence Metadata component */}
+          {/* Evidence Metadata component — category is shared/case-level, rows are per-file */}
           <EvidenceMetadata
-            formData={formData}
-            onChange={handleFieldChange}
-            categoryOptions={categoryOptions}
+            category={formData.category}
             onCategoryChange={handleCategoryChange}
+            categoryOptions={categoryOptions}
+            evidenceRows={evidenceRows}
+            onEvidenceRowsChange={setEvidenceRows}
           />
 
           {/* ========== ADDITIONAL METADATA ========== */}
