@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
-import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
-import PreExamination from './PreExamination';
-import PreExamine from './PreExamine';
+import AutoTranslate from '../i18n/AutoTranslate';
+import PreExaminationList from './PreExaminationList';
+import PreExamineForm from './PreExamineForm';
 
 const PreExaminationModule = () => {
-    const [showPreExamine, setShowPreExamine] = useState(false);
-    return (
-        <div className="">
-            <div className="title">
-                <h1><AutoTranslate>Pre-Examination</AutoTranslate></h1>
-            </div>
+  const [activeCaseId, setActiveCaseId] = useState(null);
 
-            {!showPreExamine && <PreExamination setShowPreExamine={setShowPreExamine} />}
-
-            {showPreExamine && <PreExamine setShowPreExamine={setShowPreExamine} />}
-
-        </div>
-    )
-}
+  return (
+    <div className="">
+      <div className="title">
+        <h1><AutoTranslate>Pre-Examination</AutoTranslate></h1>
+      </div>
+      {!activeCaseId && (
+        <PreExaminationList onOpenCase={(id) => setActiveCaseId(id)} />
+      )}
+      {activeCaseId && (
+        <PreExamineForm
+          documentHeaderId={activeCaseId}
+          onBack={() => setActiveCaseId(null)}
+        />
+      )}
+    </div>
+  );
+};
 
 export default PreExaminationModule;
