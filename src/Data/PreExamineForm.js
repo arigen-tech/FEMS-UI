@@ -573,7 +573,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                     </td>
                     <td>
                       <input
-                        type="text"
+                        type="text" style={{width:"240px"}}
                         value={assignments[row.documentDetailId]?.remark || ''}
                         onChange={(e) => handleAssignmentChange(row.documentDetailId, 'remark', e.target.value)}
                         placeholder="Add remark"

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
 
-const ReferralTransferComponent = ({ onView }) => {
-    // get Current Role from local Storage
-    const currentRole = localStorage.getItem("role") || "";
-
+const ReferralTransferComponent = ({ onView, currentRole }) => {
+   
     return (
         <div className="">
             <div className="title">
@@ -46,7 +44,7 @@ const ReferralTransferComponent = ({ onView }) => {
                                 <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
                                 <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
                                 <td><AutoTranslate>18-Aug</AutoTranslate></td>
-                                <td><span className='pending'>Pending</span></td>
+                                <td><span className='pending'>Reffered for External Examination</span></td>
                                 <td class="text-center"><button class="btnTable" onClick={onView}><span class="">View</span></button></td>
                             </tr>
                             {/* <tr>
@@ -77,7 +75,7 @@ const ReferralTransferComponent = ({ onView }) => {
                                 <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
                                 <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
                                 <td><AutoTranslate>EVD-002	Cyber</AutoTranslate></td>
-                                <td><span className='approved'>Acceptance</span></td>
+                                <td><span className='pending'>Pending Acceptance</span></td>
                                 <td class="text-center"><button class="btnTable" onClick={onView}><span class="">View</span></button></td>
                             </tr>
                             {/* <tr>

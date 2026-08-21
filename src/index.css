@@ -949,7 +949,11 @@ h2 {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 4px;
+            padding: 8px;
+            & img{
+                width: 100%;
+                height: 100%;
+            }
         }
     }
 
@@ -1309,7 +1313,7 @@ h2 {
         background: var(--white-color);
         border: solid 1px var(--border-color-15);
         display: block;
-        width: 100%;
+        /* width: 100%; */
         font-size: 16px;
         color: var(--black-color-80);
         font-weight: 400;

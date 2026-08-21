@@ -4,10 +4,12 @@ import ReferralTransferView from './ReferralTransferView';
 
 const ReferralTransfer = () => {
     const [transferView, setTransferView] = useState(false);
+     // get Current Role from local Storage
+    const currentRole = localStorage.getItem("role") || "";
     return (
         <>
-            {!transferView && <ReferralTransferComponent onView={() => setTransferView(true)} />}
-            {transferView && <ReferralTransferView onBack={() => setTransferView(false)} />}
+            {!transferView && <ReferralTransferComponent onView={() => setTransferView(true)} currentRole={currentRole} />}
+            {transferView && <ReferralTransferView onBack={() => setTransferView(false)} currentRole={currentRole} />}
         </>
     )
 }
