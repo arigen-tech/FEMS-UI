@@ -11,6 +11,9 @@ import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import ReportReviewLayout from "./Pages/ReportReviewLayout";
 import ReferralTransferLayout from "./Pages/ReferralTransferLayout";
+import ReferralPreExaminationLayout from "./Pages/ReferralPreExaminationLayout";
+import ReferralReportEntryLayout from "./Pages/ReferralReportEntryLayout";
+import ReferralReportReviewLayout from "./Pages/ReferralReportReviewLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -100,7 +103,10 @@ function App() {
               <Route path="/notifications" element={<Notification />} />
               <Route path="/adminOCRResponce" element={<AdminsOCRResponce />} />
               <Route path="/profile" element={<ChangePasswordPage />} />
-
+              <Route path="/referral-pre-examination" element={<ReferralPreExaminationLayout />} />
+              <Route path="/referral-report-entry" element={<ReferralReportEntryLayout />} />
+              <Route path="/referral-report-review" element={<ReferralReportReviewLayout />} />        
+              
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/newDash" element={<Dashboard />} />
@@ -165,7 +171,8 @@ function App() {
                 <Route path="/report-upload" element={<ReportUploadLayout/>} />
                 <Route path="/dispatch" element={<DispatchLayout/>} />
                 <Route path="/report-review" element={<ReportReviewLayout />} />
-                <Route path="/referral-transfer" element={<ReferralTransferLayout />} />
+                <Route path="/referral-transfer" element={<ReferralTransferLayout />} />              
+                
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />

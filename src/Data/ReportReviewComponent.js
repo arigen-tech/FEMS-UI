@@ -1,5 +1,6 @@
 import React from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
+import { Link } from 'react-router-dom';
 
 const ReportReviewComponent = ({ onView }) => {
     return (
@@ -56,6 +57,21 @@ const ReportReviewComponent = ({ onView }) => {
                        
                             <td><span className='pending'>Pending for Review</span></td>
                             <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
+                        </tr>
+
+                        <tr>
+                            <td><AutoTranslate>SFSL/2026/0147</AutoTranslate></td>
+                            <td><AutoTranslate>147/2026</AutoTranslate></td>
+                            <td><AutoTranslate>EVD-003</AutoTranslate></td>
+                            {/* <td><AutoTranslate>Cyber</AutoTranslate></td>
+                            <td><AutoTranslate>Officer B</AutoTranslate></td>
+                            <td><AutoTranslate>RPT-002</AutoTranslate></td> */}
+                            <td><AutoTranslate>22-Aug-26</AutoTranslate></td>
+                       
+                            <td><span className='pending'>Referral Report Pending</span></td>
+                            <td class="text-center">
+                                <Link to="/referral-report-review"><button class="btnTable"><AutoTranslate>View</AutoTranslate></button></Link>
+                            </td>
                         </tr>
 
                         {/* <tr>

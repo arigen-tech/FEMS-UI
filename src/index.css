@@ -237,6 +237,7 @@ a:focus {
         line-height: 1.5;
         border-radius: 5px;
         padding: 8px 12px;
+        padding: 4px 8px;
     }
 
     & input,
@@ -323,8 +324,29 @@ a:focus {
             margin-top: -3px;
         }
     }
+    /* Chrome / Edge / Safari */
+& input[type="file"]::file-selector-button {
+    background: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
+/* Firefox */
+& input[type="file"]::-moz-file-upload-button {
+    background: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+}
+
+/* *****-----Form Group End-----******* */
 
 
 .checkboxGroup {

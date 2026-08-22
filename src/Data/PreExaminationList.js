@@ -4,6 +4,7 @@ import apiClient from "../API/apiClient";
 import LoadingComponent from '../Components/LoadingComponent';
 import AutoTranslate from '../i18n/AutoTranslate';
 import { API_HOST } from "../API/apiConfig";
+import { Link } from "react-router-dom";
 
 const PreExaminationList = ({ onOpenCase }) => {
   const [cases, setCases] = useState([]);
@@ -128,6 +129,22 @@ const PreExaminationList = ({ onOpenCase }) => {
                 </td>
               </tr>
             )}
+            <tr>
+              <td>case4</td>
+              <td>Attempt to Murder</td>
+              <td>51245</td>
+              <td>kendrapada police station </td>
+              <td class="text-center">3</td>
+              <td>High</td>
+              <td class="text-center"><span class="status-badge pending">Referral Pre-Examination Pending</span></td>
+              <td className="text-center">
+                <Link to="/referral-pre-examination">
+                  <button className="btnTable">
+                    <AutoTranslate>View & Pre-Examine</AutoTranslate>
+                  </button>
+                </Link>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
