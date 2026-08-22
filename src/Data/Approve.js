@@ -774,7 +774,14 @@ const Approve = () => {
                       </div>
                     </td>
                     <td className="text-center">
-                      <div className="btn-center gap-2 flex justify-center">
+                    <select
+                        className="border px-2 py-1 rounded-md text-sm w-full" style={{width:"110px", fontSize:"13px"}}
+                        onChange={(e) => handleCaseStatusChange(doc, e.target.value)}>
+                        <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                        <option value="APPROVED"><AutoTranslate>APPROVED</AutoTranslate></option>
+                        <option value="REJECTED"><AutoTranslate>REJECTED</AutoTranslate></option>
+                      </select>
+                      {/* <div className="btn-center gap-2 flex justify-center">
                         <button
                           title="Approve Case"
                           className="text-green-600 hover:text-green-800"
@@ -789,7 +796,7 @@ const Approve = () => {
                         >
                           <XCircleIcon className="h-6 w-6" />
                         </button>
-                      </div>
+                      </div> */}
                     </td>
                   </tr>
                 ))
