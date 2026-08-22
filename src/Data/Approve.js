@@ -687,40 +687,40 @@ const Approve = () => {
           <table className="">
             <thead>
               <tr>
-                <th className="text-center">
+                {/* <th className="text-center">
                   <AutoTranslate>SN</AutoTranslate>
+                </th> */}
+                <th>
+                  <AutoTranslate>Case No.</AutoTranslate>
                 </th>
                 <th>
                   <AutoTranslate>Case Title</AutoTranslate>
                 </th>
                 <th>
-                  <AutoTranslate>Case No</AutoTranslate>
+                  <AutoTranslate>FIR No.</AutoTranslate>
                 </th>
-                <th>
-                  <AutoTranslate>Case Description</AutoTranslate>
-                </th>
-                <th>
+                {/* <th>
                   <AutoTranslate>Laboratories</AutoTranslate>
-                </th>
-                <th>
+                </th> */}
+                {/* <th>
                   <AutoTranslate>Division</AutoTranslate>
-                </th>
+                </th> */}
                 <th>
-                  <AutoTranslate>Evidence Category</AutoTranslate>
+                  <AutoTranslate>FIR Date</AutoTranslate>
                 </th>
-                <th>
-                  <AutoTranslate>Uploaded Date</AutoTranslate>
-                </th>
-                <th>
+                {/* <th>
+                  <AutoTranslate>Case Registered Date</AutoTranslate>
+                </th> */}
+                {/* <th>
                   <AutoTranslate>User</AutoTranslate><AutoTranslate> Name</AutoTranslate>
-                </th>
-                <th>
+                </th> */}
+                {/* <th>
                   <AutoTranslate>No. Of Attached Files</AutoTranslate>
-                </th>
+                </th> */}
                 <th className="text-center">
                   <AutoTranslate>View</AutoTranslate>
                 </th>
-                <th className="text-center">
+                <th className="text-center" style={{width:"16%"}}>
                   <AutoTranslate>Action</AutoTranslate>
                 </th>
               </tr>
@@ -737,34 +737,35 @@ const Approve = () => {
                         : ''
                     }
                   >
-                    <td className="text-center">
+                    {/* <td className="text-center">
                       {(currentPage - 1) * itemsPerPage + index + 1}
-                    </td>
-                    <td>{doc.title}</td>
+                    </td> */}
                     <td>{doc.fileNo}</td>
-                    <td>{doc.subject}</td>
-                    <td>
+                    <td>{doc.title}</td>
+                    <td>{doc.firNumber}</td>
+                    {/* <td>
                       {doc.branchMaster
                         ? doc.branchMaster?.name
                         : <AutoTranslate>No Laboratories</AutoTranslate>}
-                    </td>
-                    <td>
+                    </td> */}
+                    {/* <td>
                       {doc.departmentMaster
                         ? doc.departmentMaster?.name
                         : <AutoTranslate>No Divisions</AutoTranslate>}
-                    </td>
+                    </td> */}
                     <td>
-                      {doc.categoryMaster ? doc.categoryMaster.name : ""}
+                      {new Date(doc.firDate).toLocaleDateString()}
+                      {/* {doc.categoryMaster ? doc.categoryMaster.name : ""} */}
                     </td>
-                    <td>
+                    {/* <td>
                       {new Date(doc.createdOn).toLocaleDateString()}
-                    </td>
+                    </td> */}
 
-                    <td>
+                    {/* <td>
                       {doc.employee ? doc.employee.name : "N/A"}
-                    </td>
+                    </td> */}
 
-                    <td className="text-center">{doc.documentDetails.length}</td>
+                    {/* <td className="text-center">{doc.documentDetails.length}</td> */}
                     <td className="text-center">
                       <div className="btn-center">
                         <button className="viewBtn" onClick={() => openModal(doc)}>
@@ -774,29 +775,10 @@ const Approve = () => {
                       </div>
                     </td>
                     <td className="text-center">
-                    <select
-                        className="border px-2 py-1 rounded-md text-sm w-full" style={{width:"110px", fontSize:"13px"}}
-                        onChange={(e) => handleCaseStatusChange(doc, e.target.value)}>
-                        <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                        <option value="APPROVED"><AutoTranslate>APPROVED</AutoTranslate></option>
-                        <option value="REJECTED"><AutoTranslate>REJECTED</AutoTranslate></option>
-                      </select>
-                      {/* <div className="btn-center gap-2 flex justify-center">
-                        <button
-                          title="Approve Case"
-                          className="text-green-600 hover:text-green-800"
-                          onClick={() => handleCaseStatusChange(doc, "APPROVED")}
-                        >
-                          <CheckCircleIcon className="h-6 w-6" />
-                        </button>
-                        <button
-                          title="Reject Case"
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => handleCaseStatusChange(doc, "REJECTED")}
-                        >
-                          <XCircleIcon className="h-6 w-6" />
-                        </button>
-                      </div> */}
+                      <div className="btn-group-table">
+                        <button title="Approve Case" className="btn btn-approve" onClick={() => handleCaseStatusChange(doc, "APPROVED")}>Approve</button>
+                        <button title="Reject Case" className="btn btn-reject" onClick={() => handleCaseStatusChange(doc, "REJECTED")}>Reject</button>
+                      </div>
                     </td>
                   </tr>
                 ))

@@ -1422,8 +1422,6 @@ h2 {
     }
 }
 
-
-
 .paginationWp {
     display: flex;
     justify-content: space-between;
@@ -2204,6 +2202,27 @@ h2 {
 .viewDoc:hover {
     background-color: rgb(0 0 0/ 0.06);
     box-shadow: 0 5px 8px rgba(0 0 0/0.1);
+}
+
+.btn-approve{
+    background-color: var(--approved-bg);
+    color: var(--approved-color);
+}
+.btn-reject{
+    background-color: var(--rejected-bg);
+    color: var(--rejected-color);
+}
+
+.btn-group-table{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    & button{
+        font-size: 14px;
+        text-shadow: none;
+        padding: 4px 10px;
+    }
 }
 
 /* *********----Buttons end---******** */
