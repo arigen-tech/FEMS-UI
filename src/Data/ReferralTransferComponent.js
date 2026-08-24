@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
+import { Link } from 'react-router-dom';
 
 const ReferralTransferComponent = ({ onView, currentRole }) => {
    
@@ -32,7 +33,7 @@ const ReferralTransferComponent = ({ onView, currentRole }) => {
                                 <th><AutoTranslate>From Laboratory</AutoTranslate></th>
                                 <th><AutoTranslate>To Laboratory</AutoTranslate></th>
                                 <th><AutoTranslate>Date</AutoTranslate></th>
-                                <th><AutoTranslate>Status</AutoTranslate></th>
+                                <th className='text-center'><AutoTranslate>Status</AutoTranslate></th>
                                 <th className='text-center'><AutoTranslate>Action</AutoTranslate></th>
                             </tr>
                         </thead>
@@ -44,8 +45,18 @@ const ReferralTransferComponent = ({ onView, currentRole }) => {
                                 <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
                                 <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
                                 <td><AutoTranslate>18-Aug</AutoTranslate></td>
-                                <td><span className='pending'>Reffered for External Examination</span></td>
-                                <td class="text-center"><button class="btnTable" onClick={onView}><span class="">View</span></button></td>
+                                <td className='text-center'><span className='pending'>Referred for External Examination</span></td>
+                                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
+                            </tr>
+
+                            <tr>
+                                <td><AutoTranslate>DFSL/146/2026</AutoTranslate></td>
+                                <td><AutoTranslate>DNA</AutoTranslate></td>
+                                <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
+                                <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
+                                <td><AutoTranslate>20-Aug</AutoTranslate></td>
+                                <td className='text-center'><span className='approved'>Referred Case Approved</span></td>
+                                <td class="text-center"><Link to="/report-review-approved"><button class="btnTable"><AutoTranslate>View</AutoTranslate></button></Link></td>
                             </tr>
                             {/* <tr>
                             <td colspan="10" class="text-center"><span class="">No data found.</span></td>
@@ -76,7 +87,7 @@ const ReferralTransferComponent = ({ onView, currentRole }) => {
                                 <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
                                 <td><AutoTranslate>EVD-002	Cyber</AutoTranslate></td>
                                 <td><span className='pending'>Pending Acceptance</span></td>
-                                <td class="text-center"><button class="btnTable" onClick={onView}><span class="">View</span></button></td>
+                                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
                             </tr>
                             {/* <tr>
                             <td colspan="10" class="text-center"><span class="">No data found.</span></td>

@@ -14,6 +14,7 @@ import ReferralTransferLayout from "./Pages/ReferralTransferLayout";
 import ReferralPreExaminationLayout from "./Pages/ReferralPreExaminationLayout";
 import ReferralReportEntryLayout from "./Pages/ReferralReportEntryLayout";
 import ReferralReportReviewLayout from "./Pages/ReferralReportReviewLayout";
+import ReportReviewApprovedLayout from "./Pages/ReportReviewApprovedLayout";
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -106,6 +107,7 @@ function App() {
               <Route path="/referral-pre-examination" element={<ReferralPreExaminationLayout />} />
               <Route path="/referral-report-entry" element={<ReferralReportEntryLayout />} />
               <Route path="/referral-report-review" element={<ReferralReportReviewLayout />} />        
+              <Route path="/report-review-approved" element={<ReportReviewApprovedLayout />} />        
               
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
