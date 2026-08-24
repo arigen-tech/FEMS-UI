@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { API_HOST, SYSTEM_ADMIN, BRANCH_ADMIN, DEPARTMENT_ADMIN, USER, BRANCH_API, EMPLOYEE_API, DOCUMENTHEADER_API } from "../API/apiConfig";
+import { API_HOST, SYSTEM_ADMIN, BRANCH_ADMIN, DEPARTMENT_ADMIN, USER, BRANCH_API, EMPLOYEE_API, DOCUMENTHEADER_API, DISPATCH_OFFICER } from "../API/apiConfig";
 import apiClient from "../API/apiClient";
 import lodingIcon from "../Assets/icons/loader.gif";
 import chartIcon from "../Assets/icons/chart-icon.svg";
@@ -14,7 +14,8 @@ import { BsTrash3Fill } from "react-icons/bs";
 import { IoDocuments } from "react-icons/io5";
 import { HiDocumentArrowUp } from "react-icons/hi2";
 import { Icon } from "@iconify/react";
-
+import { FaBriefcase } from "react-icons/fa";
+import { AiOutlineDeliveredProcedure } from "react-icons/ai";
 
 import { FcDepartment } from "react-icons/fc";
 import { RiFunctionAddFill } from "react-icons/ri";
@@ -544,7 +545,6 @@ function Dashboard() {
     </div>
   );
 
-
   const legendItems = [
     { name: "Active", color: COLORS[0] },
     { name: "Inactive", color: COLORS[1] },
@@ -607,27 +607,43 @@ function Dashboard() {
                 <StatBlock title="Total Evidence" value={stats.totalDocument} Icon={IoDocuments} />
               </div>
 
+
+
+              {/* static value */}
+              <div className="gridItems">
+                <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+              </div>
+              <div className="gridItems pending">
+                <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+              </div>
+              <div className="gridItems">
+                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+              </div>
+              {/* static value */}
+
+
+
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocuments} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Case" value={stats.totalPendingDocuments} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Evidence" value={stats.totalApprovedDocuments} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Case" value={stats.totalApprovedDocuments} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Case" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Evidence" value={stats.trashTotalDoc} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Case" value={stats.trashTotalDoc} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -657,27 +673,32 @@ function Dashboard() {
                 <StatBlock title="Total Evidence" value={totalDocsbyBranch} Icon={IoDocuments} />
               </div>
 
+              {/* static value */}
+              <div className="gridItems">
+                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+              </div>
+
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocumentsById} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Case" value={stats.totalPendingDocumentsById} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Evidence" value={stats.totalApprovedStatusDocById} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Case" value={stats.totalApprovedStatusDocById} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedStatusDocById} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Case" value={stats.totalRejectedStatusDocById} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Evidence" value={stats.trashTotalDocByBranch} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Case" value={stats.trashTotalDocByBranch} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -701,27 +722,32 @@ function Dashboard() {
                 <StatBlock title="Total Evidence" value={totalDocsbyDep} Icon={IoDocuments} />
               </div>
 
+              {/* static value */}
+              <div className="gridItems">
+                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+              </div>
+
               <Link to="/approve-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Evidence" value={stats.totalPendingDocumentsByDepartmentId} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Case" value={stats.totalPendingDocumentsByDepartmentId} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/total-approved">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Evidence" value={stats.totalApprovedStatusDocByDepartmentId} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Case" value={stats.totalApprovedStatusDocByDepartmentId} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/total-rejected">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Evidence" value={stats.totalRejectedStatusDocByDepartmentId} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Case" value={stats.totalRejectedStatusDocByDepartmentId} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
 
               <Link to="/trash-documents">
                 <div className="gridItems rejected">
-                  <StatBlock title="Trash Evidence" value={stats.trashTotalDocByDepartment} Icon={BsTrash3Fill} />
+                  <StatBlock title="Trash Case" value={stats.trashTotalDocByDepartment} Icon={BsTrash3Fill} />
                 </div>
               </Link>
             </>
@@ -733,26 +759,51 @@ function Dashboard() {
                 <StatBlock title="Total Uploaded Evidence" value={totalDocsbyUser} Icon={HiDocumentArrowUp} />
               </div>
 
+              {/* static value */}
+              <div className="gridItems">
+                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+              </div>
+
               <Link to="/all-documents">
                 <div className="gridItems pending">
-                  <StatBlock title="Pending Evidence Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
+                  <StatBlock title="Pending Case Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
                 </div>
               </Link>
 
               <Link to="/approvedDocs">
                 <div className="gridItems approved">
-                  <StatBlock title="Approved Evidence" value={stats.approvedDocsbyid} Icon={DocumentCheckIcon} />
+                  <StatBlock title="Approved Case" value={stats.approvedDocsbyid} Icon={DocumentCheckIcon} />
                 </div>
               </Link>
 
               <Link to="/rejectedDocs">
                 <div className="gridItems rejected">
-                  <StatBlock title="Rejected Evidence" value={stats.rejectedDocsbyid} Icon={DocumentMinusIcon} />
+                  <StatBlock title="Rejected Case" value={stats.rejectedDocsbyid} Icon={DocumentMinusIcon} />
                 </div>
               </Link>
             </>
           )}
+
+          {role === DISPATCH_OFFICER && (
+            <>
+              {/* static value */}
+              <div className="gridItems">
+                <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+              </div>
+              <div className="gridItems pending">
+                <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+              </div>
+              <div className="gridItems">
+                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+              </div>
+              {/* static value */}
+            </>
+          )}
+
         </div>
+
+
+
 
         <div className="grid grid-col-4">
           <div className="dateInput">
@@ -769,24 +820,24 @@ function Dashboard() {
                 className="w-full border border-gray-300 rounded px-3 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer pr-8"
               />
               <span
-  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-indigo-600 cursor-pointer"
-  onClick={() => setShowYearPicker(prev => !prev)}
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-    />
-  </svg>
-</span>
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-indigo-600 cursor-pointer"
+                onClick={() => setShowYearPicker(prev => !prev)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </span>
 
               {showYearPicker && (
                 <div className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-3 w-56">

@@ -61,26 +61,13 @@ export const MAS_ROLES = `/RoleMaster`;
 export const ROLE_TEMPLATE=`/dynamic-sidebar/role-template`;
 export const EXPORT_API = `${API_HOST}/export`;
 
-
 export const MASTER_API = `${API_HOST}/master`;
-
-
-
-
-
-
-
-
 
 export const P5_APIS = "/p5/apis";
 
-
-
-
-
 // for roles
-
 export const SYSTEM_ADMIN = config.ROLES?.SYSTEM_ADMIN;
 export const BRANCH_ADMIN = config.ROLES?.BRANCH_ADMIN;
 export const DEPARTMENT_ADMIN = config.ROLES?.DEPARTMENT_ADMIN;
 export const USER = config.ROLES?.USER;
+export const DISPATCH_OFFICER = config.ROLES?.DISPATCH_OFFICER;
