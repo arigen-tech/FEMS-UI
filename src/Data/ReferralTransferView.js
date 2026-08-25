@@ -6,7 +6,7 @@ const ReferralTransferView = ({ onBack, currentRole }) => {
     const [referTransfer, setReferTransfer] = useState(false);
 
     return (
-        <>
+        <>        
             <div className="card">
                 <div className="cardLight mb-30">
                     <div className='btnBackTop'>

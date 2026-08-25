@@ -5,10 +5,7 @@ import { Link } from 'react-router-dom';
 const ReferralTransferComponent = ({ onView, currentRole }) => {
    
     return (
-        <div className="">
-            <div className="title">
-                <h1><AutoTranslate>Referral / Transfer</AutoTranslate></h1>
-            </div>
+       
 
             <div class="card">
 
@@ -124,8 +121,6 @@ const ReferralTransferComponent = ({ onView, currentRole }) => {
                 </div>
 
             </div>
-
-        </div>
     )
 }
 
