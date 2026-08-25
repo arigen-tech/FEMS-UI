@@ -610,15 +610,21 @@ function Dashboard() {
 
 
               {/* static value */}
-              <div className="gridItems">
-                <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
-              </div>
-              <div className="gridItems pending">
-                <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
-              </div>
-              <div className="gridItems">
-                <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
-              </div>
+              <Link to="/dispatch">
+                <div className="gridItems">
+                  <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+              <Link to="/dispatch">
+                <div className="gridItems pending">
+                  <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+              <Link to="/total-rejected">
+                <div className="gridItems">
+                  <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
+                </div>
+              </Link>
               {/* static value */}
 
 
@@ -674,9 +680,11 @@ function Dashboard() {
               </div>
 
               {/* static value */}
+              <Link to="/total-rejected">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
+              </Link>
 
               <Link to="/approve-documents">
                 <div className="gridItems pending">
@@ -723,9 +731,11 @@ function Dashboard() {
               </div>
 
               {/* static value */}
+              <Link to="/total-rejected">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
+              </Link>
 
               <Link to="/approve-documents">
                 <div className="gridItems pending">
@@ -759,10 +769,10 @@ function Dashboard() {
                 <StatBlock title="Total Uploaded Evidence" value={totalDocsbyUser} Icon={HiDocumentArrowUp} />
               </div>
 
-              {/* static value */}
+              {/* static value */}         
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
-              </div>
+              </div>      
 
               <Link to="/all-documents">
                 <div className="gridItems pending">
@@ -787,12 +797,16 @@ function Dashboard() {
           {role === DISPATCH_OFFICER && (
             <>
               {/* static value */}
-              <div className="gridItems">
-                <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
-              </div>
-              <div className="gridItems pending">
-                <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
-              </div>
+              <Link to="/dispatch">
+                <div className="gridItems">
+                  <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+              <Link to="/dispatch">
+                <div className="gridItems pending">
+                  <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
