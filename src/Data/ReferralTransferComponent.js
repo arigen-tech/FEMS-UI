@@ -1,28 +1,67 @@
 import React, { useState } from 'react';
-import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
-import { Link } from 'react-router-dom';
+import AutoTranslate from '../i18n/AutoTranslate';
+import { BRANCH_ADMIN, DEPARTMENT_ADMIN } from "../API/apiConfig";
 
-const ReferralTransferComponent = ({ onView, currentRole }) => {
-   
+const ReferralTransferComponent = ({ referrals, onView, currentRole }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+
+    const filtered = referrals.filter((r) => {
+        const term = searchTerm.toLowerCase();
+        return (
+            r.caseNo?.toLowerCase().includes(term) ||
+            r.evidenceId?.toLowerCase().includes(term) ||
+            r.evidenceType?.toLowerCase().includes(term) ||
+            r.fromLaboratoryName?.toLowerCase().includes(term) ||
+            r.toLaboratoryName?.toLowerCase().includes(term)
+        );
+    });
+
+    const visible = filtered.slice(0, itemsPerPage);
+    const totalItems = filtered.length;
+
+    const statusLabel = (status) => {
+        if (status === "REFERRED") return currentRole === DEPARTMENT_ADMIN
+            ? "Pending Acceptance"
+            : "Referred for External Examination";
+        if (status === "ACCEPTED") return "Referred Case Approved";
+        return status || "--";
+    };
+
+    const statusClass = (status) => status === "ACCEPTED" ? "approved" : "pending";
+
     return (
-       
-
-            <div class="card">
-
-                <div class="grid grid-col-4 mb-4">
-                    <div class="form-group"><label for="itemsPerPage"><span class="">Show:</span></label><select id="itemsPerPage">
+        <div className="card">
+            <div className="grid grid-col-4 mb-4">
+                <div className="form-group">
+                    <label htmlFor="itemsPerPage"><span><AutoTranslate>Show:</AutoTranslate></span></label>
+                    <select
+                        id="itemsPerPage"
+                        value={itemsPerPage}
+                        onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    >
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="15">15</option>
                         <option value="20">20</option>
-                    </select></div>
-                    <div class="form-group"><label for="searchId"><span class="">Search</span></label>
-                        <input type="text" id="searchId" placeholder="Search..." class="searchIcon" value="" />
-                    </div>
+                    </select>
                 </div>
-              
-                {currentRole === "LABORATORY ADMIN / HOD" ? (<div class="table-wrapper">
-                    <table class="">
+                <div className="form-group">
+                    <label htmlFor="searchId"><span><AutoTranslate>Search</AutoTranslate></span></label>
+                    <input
+                        type="text"
+                        id="searchId"
+                        placeholder="Search..."
+                        className="searchIcon"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            {currentRole === BRANCH_ADMIN && (
+                <div className="table-wrapper">
+                    <table>
                         <thead>
                             <tr>
                                 <th><AutoTranslate>Case No.</AutoTranslate></th>
@@ -34,94 +73,85 @@ const ReferralTransferComponent = ({ onView, currentRole }) => {
                                 <th className='text-center'><AutoTranslate>Action</AutoTranslate></th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            <tr>
-                                <td><AutoTranslate>DFSL/145/2026</AutoTranslate></td>
-                                <td><AutoTranslate>DNA</AutoTranslate></td>
-                                <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
-                                <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
-                                <td><AutoTranslate>18-Aug</AutoTranslate></td>
-                                <td className='text-center'><span className='pending'>Referred for External Examination</span></td>
-                                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
-                            </tr>
-
-                            <tr>
-                                <td><AutoTranslate>DFSL/146/2026</AutoTranslate></td>
-                                <td><AutoTranslate>DNA</AutoTranslate></td>
-                                <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
-                                <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
-                                <td><AutoTranslate>20-Aug</AutoTranslate></td>
-                                <td className='text-center'><span className='approved'>Referred Case Approved</span></td>
-                                <td class="text-center"><Link to="/report-review-approved"><button class="btnTable"><AutoTranslate>View</AutoTranslate></button></Link></td>
-                            </tr>
-                            {/* <tr>
-                            <td colspan="10" class="text-center"><span class="">No data found.</span></td>
-                        </tr> */}
+                            {visible.length > 0 ? visible.map((r) => (
+                                <tr key={r.documentDetailId}>
+                                    <td>{r.caseNo || '--'}</td>
+                                    <td>{r.evidenceId || '--'}</td>
+                                    <td>{r.fromLaboratoryName || '--'}</td>
+                                    <td>{r.toLaboratoryName || '--'}</td>
+                                    <td>{r.referredOn ? new Date(r.referredOn).toLocaleDateString() : '--'}</td>
+                                    <td className='text-center'>
+                                        <span className={statusClass(r.referralStatus)}>{statusLabel(r.referralStatus)}</span>
+                                    </td>
+                                    <td className="text-center">
+                                        <button className="btnTable" onClick={() => onView(r.documentDetailId)}>
+                                            <AutoTranslate>View</AutoTranslate>
+                                        </button>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan={7} className="text-center">
+                                        <span><AutoTranslate>No data found.</AutoTranslate></span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
-                </div>) : ""}
+                </div>
+            )}
 
-
-                {currentRole === "CASE & EVIDENCE OFFICER" ? (<div class="table-wrapper">
-                    <table class="">
+            {currentRole === DEPARTMENT_ADMIN && (
+                <div className="table-wrapper">
+                    <table>
                         <thead>
                             <tr>
                                 <th><AutoTranslate>Case No.</AutoTranslate></th>
-                                <th><AutoTranslate>Referral ID</AutoTranslate></th>
                                 <th><AutoTranslate>From Laboratory</AutoTranslate></th>
                                 <th><AutoTranslate>Evidence ID</AutoTranslate></th>
-                                <th><AutoTranslate>Division</AutoTranslate></th>
+                                <th><AutoTranslate>Evidence Type</AutoTranslate></th>
                                 <th><AutoTranslate>Status</AutoTranslate></th>
                                 <th className='text-center'><AutoTranslate>Action</AutoTranslate></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><AutoTranslate>SFSL/145/2026</AutoTranslate></td>
-                                <td><AutoTranslate>REF-00021</AutoTranslate></td>
-                                <td><AutoTranslate>DFSL Khordha</AutoTranslate></td>
-                                <td><AutoTranslate>SFSL Bhubaneswar</AutoTranslate></td>
-                                <td><AutoTranslate>EVD-002	Cyber</AutoTranslate></td>
-                                <td><span className='pending'>Pending Acceptance</span></td>
-                                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
-                            </tr>
-                            {/* <tr>
-                            <td colspan="10" class="text-center"><span class="">No data found.</span></td>
-                        </tr> */}
+                            {visible.length > 0 ? visible.map((r) => (
+                                <tr key={r.documentDetailId}>
+                                    <td>{r.caseNo || '--'}</td>
+                                    <td>{r.fromLaboratoryName || '--'}</td>
+                                    <td>{r.evidenceId || '--'}</td>
+                                    <td>{r.evidenceType || '--'}</td>
+                                    <td><span className={statusClass(r.referralStatus)}>{statusLabel(r.referralStatus)}</span></td>
+                                    <td className="text-center">
+                                        <button className="btnTable" onClick={() => onView(r.documentDetailId)}>
+                                            <AutoTranslate>View</AutoTranslate>
+                                        </button>
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan={6} className="text-center">
+                                        <span><AutoTranslate>No data found.</AutoTranslate></span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
-                </div>) : ""}
+                </div>
+            )}
 
-
-                {/* Pagination Controls */}
-                <div class="paginationWp">
-                    <div class="items">
-                        <div class="paginationText">
-                            <span class="text-sm text-gray-700">
-                                <span class="">Showing 0 to 0 of 0 entries.</span></span>
-                            <span class="text-sm text-gray-700 mx-2">(<span class="">Pages</span> 0)</span>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="paginationBtn"><button title="End" disabled="" class="cursor-not-allowed"><svg
-                            stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em"
-                            width="1em" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z">
-                            </path>
-                        </svg></button><button title="End" disabled="" class="cursor-not-allowed"><svg stroke="currentColor"
-                            fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z">
-                            </path>
-                        </svg></button></div>
+            <div className="paginationWp">
+                <div className="items">
+                    <div className="paginationText">
+                        <span className="text-sm text-gray-700">
+                            <AutoTranslate>{`Showing ${totalItems > 0 ? 1 : 0} to ${visible.length} of ${totalItems} entries.`}</AutoTranslate>
+                        </span>
                     </div>
                 </div>
-
             </div>
+        </div>
     )
 }
 
-export default ReferralTransferComponent
+export default ReferralTransferComponent;

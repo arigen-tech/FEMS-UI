@@ -1,64 +1,136 @@
-import React, { useState } from 'react';
-import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
-import { MdRemoveRedEye, MdOutlineClose } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
+import AutoTranslate from '../i18n/AutoTranslate';
+import apiClient from "../API/apiClient";
+import LoadingComponent from '../Components/LoadingComponent';
+import Popup from '../Components/Popup';
+import { API_HOST } from "../API/apiConfig";
 
-const ReviewComponent = ({ onView, onBack }) => {
+const ReviewComponent = ({ documentHeaderId, onView, onBack }) => {
+  const [caseData, setCaseData] = useState(null);
+  const [evidenceList, setEvidenceList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [popupMessage, setPopupMessage] = useState(null);
+
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const showPopup = (message, type = 'info') => {
+    setPopupMessage({ message, type, onClose: () => setPopupMessage(null) });
+  };
+
+  useEffect(() => {
+    fetchCaseAndEvidence();
+  }, [documentHeaderId]);
+
+  const fetchCaseAndEvidence = async () => {
+    try {
+      setLoading(true);
+
+      const [caseRes, evidenceRes] = await Promise.all([
+        apiClient.get(`${API_HOST}/api/report-entry/case/${documentHeaderId}`),
+        apiClient.get(`${API_HOST}/api/report-review/evidence/${documentHeaderId}`)
+      ]);
+
+      setCaseData(caseRes.data);
+      setEvidenceList(evidenceRes.data || []);
+    } catch (error) {
+      console.error("Error fetching case/evidence:", error);
+      showPopup("Failed to load case and evidence details.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredEvidence = evidenceList.filter((item) => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      item.evidenceId?.toLowerCase().includes(term) ||
+      item.evidenceCategory?.toLowerCase().includes(term) ||
+      item.evidenceType?.toLowerCase().includes(term) ||
+      item.division?.toLowerCase().includes(term) ||
+      item.scientificOfficerName?.toLowerCase().includes(term)
+    );
+  });
+
+  const visibleEvidence = filteredEvidence.slice(0, itemsPerPage);
+
+  if (loading) return <LoadingComponent />;
+  if (!caseData) return null;
 
   return (
     <>
+      {popupMessage && (
+        <Popup message={popupMessage.message} type={popupMessage.type} onClose={popupMessage.onClose} />
+      )}
+
       <div className="card">
+        {/* Case & Evidence Information */}
         <div className="cardLight mb-30">
           <div className='btnBackTop'>
-            <button type="button" class="btnBack" onClick={onBack}></button>
+            <button type="button" className="btnBack" onClick={onBack}></button>
             <h2><AutoTranslate>Case & Evidence Information</AutoTranslate></h2>
           </div>
 
           <div className="grid grid-col-4 mb-4">
             <div className="form-group">
-              <label><AutoTranslate>Case Number</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="SFSL/145/2026" readOnly />
+              <label><AutoTranslate>Case ID</AutoTranslate></label>
+              <input type="text" value={caseData.caseId || ''} readOnly />
+            </div>
+            <div className="form-group">
+              <label><AutoTranslate>File No.</AutoTranslate></label>
+              <input type="text" value={caseData.fileNo || ''} readOnly />
             </div>
             <div className="form-group">
               <label><AutoTranslate>FIR Number</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="145/2026" readOnly />
+              <input type="text" value={caseData.firNumber || ''} readOnly />
             </div>
             <div className="form-group">
               <label><AutoTranslate>Police Station</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="Saheed Nagar" readOnly />
+              <input type="text" value={caseData.policeStation || ''} readOnly />
             </div>
             <div className="form-group">
-              <label><AutoTranslate>District</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="Khordha" readOnly />
+              <label><AutoTranslate>Title</AutoTranslate></label>
+              <input type="text" value={caseData.title || ''} readOnly />
             </div>
             <div className="form-group">
-              <label><AutoTranslate>Incident Date</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="15-Aug-2026" readOnly />
+              <label><AutoTranslate>Subject</AutoTranslate></label>
+              <input type="text" value={caseData.subject || ''} readOnly />
             </div>
-            <div className="form-group">
-              <label><AutoTranslate>Forwarding Authority</AutoTranslate></label>
-              <input type="text" placeholder="" name="" value="Saheed Nagar Police Station" readOnly />
-            </div>
-
           </div>
         </div>
 
-
-
-        <div class="grid grid-col-4 mb-4">
-          <div class="form-group"><label for="itemsPerPage"><span class="">Show:</span></label><select id="itemsPerPage">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-          </select></div>
-          <div class="form-group"><label for="searchId"><span class="">Search</span></label>
-            <input type="text" id="searchId" placeholder="Search..." class="searchIcon" value="" />
+        {/* Table controls */}
+        <div className="grid grid-col-4 mb-4">
+          <div className="form-group">
+            <label htmlFor="itemsPerPage"><span>Show:</span></label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="searchId"><span>Search</span></label>
+            <input
+              type="text"
+              id="searchId"
+              placeholder="Search..."
+              className="searchIcon"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
 
-
-        <div class="table-wrapper">
-          <table class="">
+        {/* Evidence Table */}
+        <div className="table-wrapper">
+          <table>
             <thead>
               <tr>
                 <th><AutoTranslate>Evidence ID</AutoTranslate></th>
@@ -72,75 +144,57 @@ const ReviewComponent = ({ onView, onBack }) => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><AutoTranslate>EVD-001</AutoTranslate></td>
-                <td><AutoTranslate>EVD-001</AutoTranslate></td>
-                <td><AutoTranslate>Biological Sample</AutoTranslate></td>
-                <td><AutoTranslate>DNA</AutoTranslate></td>
-                <td><AutoTranslate>Officer A</AutoTranslate></td>
-                <td><AutoTranslate>Submitted</AutoTranslate></td>
-                <td><AutoTranslate>--</AutoTranslate></td>
-                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
-              </tr>
-              <tr>
-                <td><AutoTranslate>EVD-002</AutoTranslate></td>
-                <td><AutoTranslate>EVD-002</AutoTranslate></td>
-                <td><AutoTranslate>CCTV Footage</AutoTranslate></td>
-                <td><AutoTranslate>Cyber</AutoTranslate></td>
-                <td><AutoTranslate>Officer B</AutoTranslate></td>
-                <td><AutoTranslate>Submitted</AutoTranslate></td>
-                <td><AutoTranslate>--</AutoTranslate></td>
-                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
-              </tr>
-              <tr>
-                <td><AutoTranslate>EVD-003</AutoTranslate></td>
-                <td><AutoTranslate>EVD-003</AutoTranslate></td>
-                <td><AutoTranslate>Firearm</AutoTranslate></td>
-                <td><AutoTranslate>Ballistics</AutoTranslate></td>
-                <td><AutoTranslate>Officer c</AutoTranslate></td>
-                <td><AutoTranslate>Submitted</AutoTranslate></td>
-                <td><AutoTranslate>--</AutoTranslate></td>
-                <td class="text-center"><button class="btnTable" onClick={onView}><AutoTranslate>View</AutoTranslate></button></td>
-              </tr>
-              {/* <tr>
-                            <td colspan="10" class="text-center"><span class="">No data found.</span></td>
-                        </tr> */}
+              {visibleEvidence.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    <span><AutoTranslate>No data found.</AutoTranslate></span>
+                  </td>
+                </tr>
+              ) : (
+                visibleEvidence.map((item) => (
+                  <tr key={item.documentDetailId}>
+                    <td>{item.evidenceId}</td>
+                    <td>{item.evidenceCategory || '--'}</td>
+                    <td>{item.evidenceType || '--'}</td>
+                    <td>{item.division || '--'}</td>
+                    <td>{item.scientificOfficerName || '--'}</td>
+                    <td>{item.reportStatus || '--'}</td>
+                    <td>{item.referralStatus || '--'}</td>
+                    <td className="text-center">
+                      <button
+                        className="btnTable"
+                        onClick={() => onView(item.reportEntryId, item.documentDetailId)}
+                        disabled={!item.reportEntryId}
+                      >
+                        <AutoTranslate>View</AutoTranslate>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-        {/* Pagination Controls */}
-        <div class="paginationWp mb-20">
-          <div class="items">
-            <div class="paginationText">
-              <span class="text-sm text-gray-700">
-                <span class="">Showing 0 to 0 of 0 entries.</span></span>
-              <span class="text-sm text-gray-700 mx-2">(<span class="">Pages</span> 0)</span>
+
+        {/* Pagination */}
+        <div className="paginationWp mb-20">
+          <div className="items">
+            <div className="paginationText">
+              <span className="text-sm text-gray-700">
+                <AutoTranslate>Showing</AutoTranslate> {visibleEvidence.length > 0 ? 1 : 0} to {visibleEvidence.length} of {filteredEvidence.length} <AutoTranslate>entries.</AutoTranslate>
+              </span>
             </div>
           </div>
-          <div class="items">
-            <div class="paginationBtn"><button title="End" disabled="" class="cursor-not-allowed"><svg
-              stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em"
-              width="1em" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z">
-              </path>
-            </svg></button><button title="End" disabled="" class="cursor-not-allowed"><svg stroke="currentColor"
-              fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z">
-              </path>
-            </svg></button></div>
-          </div>
-        </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-back" onClick={onBack}>Back</button>
         </div>
 
+        <div className="btn-group">
+          <button type="button" className="btn btn-back" onClick={onBack}>
+            <AutoTranslate>Back</AutoTranslate>
+          </button>
+        </div>
       </div>
-
     </>
-  )
-}
+  );
+};
 
 export default ReviewComponent;
