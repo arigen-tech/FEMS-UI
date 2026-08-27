@@ -1052,7 +1052,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       // !formData.subject ||  <-- REMOVED: Subject is now optional
       !formData.category ||
       !formData.year ||
-      !formData.version ||
+      // !formData.version ||
       formData.uploadedFilePaths.length === 0
     ) {
       console.error("=== ❌ VALIDATION FAILED ===");
