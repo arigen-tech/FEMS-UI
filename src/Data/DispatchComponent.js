@@ -1,84 +1,126 @@
-import React from 'react';
-import AutoTranslate from '../i18n/AutoTranslate'; // Import AutoTranslate
-import { MdRemoveRedEye, MdOutlineClose } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
+import AutoTranslate from '../i18n/AutoTranslate';
+import apiClient from "../API/apiClient";
+import LoadingComponent from '../Components/LoadingComponent';
+import { API_HOST } from "../API/apiConfig";
 
-const DispatchComponent = ({ setShowDispatchView }) => {
+const DispatchComponent = ({ onView }) => {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  useEffect(() => {
+    fetchPendingDispatch();
+  }, []);
+
+  const fetchPendingDispatch = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.get(`${API_HOST}/api/dispatch/pending`);
+      setReports(response.data || []);
+    } catch (error) {
+      console.error("Error fetching pending dispatch list:", error);
+      setReports([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filtered = reports.filter((r) => {
+    const term = searchTerm.toLowerCase();
     return (
-        <div class="card">
+      r.caseNumber?.toLowerCase().includes(term) ||
+      r.firNumber?.toLowerCase().includes(term) ||
+      r.reportNumber?.toLowerCase().includes(term) ||
+      r.divisionName?.toLowerCase().includes(term)
+    );
+  });
 
-            <div class="grid grid-col-4 mb-4">
-                <div class="form-group">
-                    <label for="itemsPerPage"><span class="">Show:</span></label>
-                    <select id="itemsPerPage">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </select>
-                </div>
-                <div class="form-group"><label for="searchId"><span class="">Search</span></label>
-                    <input type="text" id="searchId" placeholder="Search..." class="searchIcon" value="" />
-                </div>
-            </div>
+  const visible = filtered.slice(0, itemsPerPage);
+  const totalItems = filtered.length;
 
-            <div class="table-wrapper">
-                <table class="">
-                    <thead>
-                        <tr>
-                            <th><AutoTranslate>Case Number</AutoTranslate></th>
-                            <th><AutoTranslate>FIR Number</AutoTranslate></th>
-                            <th><AutoTranslate>Report Number</AutoTranslate></th>
-                            <th><AutoTranslate>Division</AutoTranslate></th>
-                            <th><AutoTranslate>Approved Date</AutoTranslate></th>
-                            <th><AutoTranslate>Status</AutoTranslate></th>
-                            <th><AutoTranslate>Action</AutoTranslate></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><AutoTranslate>SFSL/145/2026</AutoTranslate></td>
-                            <td><AutoTranslate>145/2026</AutoTranslate></td>
-                            <td><AutoTranslate>RPT-001</AutoTranslate></td>
-                            <td><AutoTranslate>DNA</AutoTranslate></td>
-                            <td><AutoTranslate>18-Aug-2026</AutoTranslate></td>
-                            <td><span className='pending'>Pending</span></td>
-                            <td class="text-center"><button class="btnTable" onClick={() => setShowDispatchView(true)}><AutoTranslate>View</AutoTranslate></button></td>
-                        </tr>
-                        {/* <tr>
-                            <td colspan="10" class="text-center"><span class="">No data found.</span></td>
-                        </tr> */}
-                    </tbody>
-                </table>
-            </div>
+  if (loading) return <LoadingComponent />;
 
-            {/* Pagination Controls */}
-            <div class="paginationWp">
-                <div class="items">
-                    <div class="paginationText">
-                        <span class="text-sm text-gray-700">
-                            <span class="">Showing 0 to 0 of 0 entries.</span></span>
-                        <span class="text-sm text-gray-700 mx-2">(<span class="">Pages</span> 0)</span>
-                    </div>
-                </div>
-                <div class="items">
-                    <div class="paginationBtn"><button title="End" disabled="" class="cursor-not-allowed"><svg
-                        stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em"
-                        width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z">
-                        </path>
-                    </svg></button><button title="End" disabled="" class="cursor-not-allowed"><svg stroke="currentColor"
-                        fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z">
-                        </path>
-                    </svg></button></div>
-                </div>
-            </div>
-
+  return (
+    <div className="card">
+      <div className="grid grid-col-4 mb-4">
+        <div className="form-group">
+          <label htmlFor="itemsPerPage"><span><AutoTranslate>Show:</AutoTranslate></span></label>
+          <select
+            id="itemsPerPage"
+            value={itemsPerPage}
+            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
         </div>
-    )
+        <div className="form-group">
+          <label htmlFor="searchId"><span><AutoTranslate>Search</AutoTranslate></span></label>
+          <input
+            type="text"
+            id="searchId"
+            placeholder="Search..."
+            className="searchIcon"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th><AutoTranslate>Case Number</AutoTranslate></th>
+              <th><AutoTranslate>FIR Number</AutoTranslate></th>
+              <th><AutoTranslate>Report Number</AutoTranslate></th>
+              <th><AutoTranslate>Division</AutoTranslate></th>
+              <th><AutoTranslate>Approved Date</AutoTranslate></th>
+              <th><AutoTranslate>Status</AutoTranslate></th>
+              <th><AutoTranslate>Action</AutoTranslate></th>
+            </tr>
+          </thead>
+          <tbody>
+            {visible.length > 0 ? visible.map((r) => (
+              <tr key={r.reportEntryId}>
+                <td>{r.caseNumber || '--'}</td>
+                <td>{r.firNumber || '--'}</td>
+                <td>{r.reportNumber || '--'}</td>
+                <td>{r.divisionName || '--'}</td>
+                <td>{r.approvedDate ? new Date(r.approvedDate).toLocaleDateString() : '--'}</td>
+                <td><span className={r.dispatchStatus === 'DISPATCHED' ? 'approved' : 'pending'}>{r.dispatchStatus}</span></td>
+                <td className="text-center">
+                  <button className="btnTable" onClick={() => onView(r.reportEntryId)}>
+                    <AutoTranslate>View</AutoTranslate>
+                  </button>
+                </td>
+              </tr>
+            )) : (
+              <tr>
+                <td colSpan={7} className="text-center">
+                  <span><AutoTranslate>No data found.</AutoTranslate></span>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="paginationWp">
+        <div className="items">
+          <div className="paginationText">
+            <span className="text-sm text-gray-700">
+              <AutoTranslate>{`Showing ${totalItems > 0 ? 1 : 0} to ${visible.length} of ${totalItems} entries.`}</AutoTranslate>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default DispatchComponent
+export default DispatchComponent;
