@@ -553,7 +553,7 @@ function Sidebar({ roleChanged }) {
     return countMap[url] || 0;
   };
 
-  
+
 
   // Sidebar Link component with null check
   const SidebarLink = ({ to, icon: Icon, text, count }) => {
@@ -686,11 +686,12 @@ function Sidebar({ roleChanged }) {
             <input
               type="text"
               placeholder={searchPlaceholder}
-              name="name"
+              name="search"
               value={searchTerm}
               onChange={handleInputChange}
               maxLength={30}
               className="border outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-400"
+              autocomplete="off"             
             />
           </div>
 

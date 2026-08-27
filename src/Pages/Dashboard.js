@@ -620,7 +620,7 @@ function Dashboard() {
                   <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
-              <Link to="/total-rejected">
+              <Link to="/all-documents">
                 <div className="gridItems">
                   <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
                 </div>
@@ -641,7 +641,7 @@ function Dashboard() {
                 </div>
               </Link>
 
-              <Link to="/total-rejected">
+              <Link to="/all-documents">
                 <div className="gridItems rejected">
                   <StatBlock title="Rejected Case" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
                 </div>
@@ -680,7 +680,7 @@ function Dashboard() {
               </div>
 
               {/* static value */}
-              <Link to="/total-rejected">
+              <Link to="/all-documents">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
@@ -731,7 +731,7 @@ function Dashboard() {
               </div>
 
               {/* static value */}
-              <Link to="/total-rejected">
+              <Link to="/all-documents">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
