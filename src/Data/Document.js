@@ -1,4 +1,4 @@
-// DocumentManagement.jsx - Complete Working Version
+// DocumentManagement.jsx - Complete Working Version (Fixed)
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import apiClient from "../API/apiClient";
@@ -36,10 +36,12 @@ import ForwardingAuthorityDetails from "./ForwardingAuthorityDetails";
 import EvidenceMetadata from "./EvidenceMetadata";
 
 // ============ INITIAL FORM DATA ============
+// NOTE: `subject` is kept in state (always "") because the DB column is
+// NOT NULL. There is no Subject field in the UI and it is never required.
 const getInitialFormData = () => ({
   fileNo: "",
   title: "",
-  subject: null,
+  subject: "",
   version: "",
   category: null,
   year: null,
@@ -238,8 +240,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
   // ============ USE EFFECTS ============
   useEffect(() => {
-    const { fileNo, title, subject, version, category, year } = formData;
-    setIsMetadataComplete(!!(fileNo && title && subject && version && category && year));
+    const { fileNo, title, version, category, year } = formData;
+    setIsMetadataComplete(!!(fileNo && title && version && category && year));
   }, [formData]);
 
   useEffect(() => {
@@ -262,11 +264,10 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   }, [selectedDoc]);
 
   useEffect(() => {
-    const { fileNo, title, subject, version, category, year } = formData;
+    const { fileNo, title, version, category, year } = formData;
     const isFormFilled =
       fileNo &&
       title &&
-      subject &&
       version &&
       category &&
       year &&
@@ -362,13 +363,13 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
   const getCaseTypeName = (doc) => {
     if (doc?.caseType?.name) return doc.caseType.name;
-    const match = caseTypeOptions.find((item) => item.id === doc?.caseTypeId);
+    const match = caseTypeOptions.find((item) => item.id === doc?.caseType?.id);
     return match?.name || '--';
   };
 
   const getCrimeTypeName = (doc) => {
     if (doc?.crimeType?.name) return doc.crimeType.name;
-    const match = crimeTypeOptions.find((item) => item.id === doc?.crimeTypeId);
+    const match = crimeTypeOptions.find((item) => item.id === doc?.crimeType?.id);
     return match?.name || '--';
   };
 
@@ -376,10 +377,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     try {
       setLoading(true);
       const response = await apiClient.get(`${DOCUMENTHEADER_API}/pending/employee/${UserId}`);
-      setDocuments(response.data || []);
-      setTotalItems(response.data?.length || 0);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setDocuments(data);
+      setTotalItems(data.length);
     } catch (error) {
-      console.error(<AutoTranslate>Error fetching documents:</AutoTranslate>, error);
+      console.error("Error fetching documents:", error);
       setDocuments([]);
     } finally {
       setLoading(false);
@@ -1031,44 +1033,39 @@ const DocumentManagement = ({ fieldsDisabled }) => {
   // ============ SAVE DOCUMENT ============
   const handleAddDocument = async () => {
     // ==========================================
-    // 🔍 DEBUG: Print current state values to Console (F12)
+    // ✅ VALIDATION — collect all missing mandatory fields.
+    // Mandatory: File No, Title, Category, Year, ≥1 uploaded file.
+    // NOT mandatory: version (cleared after each upload batch),
+    // subject (no UI field — always sent as "").
     // ==========================================
     console.log("=== 🔍 DEBUG: handleAddDocument Validation Check ===");
     console.log("1. formData.fileNo:", formData.fileNo);
     console.log("2. formData.title:", formData.title);
-    console.log("3. formData.subject:", formData.subject);
-    console.log("4. formData.category:", formData.category);
-    console.log("5. formData.year:", formData.year);
-    console.log("6. formData.version:", formData.version);
+    console.log("3. formData.category:", formData.category);
+    console.log("4. formData.year:", formData.year);
+    console.log("5. formData.caseTypeId:", formData.caseTypeId);
+    console.log("6. formData.crimeTypeId:", formData.crimeTypeId);
     console.log("7. formData.uploadedFilePaths length:", formData.uploadedFilePaths.length);
     console.log("=====================================================");
 
-    // ==========================================
-    // ✅ REMOVED SUBJECT VALIDATION
-    // ==========================================
-    if (
-      !formData.fileNo ||
-      !formData.title ||
-      // !formData.subject ||  <-- REMOVED: Subject is now optional
-      !formData.category ||
-      !formData.year ||
-      // !formData.version ||
-      formData.uploadedFilePaths.length === 0
-    ) {
-      console.error("=== ❌ VALIDATION FAILED ===");
-      if (!formData.fileNo) console.error("❌ File No is missing");
-      if (!formData.title) console.error("❌ Title is missing");
-      if (!formData.category) console.error("❌ Category is missing");
-      if (!formData.year) console.error("❌ Year is missing");
-      if (!formData.version) console.error("❌ Version is missing");
-      if (formData.uploadedFilePaths.length === 0) console.error("❌ No uploaded files found");
+    const missingFields = [];
+    if (!formData.fileNo) missingFields.push("Case Number (File No)");
+    if (!formData.title) missingFields.push("Case Title");
+    if (!formData.category) missingFields.push("Evidence Category");
+    if (!formData.year) missingFields.push("Case Year");
+    if (formData.uploadedFilePaths.length === 0) missingFields.push("At least one uploaded file");
 
-      showPopup("Please fill in all the required fields and upload a file.", "error");
+    if (missingFields.length > 0) {
+      console.error("=== ❌ VALIDATION FAILED ===", missingFields);
+      showPopup(
+        `Please fill in the following required field(s):\n• ${missingFields.join("\n• ")}`,
+        "error"
+      );
       return;
     }
 
     // ==========================================
-    // REST OF YOUR EXISTING CODE (Keep everything below this)
+    // Build versioned file paths
     // ==========================================
     const versionedFilePaths = formData.uploadedFilePaths.map((file) => {
       const { version = formData.version || "1.0", yearMaster, displayName } = file;
@@ -1103,13 +1100,18 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
     });
 
+    // ==========================================
+    // ✅ PAYLOAD — nested master objects to match DocumentHeader entity
+    // (caseType, crimeType, state, district, priority are @ManyToOne
+    // relations on the backend, NOT flat *Id fields).
+    // ==========================================
     const payload = {
       documentHeader: {
         id: formData.id || null,
         fileNo: formData.fileNo,
         title: formData.title,
-        subject: formData.subject || "", // If empty, send empty string
-        categoryMaster: { id: formData.category.id },
+        subject: formData.subject || "", // DB column is NOT NULL; no UI field, always ""
+        categoryMaster: formData.category?.id ? { id: formData.category.id } : null,
         employee: { id: parseInt(UserId, 10) },
         qrPath: formData.qrPath || null,
         archive: false,
@@ -1117,14 +1119,14 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         // Case Information
         firNumber: formData.firNumber || null,
         firDate: formData.firDate || null,
-        caseTypeId: formData.caseTypeId || null,
-        crimeTypeId: formData.crimeTypeId || null,
-        stateId: formData.stateId || null,
-        districtId: formData.districtId || null,
+        caseType: formData.caseTypeId ? { id: parseInt(formData.caseTypeId, 10) } : null,
+        crimeType: formData.crimeTypeId ? { id: parseInt(formData.crimeTypeId, 10) } : null,
+        state: formData.stateId ? { id: parseInt(formData.stateId, 10) } : null,
+        district: formData.districtId ? { id: parseInt(formData.districtId, 10) } : null,
+        priority: formData.priorityId ? { id: parseInt(formData.priorityId, 10) } : null,
         policeStation: formData.policeStation || null,
         investigatingOfficer: formData.investigatingOfficer || null,
         courtReference: formData.courtReference || null,
-        priorityId: formData.priorityId || null,
         dateOfIncident: formData.dateOfIncident || null,
         incidentLocation: formData.incidentLocation || null,
 
@@ -1164,6 +1166,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         receivedTime: formData.receivedTime || null,
         receivedBy: formData.receivedBy || null,
         remarks: formData.forwardingRemarks || null,
+        messengerName: formData.messengerName || null,
+        messengerDesignation: formData.messengerDesignation || null,
+        messengerOrganization: formData.messengerOrganization || null,
+        messengerIdRef: formData.messengerIdRef || null,
+        handoverDateTime: formData.handoverDateTime || null,
       },
       filePaths: versionedFilePaths,
       metadata: metadataObject,
@@ -1232,14 +1239,25 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
+  // ============ DATE HELPER ============
+  const toDateInputValue = (value) => {
+    if (!value) return '';
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
+  };
+
   // ============ EDIT DOCUMENT ============
   const handleEditDocument = (doc) => {
     if (!doc) return;
 
     setHandleEditDocumentActive(true);
+
     setEditingDoc(doc);
 
-    const existingFiles = (doc.documentDetails || [])
+    const doc_ = doc;
+
+    const existingFiles = (doc_.documentDetails || [])
       .filter(detail => detail !== undefined && detail !== null)
       .map((detail) => ({
         name: detail.path?.split("/").pop() || 'unknown',
@@ -1256,7 +1274,6 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         fileSizeBytes: detail.fileSizeBytes || null,
         fileSizeHuman: detail.fileSizeHuman || null,
         pageCounts: detail.pageCounts || null,
-        // ✅ per-file evidence metadata carried through for update round-trip
         evidenceTypeId: detail.evidenceTypeId ?? '',
         evidenceDescription: detail.evidenceDescription ?? '',
         isExisting: true,
@@ -1264,73 +1281,78 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
     setFormData({
       ...getInitialFormData(),
-      id: doc.id,
-      fileNo: doc.fileNo || '',
-      title: doc.title || '',
-      subject: doc.subject || '',
+      id: doc_.id,
+      fileNo: doc_.fileNo || '',
+      title: doc_.title || '',
+      subject: doc_.subject || '',
       version: "",
-      category: doc.categoryMaster || null,
+      category: doc_.categoryMaster || null,
       year: null,
       uploadedFilePaths: [],
 
-      caseId: doc.caseId || '',
-      firNumber: doc.firNumber || '',
-      firDate: doc.firDate || '',
-      caseTypeId: doc.caseTypeId || '',
-      crimeTypeId: doc.crimeTypeId || '',
-      stateId: doc.stateId || '',
-      districtId: doc.districtId || '',
-      policeStation: doc.policeStation || '',
-      investigatingOfficer: doc.investigatingOfficer || '',
-      courtReference: doc.courtReference || '',
-      priorityId: doc.priorityId || '',
-      dateOfIncident: doc.dateOfIncident || '',
-      incidentLocation: doc.incidentLocation || '',
+      caseId: doc_.caseId || '',
+      firNumber: doc_.firNumber || '',
+      firDate: toDateInputValue(doc_.firDate),
+      caseTypeId: doc_.caseType?.id || '',
+      crimeTypeId: doc_.crimeType?.id || '',
+      stateId: doc_.state?.id || '',
+      districtId: doc_.district?.id || '',
+      policeStation: doc_.policeStation || '',
+      investigatingOfficer: doc_.investigatingOfficer || '',
+      courtReference: doc_.courtReference || '',
+      priorityId: doc_.priority?.id || '',
+      dateOfIncident: toDateInputValue(doc_.dateOfIncident),
+      incidentLocation: doc_.incidentLocation || '',
 
-      // Evidence Metadata — header-level only now
-      evidenceId: doc.evidenceId || '',
-      exhibitNumber: doc.exhibitNumber || '',
+      evidenceId: doc_.evidenceId || '',
+      exhibitNumber: doc_.exhibitNumber || '',
 
-      forwardingAuthorityTypeId: doc.forwardingAuthority?.forwardingAuthorityType?.id || doc.forwardingAuthority?.forwardingAuthorityTypeId || '',
-      authorityName: doc.forwardingAuthority?.authorityName || '',
-      designation: doc.forwardingAuthority?.designation || '',
-      organisation: doc.forwardingAuthority?.organisation || '',
-      forwardingDistrictId: doc.forwardingAuthority?.district?.id || doc.forwardingAuthority?.districtId || '',
-      cityId: doc.forwardingAuthority?.city?.id || doc.forwardingAuthority?.cityId || '',
-      address: doc.forwardingAuthority?.address || '',
-      contactNumber: doc.forwardingAuthority?.contactNumber || '',
-      email: doc.forwardingAuthority?.email || '',
-      forwardingLetterNumber: doc.forwardingAuthority?.forwardingLetterNumber || '',
-      forwardingDate: doc.forwardingAuthority?.forwardingDate || '',
-      forwardingLetterPath: doc.forwardingAuthority?.forwardingLetterPath || '',
-      modeOfSubmissionId: doc.forwardingAuthority?.modeOfSubmission?.id || doc.forwardingAuthority?.modeOfSubmissionId || '',
-      courierAgency: doc.forwardingAuthority?.courierAgency || '',
-      awbNumber: doc.forwardingAuthority?.awbConsignmentNumber || '',
-      bookingDate: doc.forwardingAuthority?.bookingDate || '',
-      dispatchDate: doc.forwardingAuthority?.dispatchDate || '',
-      expectedDeliveryDate: doc.forwardingAuthority?.expectedDeliveryDate || '',
-      actualDeliveryDate: doc.forwardingAuthority?.actualDeliveryDate || '',
-      parcelId: doc.forwardingAuthority?.parcelId || '',
-      parcelNumber: doc.forwardingAuthority?.parcelNumber || '',
-      numberOfExhibits: doc.forwardingAuthority?.numberOfExhibits || '',
-      packageTypeId: doc.forwardingAuthority?.packageType?.id || doc.forwardingAuthority?.packageTypeId || '',
-      sealNumber: doc.forwardingAuthority?.sealNumber || '',
-      sealDescription: doc.forwardingAuthority?.sealDescription || '',
-      sealCondition: doc.forwardingAuthority?.sealCondition || '',
-      packageCondition: doc.forwardingAuthority?.packageCondition || '',
-      receivedDate: doc.forwardingAuthority?.receivedDate || '',
-      receivedTime: doc.forwardingAuthority?.receivedTime || '',
-      receivedBy: doc.forwardingAuthority?.receivedBy || '',
-      forwardingRemarks: doc.forwardingAuthority?.remarks || '',
+      forwardingAuthorityTypeId: doc_.forwardingAuthority?.forwardingAuthorityType?.id || doc_.forwardingAuthority?.forwardingAuthorityTypeId || '',
+      authorityName: doc_.forwardingAuthority?.authorityName || '',
+      designation: doc_.forwardingAuthority?.designation || '',
+      organisation: doc_.forwardingAuthority?.organisation || '',
+      forwardingDistrictId: doc_.forwardingAuthority?.district?.id || doc_.forwardingAuthority?.districtId || '',
+      cityId: doc_.forwardingAuthority?.city?.id || doc_.forwardingAuthority?.cityId || '',
+      address: doc_.forwardingAuthority?.address || '',
+      contactNumber: doc_.forwardingAuthority?.contactNumber || '',
+      email: doc_.forwardingAuthority?.email || '',
+      forwardingLetterNumber: doc_.forwardingAuthority?.forwardingLetterNumber || '',
+      forwardingDate: toDateInputValue(doc_.forwardingAuthority?.forwardingDate),
+      forwardingLetterPath: doc_.forwardingAuthority?.forwardingLetterPath || '',
+      modeOfSubmissionId: doc_.forwardingAuthority?.modeOfSubmission?.id || doc_.forwardingAuthority?.modeOfSubmissionId || '',
+      courierAgency: doc_.forwardingAuthority?.courierAgency || '',
+      awbNumber: doc_.forwardingAuthority?.awbConsignmentNumber || '',
+      bookingDate: toDateInputValue(doc_.forwardingAuthority?.bookingDate),
+      dispatchDate: toDateInputValue(doc_.forwardingAuthority?.dispatchDate),
+      expectedDeliveryDate: toDateInputValue(doc_.forwardingAuthority?.expectedDeliveryDate),
+      actualDeliveryDate: toDateInputValue(doc_.forwardingAuthority?.actualDeliveryDate),
+      parcelId: doc_.forwardingAuthority?.parcelId || '',
+      parcelNumber: doc_.forwardingAuthority?.parcelNumber || '',
+      numberOfExhibits: doc_.forwardingAuthority?.numberOfExhibits || '',
+      packageTypeId: doc_.forwardingAuthority?.packageType?.id || doc_.forwardingAuthority?.packageTypeId || '',
+      sealNumber: doc_.forwardingAuthority?.sealNumber || '',
+      sealDescription: doc_.forwardingAuthority?.sealDescription || '',
+      sealCondition: doc_.forwardingAuthority?.sealCondition || '',
+      packageCondition: doc_.forwardingAuthority?.packageCondition || '',
+      receivedDate: toDateInputValue(doc_.forwardingAuthority?.receivedDate),
+      receivedTime: doc_.forwardingAuthority?.receivedTime || '',
+      receivedBy: doc_.forwardingAuthority?.receivedBy || '',
+      forwardingRemarks: doc_.forwardingAuthority?.remarks || '',
+
+      // NEW — messenger/handover fields
+      messengerName: doc_.forwardingAuthority?.messengerName || '',
+      messengerDesignation: doc_.forwardingAuthority?.messengerDesignation || '',
+      messengerOrganization: doc_.forwardingAuthority?.messengerOrganization || '',
+      messengerIdRef: doc_.forwardingAuthority?.messengerIdRef || '',
+      handoverDateTime: toDateInputValue(doc_.forwardingAuthority?.handoverDateTime),
     });
 
     setUploadedFileNames(existingFiles.map((file) => file.name));
     setUploadedFilePath(existingFiles);
 
-    // ✅ Fresh row for adding new files while editing this case
     setEvidenceRows([{ id: `row_${Date.now()}`, evidenceTypeId: '', description: '', file: null }]);
 
-    const backendMetadata = doc.metadataList || [];
+    const backendMetadata = doc_.metadataList || [];
     const formattedMetadata = backendMetadata
       .filter(item => item !== undefined && item !== null)
       .map(item => ({
@@ -1344,7 +1366,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       formSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  // ============ UPDATE DOCUMENT ============
   // ============ UPDATE DOCUMENT ============
   const handleSaveEdit = async () => {
     const userId = localStorage.getItem("id");
@@ -1353,12 +1375,34 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       return;
     }
 
-    const { fileNo, title, subject, category } = formData;
-    if (!fileNo || !title || !subject || !category || uploadedFilePath.length === 0) {
-      showPopup("Please fill in all required fields and upload files.", "error");
+    // ==========================================
+    // ✅ VALIDATION — collect all missing mandatory fields.
+    // ==========================================
+    const missingFields = [];
+    if (!formData.fileNo) missingFields.push("Case Number (File No)");
+    if (!formData.title) missingFields.push("Case Title");
+    if (!formData.category) missingFields.push("Evidence Category");
+    if (uploadedFilePath.length === 0) missingFields.push("At least one uploaded file");
+
+    if (missingFields.length > 0) {
+      showPopup(
+        `Please fill in the following required field(s):\n• ${missingFields.join("\n• ")}`,
+        "error"
+      );
       return;
     }
 
+    const { fileNo, title, category } = formData;
+
+    // Helper function to safely convert values to Integer
+    const toInteger = (value) => {
+      if (value === null || value === undefined || value === '') return null;
+      if (typeof value === 'object' && value.id) return parseInt(value.id, 10);
+      const parsed = parseInt(value, 10);
+      return isNaN(parsed) ? null : parsed;
+    };
+
+    // Build metadata object
     const metadataObject = [];
     const seenKeys = new Set();
     dynamicMetadata.forEach(item => {
@@ -1372,46 +1416,49 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       }
     });
 
+    // Build versioned file paths with proper type handling
     const versionedFilePaths = uploadedFilePath.map((file) => {
       const { version = formData.version || "1.0", yearMaster, displayName } = file;
       const filePath = file.isWaitingRoomFile ? displayName : file.path;
+
       return {
         path: filePath || '',
         version: `${version}`,
         yearId: yearMaster?.id || formData.year?.id || null,
         fileType: file.fileType || null,
         mimeType: file.mimeType || null,
-        pageCounts: file.pageCounts || null,
+        pageCounts: toInteger(file.pageCounts),
         fileSizeBytes: file.fileSizeBytes || null,
         fileSizeHuman: file.fileSizeHuman || null,
-        waitingRoomId: file.waitingRoomId || null,
+        waitingRoomId: toInteger(file.waitingRoomId),
         isWaitingRoomFile: file.isWaitingRoomFile || false,
         displayName: displayName || filePath?.split("/").pop() || 'unknown',
-        evidenceTypeId: file.evidenceTypeId || null,
+        evidenceTypeId: toInteger(file.evidenceTypeId),
         evidenceDescription: file.evidenceDescription || null,
       };
     });
 
+    // ✅ PAYLOAD — nested master objects, matching DocumentHeader entity
     const payload = {
       documentHeader: {
         id: editingDoc.id,
         fileNo,
         title,
-        subject,
-        categoryMaster: { id: category.id },
+        subject: formData.subject || "",
+        categoryMaster: category?.id ? { id: toInteger(category.id) } : null,
         employee: { id: parseInt(userId, 10) },
 
         caseId: formData.caseId || null,
         firNumber: formData.firNumber || null,
         firDate: formData.firDate || null,
-        caseTypeId: formData.caseTypeId || null,
-        crimeTypeId: formData.crimeTypeId || null,
-        stateId: formData.stateId || null,
-        districtId: formData.districtId || null,
+        caseType: formData.caseTypeId ? { id: toInteger(formData.caseTypeId) } : null,
+        crimeType: formData.crimeTypeId ? { id: toInteger(formData.crimeTypeId) } : null,
+        state: formData.stateId ? { id: toInteger(formData.stateId) } : null,
+        district: formData.districtId ? { id: toInteger(formData.districtId) } : null,
+        priority: formData.priorityId ? { id: toInteger(formData.priorityId) } : null,
         policeStation: formData.policeStation || null,
         investigatingOfficer: formData.investigatingOfficer || null,
         courtReference: formData.courtReference || null,
-        priorityId: formData.priorityId || null,
         dateOfIncident: formData.dateOfIncident || null,
         incidentLocation: formData.incidentLocation || null,
 
@@ -1419,19 +1466,19 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         exhibitNumber: formData.exhibitNumber || null,
       },
       forwardingAuthority: {
-        forwardingAuthorityTypeId: formData.forwardingAuthorityTypeId || null,
+        forwardingAuthorityTypeId: toInteger(formData.forwardingAuthorityTypeId),
         authorityName: formData.authorityName || null,
         designation: formData.designation || null,
         organisation: formData.organisation || null,
-        districtId: formData.forwardingDistrictId || null,
-        cityId: formData.cityId || null,
+        districtId: toInteger(formData.forwardingDistrictId),
+        cityId: toInteger(formData.cityId),
         address: formData.address || null,
         contactNumber: formData.contactNumber || null,
         email: formData.email || null,
         forwardingLetterNumber: formData.forwardingLetterNumber || null,
         forwardingDate: formData.forwardingDate || null,
         forwardingLetterPath: formData.forwardingLetterPath || null,
-        modeOfSubmissionId: formData.modeOfSubmissionId || null,
+        modeOfSubmissionId: toInteger(formData.modeOfSubmissionId),
         courierAgency: formData.courierAgency || null,
         awbConsignmentNumber: formData.awbNumber || null,
         bookingDate: formData.bookingDate || null,
@@ -1440,8 +1487,8 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         actualDeliveryDate: formData.actualDeliveryDate || null,
         parcelId: formData.parcelId || null,
         parcelNumber: formData.parcelNumber || null,
-        numberOfExhibits: formData.numberOfExhibits || null,
-        packageTypeId: formData.packageTypeId || null,
+        numberOfExhibits: toInteger(formData.numberOfExhibits),
+        packageTypeId: toInteger(formData.packageTypeId),
         sealNumber: formData.sealNumber || null,
         sealDescription: formData.sealDescription || null,
         sealCondition: formData.sealCondition || null,
@@ -1450,11 +1497,24 @@ const DocumentManagement = ({ fieldsDisabled }) => {
         receivedTime: formData.receivedTime || null,
         receivedBy: formData.receivedBy || null,
         remarks: formData.forwardingRemarks || null,
+        messengerName: formData.messengerName || null,
+        messengerDesignation: formData.messengerDesignation || null,
+        messengerOrganization: formData.messengerOrganization || null,
+        messengerIdRef: formData.messengerIdRef || null,
+        handoverDateTime: formData.handoverDateTime || null,
       },
       filePaths: versionedFilePaths,
       metadata: metadataObject,
       deletedMetaDataIds,
     };
+
+    // Debug log to check payload before sending
+    console.log("=== UPDATE PAYLOAD DEBUG ===");
+    console.log("Forwarding Authority districtId:", payload.forwardingAuthority.districtId);
+    console.log("Forwarding Authority cityId:", payload.forwardingAuthority.cityId);
+    console.log("Forwarding Authority type:", payload.forwardingAuthority.forwardingAuthorityTypeId);
+    console.log("Full Payload:", JSON.stringify(payload, null, 2));
+    console.log("============================");
 
     try {
       setBProcess(true);
@@ -1509,6 +1569,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
       fetchDocuments();
     } catch (error) {
       console.error("Error updating document:", error);
+      console.error("Error details:", error.response?.data);
       showPopup("Document update failed: " + error.message, "error");
     } finally {
       setBProcess(false);
@@ -1749,7 +1810,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
             <div className="grid grid-col-4">
               <div className="form-group">
                 <label>
-                  <AutoTranslate>Case Year</AutoTranslate>
+                  <AutoTranslate>Case Year</AutoTranslate> <span className="text-red-500">*</span>
                   {isDocumentSaved && (
                     <span className="text-xs text-green-600 ml-1">(can change)</span>
                   )}
