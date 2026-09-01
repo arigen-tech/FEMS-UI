@@ -12,11 +12,11 @@ import {
 } from "@heroicons/react/24/solid"
 import { BellAlertIcon } from "@heroicons/react/24/solid"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
 import { API_HOST, SYSTEM_ADMIN, BRANCH_ADMIN, DEPARTMENT_ADMIN, USER } from "../API/apiConfig"
 import AutoTranslate from '../i18n/AutoTranslate';
 import { useLanguage } from '../i18n/LanguageContext';
 import apiClient from "../API/apiClient";
+
 const getNotificationIcon = (type) => {
   const commonClasses = "h-8 w-8 p-1.5 rounded-lg"
   switch (type) {
@@ -112,7 +112,6 @@ export const NotificationBell = () => {
         params: { employeeId: userId },
       })
 
-
       const allNotifications = response.data.response
       const allowedTypes = getAllowedNotificationTypes(role)
 
@@ -199,7 +198,6 @@ export const Notification = () => {
     "DOCUMENT_SHARE_REVOKE"
   ]
 
-  // Function to translate text
   const translateText = useCallback(async (text) => {
     if (isTranslationNeeded()) {
       try {
@@ -212,7 +210,6 @@ export const Notification = () => {
     return text;
   }, [isTranslationNeeded, translate]);
 
-  // Update translated texts when language changes
   useEffect(() => {
     const updateTranslatedTexts = async () => {
       if (!isTranslationNeeded()) {
@@ -267,7 +264,6 @@ export const Notification = () => {
       .join(" ")
   }
 
-  // Function to get count for each filter
   const getFilterCount = (filterType) => {
     if (filterType === "all") {
       return notifications.length
@@ -283,13 +279,11 @@ export const Notification = () => {
       })
       const allNotifications = response.data.response
 
-      // Filter by role using the helper function
       const allowedTypes = getAllowedNotificationTypes(role)
       const roleFilteredNotifications = allNotifications.filter((notification) =>
         allowedTypes.includes(notification.type)
       )
 
-      // Then filter out read notifications
       const unreadNotifications = roleFilteredNotifications.filter(
         (notification) => !notification.read
       )
@@ -326,7 +320,6 @@ export const Notification = () => {
     try {
       await apiClient.put(`${API_HOST}/notifications/${notificationId}/read`)
 
-      // Immediately remove the notification from the list
       setNotifications(prevNotifications =>
         prevNotifications.filter(notification => notification.id !== notificationId)
       );
@@ -343,7 +336,7 @@ export const Notification = () => {
   const handleNotificationClick = async (notification) => {
     setSelectedNotification(notification)
     setIsDetailView(true)
-    if (!notification.isRead) {
+    if (!notification.read) {
       setTimeout(() => {
         markAsRead(notification.id)
       }, 500)
@@ -366,7 +359,7 @@ export const Notification = () => {
 
     try {
       const markAsReadPromises = notifications.map(notification =>
-        axios.put(`${API_HOST}/notifications/${notification.id}/read`, null,)
+        apiClient.put(`${API_HOST}/notifications/${notification.id}/read`)
       );
 
       await Promise.all(markAsReadPromises);
@@ -397,13 +390,11 @@ export const Notification = () => {
           label: translatedTexts.viewEmployee,
         }
       case "DOCUMENT_SHARE":
-        // ✅ FIXED: For DOCUMENT_SHARE, use referenceId which is documentDetails.id
         return {
           path: `/all-documents?docId=${notification.referenceId}`,
           label: translatedTexts.viewSharedDocument,
         }
       case "DOCUMENT_SHARE_REVOKE":
-        // ✅ FIXED: For DOCUMENT_SHARE_REVOKE, use referenceId which is documentDetails.id
         return {
           path: `/all-documents?docId=${notification.referenceId}`,
           label: translatedTexts.viewRevokedDocument,
@@ -413,7 +404,6 @@ export const Notification = () => {
     }
   }
 
-  // Get allowed notification types for current role
   const allowedTypes = getAllowedNotificationTypes(role)
 
   if (loading) {
@@ -496,7 +486,7 @@ export const Notification = () => {
                     <div
                       key={notification.id}
                       onClick={() => handleNotificationClick(notification)}
-                      className={`p-6 hover:bg-gray-50 transition-all duration-200 cursor-pointer ${!notification.isRead ? "bg-blue-50" : ""
+                      className={`p-6 hover:bg-gray-50 transition-all duration-200 cursor-pointer ${!notification.read ? "bg-blue-50" : ""
                         }`}
                     >
                       <div className="flex items-start space-x-4">
@@ -545,7 +535,6 @@ export const Notification = () => {
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-[calc(100vh-4rem)] flex flex-col">
-            {/* Header */}
             <div className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-800 p-8">
               <div className="flex items-center space-x-4">
                 <button
@@ -560,10 +549,8 @@ export const Notification = () => {
               </div>
             </div>
 
-            {/* Content */}
             <div className="flex-1 overflow-y-auto">
               <div className="p-8">
-                {/* Metadata */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-4">
                     {selectedNotification && getNotificationIcon(selectedNotification.type)}
@@ -576,14 +563,12 @@ export const Notification = () => {
                   </span>
                 </div>
 
-                {/* Message */}
                 <div className="bg-gray-50 rounded-xl p-6 mb-6">
                   <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
                     {selectedNotification?.message}
                   </p>
                 </div>
 
-                {/* Detailed Message */}
                 {selectedNotification?.detailedMessage && (
                   <div className="bg-gray-50 rounded-xl p-6 mt-4">
                     <h3 className="text-lg font-semibold mb-4">
@@ -598,7 +583,6 @@ export const Notification = () => {
                   </div>
                 )}
 
-                {/* Navigation Button */}
                 {selectedNotification && getNavigationButton(selectedNotification) && (
                   <div className="mt-8 flex justify-center">
                     <button
