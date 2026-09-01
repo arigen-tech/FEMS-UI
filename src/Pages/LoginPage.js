@@ -993,7 +993,7 @@ const LoginPage = () => {
                 </button>
                 {showTooltip && (
                   <div className="toolTip">
-                    <AutoTranslate>This website is running on Release Version 3.0, which is currently under testing.</AutoTranslate>
+                    <AutoTranslate>This website is running on Release Version 1.1, which is currently under testing.</AutoTranslate>
                   </div>
                 )}
               </div>

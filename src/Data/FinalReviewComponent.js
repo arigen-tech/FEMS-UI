@@ -434,7 +434,7 @@ const FinalReviewComponent = ({ reportEntryId, documentDetailId, onBack }) => {
                     <div className="grid grid-col-4 mb-4">
                         <div className="form-group">
                             <label><AutoTranslate>Report Date</AutoTranslate></label>
-                            <input type="text" value={reportData.reportDate ? new Date(reportData.reportDate).toLocaleDateString() : '--'} readOnly />
+                            <input type="text" value={reportData.submittedOn ? new Date(reportData.submittedOn).toLocaleDateString('en-GB') : '--'} readOnly />
                         </div>
 
                         <div className="form-group">

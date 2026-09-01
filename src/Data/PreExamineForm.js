@@ -5,6 +5,8 @@ import LoadingComponent from '../Components/LoadingComponent';
 import Popup from '../Components/Popup';
 import { API_HOST, DEPAETMENT_API, MASTER_API } from "../API/apiConfig";
 
+const errorTextStyle = { color: 'red', fontSize: '12px', display: 'block', marginTop: '4px' };
+
 const PreExamineForm = ({ documentHeaderId, onBack }) => {
   const [caseData, setCaseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,10 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
   const [assignments, setAssignments] = useState({});
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
+  // Per-row assignment errors, keyed by documentDetailId
+  const [assignmentErrors, setAssignmentErrors] = useState({});
+  const [assignmentTouched, setAssignmentTouched] = useState({});
 
   const showPopup = (message, type = 'info') => {
     setPopupMessage({ message, type, onClose: () => setPopupMessage(null) });
@@ -350,6 +356,20 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
   // Check if parcel condition was auto-filled from seal status
   const isParcelConditionAutoFilled = !!selectedSealStatus?.defaultParcelConditionId;
 
+  // Validate a single row's assignment fields
+  const validateAssignmentRow = (detailId, field, value) => {
+    switch (field) {
+      case 'divisionId':
+        if (!value) return "Division is required";
+        return "";
+      case 'employeeId':
+        if (!value) return "Employee is required";
+        return "";
+      default:
+        return "";
+    }
+  };
+
   const handleDivisionChange = (detailId, divisionId) => {
     setAssignments((prev) => ({
       ...prev,
@@ -358,6 +378,19 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
         divisionId,
         employeeId: "" // Reset employee when division changes
       },
+    }));
+
+    // Validate division, and re-flag employee as required again since it was reset
+    if (assignmentTouched[detailId]?.divisionId) {
+      const error = validateAssignmentRow(detailId, 'divisionId', divisionId);
+      setAssignmentErrors(prev => ({
+        ...prev,
+        [detailId]: { ...prev[detailId], divisionId: error }
+      }));
+    }
+    setAssignmentErrors(prev => ({
+      ...prev,
+      [detailId]: { ...prev[detailId], employeeId: "" }
     }));
     
     if (divisionId) {
@@ -369,6 +402,29 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
     setAssignments((prev) => ({
       ...prev,
       [detailId]: { ...prev[detailId], [field]: value },
+    }));
+
+    // Validate on change if touched
+    if (assignmentTouched[detailId]?.[field]) {
+      const error = validateAssignmentRow(detailId, field, value);
+      setAssignmentErrors(prev => ({
+        ...prev,
+        [detailId]: { ...prev[detailId], [field]: error }
+      }));
+    }
+  };
+
+  // Mark a row field as touched and validate it on blur
+  const handleAssignmentBlur = (detailId, field) => {
+    setAssignmentTouched(prev => ({
+      ...prev,
+      [detailId]: { ...prev[detailId], [field]: true }
+    }));
+    const value = assignments[detailId]?.[field];
+    const error = validateAssignmentRow(detailId, field, value);
+    setAssignmentErrors(prev => ({
+      ...prev,
+      [detailId]: { ...prev[detailId], [field]: error }
     }));
   };
 
@@ -401,7 +457,32 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    // Validate Assign Division + Assign Employee for every evidence row
+    const newAssignmentErrors = {};
+    const newAssignmentTouched = {};
+    let hasAssignmentErrors = false;
+
+    (caseData?.evidenceList || []).forEach((row) => {
+      const detailId = row.documentDetailId;
+      const rowData = assignments[detailId] || {};
+
+      const divisionError = validateAssignmentRow(detailId, 'divisionId', rowData.divisionId);
+      const employeeError = validateAssignmentRow(detailId, 'employeeId', rowData.employeeId);
+
+      newAssignmentErrors[detailId] = {
+        divisionId: divisionError,
+        employeeId: employeeError,
+      };
+      newAssignmentTouched[detailId] = { divisionId: true, employeeId: true };
+
+      if (divisionError || employeeError) hasAssignmentErrors = true;
+    });
+
+    setAssignmentErrors(newAssignmentErrors);
+    setAssignmentTouched(newAssignmentTouched);
+
+    return Object.keys(newErrors).length === 0 && !hasAssignmentErrors;
   };
 
   const handleSave = async () => {
@@ -537,50 +618,65 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <th><AutoTranslate>File Name</AutoTranslate></th>
                   <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                   <th><AutoTranslate>Evidence Type</AutoTranslate></th>
-                  <th><AutoTranslate>Assign Division</AutoTranslate></th>
-                  <th><AutoTranslate>Assign Employee</AutoTranslate></th>
+                  <th><AutoTranslate>Assign Division</AutoTranslate> *</th>
+                  <th><AutoTranslate>Assign Employee</AutoTranslate> *</th>
                   <th><AutoTranslate>Remark</AutoTranslate></th>
                 </tr>
               </thead>
               <tbody>
-                {(caseData.evidenceList || []).length > 0 ? caseData.evidenceList.map((row) => (
-                  <tr key={row.documentDetailId}>
-                    <td>{row.docName}</td>
-                    <td>{row.evidenceCategory || '--'}</td>
-                    <td>{row.evidenceTypeName || '--'}</td>
-                    <td>
-                      <select
-                        value={assignments[row.documentDetailId]?.divisionId || ''}
-                        onChange={(e) => handleDivisionChange(row.documentDetailId, e.target.value)}
-                      >
-                        <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                        {divisions.map((d) => (
-                          <option key={d.id} value={d.id}>{d.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        value={assignments[row.documentDetailId]?.employeeId || ''}
-                        onChange={(e) => handleAssignmentChange(row.documentDetailId, 'employeeId', e.target.value)}
-                        disabled={!assignments[row.documentDetailId]?.divisionId}
-                      >
-                        <option value=""><AutoTranslate>Select</AutoTranslate></option>
-                        {(employees[assignments[row.documentDetailId]?.divisionId] || []).map((emp) => (
-                          <option key={emp.id} value={emp.id}>{emp.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        type="text" style={{width:"240px"}}
-                        value={assignments[row.documentDetailId]?.remark || ''}
-                        onChange={(e) => handleAssignmentChange(row.documentDetailId, 'remark', e.target.value)}
-                        placeholder="Add remark"
-                      />
-                    </td>
-                  </tr>
-                )) : (
+                {(caseData.evidenceList || []).length > 0 ? caseData.evidenceList.map((row) => {
+                  const detailId = row.documentDetailId;
+                  const rowErrors = assignmentErrors[detailId] || {};
+
+                  return (
+                    <tr key={detailId}>
+                      <td>{row.docName}</td>
+                      <td>{row.evidenceCategory || '--'}</td>
+                      <td>{row.evidenceTypeName || '--'}</td>
+                      <td>
+                        <select
+                          value={assignments[detailId]?.divisionId || ''}
+                          onChange={(e) => handleDivisionChange(detailId, e.target.value)}
+                          onBlur={() => handleAssignmentBlur(detailId, 'divisionId')}
+                          className={rowErrors.divisionId ? 'error' : ''}
+                        >
+                          <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                          {divisions.map((d) => (
+                            <option key={d.id} value={d.id}>{d.name}</option>
+                          ))}
+                        </select>
+                        {rowErrors.divisionId && (
+                          <span style={errorTextStyle}>{rowErrors.divisionId}</span>
+                        )}
+                      </td>
+                      <td>
+                        <select
+                          value={assignments[detailId]?.employeeId || ''}
+                          onChange={(e) => handleAssignmentChange(detailId, 'employeeId', e.target.value)}
+                          onBlur={() => handleAssignmentBlur(detailId, 'employeeId')}
+                          disabled={!assignments[detailId]?.divisionId}
+                          className={rowErrors.employeeId ? 'error' : ''}
+                        >
+                          <option value=""><AutoTranslate>Select</AutoTranslate></option>
+                          {(employees[assignments[detailId]?.divisionId] || []).map((emp) => (
+                            <option key={emp.id} value={emp.id}>{emp.name}</option>
+                          ))}
+                        </select>
+                        {rowErrors.employeeId && (
+                          <span style={errorTextStyle}>{rowErrors.employeeId}</span>
+                        )}
+                      </td>
+                      <td>
+                        <input
+                          type="text" style={{width:"240px"}}
+                          value={assignments[detailId]?.remark || ''}
+                          onChange={(e) => handleAssignmentChange(detailId, 'remark', e.target.value)}
+                          placeholder="Add remark"
+                        />
+                      </td>
+                    </tr>
+                  );
+                }) : (
                   <tr>
                     <td colSpan={6} className="text-center">
                       <AutoTranslate>No evidence files found for this case.</AutoTranslate>
@@ -610,7 +706,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
-              {errors.purposeId && <span className="error-text">{errors.purposeId}</span>}
+              {errors.purposeId && <span style={errorTextStyle}>{errors.purposeId}</span>}
             </div>
 
             <div className="form-group">
@@ -626,7 +722,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <option key={n.id} value={n.id}>{n.name}</option>
                 ))}
               </select>
-              {errors.natureOfExaminationId && <span className="error-text">{errors.natureOfExaminationId}</span>}
+              {errors.natureOfExaminationId && <span style={errorTextStyle}>{errors.natureOfExaminationId}</span>}
             </div>
 
             <div className="form-group">
@@ -660,7 +756,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                 className={errors.natureOfCase ? 'error' : ''}
                 required
               ></textarea>
-              {errors.natureOfCase && <span className="error-text">{errors.natureOfCase}</span>}
+              {errors.natureOfCase && <span style={errorTextStyle}>{errors.natureOfCase}</span>}
             </div>
 
             <div className="form-group">
@@ -676,7 +772,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
-              {errors.crimeTypeId && <span className="error-text">{errors.crimeTypeId}</span>}
+              {errors.crimeTypeId && <span style={errorTextStyle}>{errors.crimeTypeId}</span>}
             </div>
 
             <div className="form-group">
@@ -692,7 +788,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
-              {errors.priorityId && <span className="error-text">{errors.priorityId}</span>}
+              {errors.priorityId && <span style={errorTextStyle}>{errors.priorityId}</span>}
             </div>
 
             <div className="form-group">
@@ -708,7 +804,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
               </select>
-              {errors.sealStatusId && <span className="error-text">{errors.sealStatusId}</span>}
+              {errors.sealStatusId && <span style={errorTextStyle}>{errors.sealStatusId}</span>}
             </div>
 
             <div className="form-group">
@@ -740,7 +836,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   ))}
                 </select>
               )}
-              {errors.parcelConditionId && <span className="error-text">{errors.parcelConditionId}</span>}
+              {errors.parcelConditionId && <span style={errorTextStyle}>{errors.parcelConditionId}</span>}
             </div>
 
             {showSealRemarks && (
@@ -754,7 +850,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   className={errors.sealVerificationRemarks ? 'error' : ''}
                   required
                 ></textarea>
-                {errors.sealVerificationRemarks && <span className="error-text">{errors.sealVerificationRemarks}</span>}
+                {errors.sealVerificationRemarks && <span style={errorTextStyle}>{errors.sealVerificationRemarks}</span>}
               </div>
             )}
 
@@ -769,7 +865,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                   className={errors.parcelConditionOther ? 'error' : ''}
                   required
                 />
-                {errors.parcelConditionOther && <span className="error-text">{errors.parcelConditionOther}</span>}
+                {errors.parcelConditionOther && <span style={errorTextStyle}>{errors.parcelConditionOther}</span>}
               </div>
             )}
           </div>

@@ -34,7 +34,7 @@ const ChatBotPopup = () => {
   useEffect(() => {
     setMessages([{
       id: Date.now(),
-      text: "✨ **Ari 5.0 online** • I can help with:\n📋 Documents | 📊 Reports | 💰 Files | 📄 Contracts | 📁 Uploads\n\n**Try asking:**\n• 'Show documents'\n• 'How to upload files'\n• 'Document status'\n• 'Help' for all commands",
+      text: "✨ **Ari 5.0 online** • I can help with:\n📋 Cases | 📊 Reports | 💰 Evidence  | 📄 Contracts | 📁 Uploads\n\n**Try asking:**\n• 'Show Cases'\n• 'How to Register cases'\n• 'Case status'\n• 'Help' for all commands",
       isBot: true,
       timestamp: new Date()
     }]);
@@ -218,42 +218,42 @@ const ChatBotPopup = () => {
 
     // Greetings
     if (lower.match(/^(hello|hi|hey|greetings|good morning|good afternoon|good evening)$/)) {
-      return "👋 **Hello!** I'm Ari 5.0, your personal document assistant.\n\n📋 **I can help you with:**\n• Document management\n• File uploads and downloads\n• Document status tracking\n• Report generation\n• File searching\n\n**Try asking:** 'Show all documents' or 'How to upload files?'";
+      return "👋 **Hello!** I'm Ari 5.0, your personal Case assistant.\n\n📋 **I can help you with:**\n• Case management\n• Evidence  uploads and downloads\n• Case status tracking\n• Report generation\n• Evidence  searching\n\n**Try asking:** 'Show all Cases' or 'How to upload Evidence ?'";
     }
 
-    // Document related
-    if (lower.includes("document") && (lower.includes("list") || lower.includes("all") || lower.includes("show"))) {
-      return "📋 **Document List**\n\nFetching document information from the system...\n\n💡 **Try:** `document details` or `search for [document name]`";
+    // Case related
+    if (lower.includes("Case") && (lower.includes("list") || lower.includes("all") || lower.includes("show"))) {
+      return "📋 **Case List**\n\nFetching Case information from the system...\n\n💡 **Try:** `Case details` or `search for [Case name]`";
     }
 
     // Upload help
-    if ((lower.includes("upload") || lower.includes("add file")) && (lower.includes("how") || lower.includes("help"))) {
-      return "📤 **Upload Guide**\n\n**To upload files:**\n1. Click on 'Upload' button\n2. Select your file\n3. Add title and description\n4. Choose category\n5. Click submit\n\n✅ **Supported formats:** PDF, DOC, DOCX, XLS, XLSX, JPG, PNG\n\n💡 **Tip:** Maximum file size is 10MB";
+    if ((lower.includes("upload") || lower.includes("add Evidence ")) && (lower.includes("how") || lower.includes("help"))) {
+      return "📤 **Upload Guide**\n\n**To upload Evidence :**\n1. Click on 'Upload' button\n2. Select your Evidence \n3. Add title and description\n4. Choose category\n5. Click submit\n\n✅ **Supported formats:** PDF, DOC, DOCX, XLS, XLSX, JPG, PNG\n\n💡 **Tip:** Maximum Evidence  size is 10MB";
     }
 
     // Download help
     if (lower.includes("download") && (lower.includes("how") || lower.includes("help"))) {
-      return "📥 **Download Guide**\n\n**To download files:**\n1. Find the file in the list\n2. Click the 'Download' button\n3. File will be saved to your device\n\n💡 **Tip:** You can also right-click and 'Save as'";
+      return "📥 **Download Guide**\n\n**To download Evidence :**\n1. Find the Evidence  in the list\n2. Click the 'Download' button\n3. Evidence  will be saved to your device\n\n💡 **Tip:** You can also right-click and 'Save as'";
     }
 
     // Status help
-    if (lower.includes("status") && (lower.includes("document") || lower.includes("file"))) {
-      return "📊 **Document Status**\n\n**Documents can have these statuses:**\n• ✅ **APPROVED** - Verified and accepted\n• ❌ **REJECTED** - Needs revision\n• ⏳ **PENDING** - Awaiting review\n\n💡 **Try:** `status of [document name]` for specific document";
+    if (lower.includes("status") && (lower.includes("Case") || lower.includes("Evidence "))) {
+      return "📊 **Case Status**\n\n**Cases can have these statuses:**\n• ✅ **APPROVED** - Verified and accepted\n• ❌ **REJECTED** - Needs revision\n• ⏳ **PENDING** - Awaiting review\n\n💡 **Try:** `status of [Case name]` for specific Case";
     }
 
     // Search help
     if (lower.includes("search") || lower.includes("find") || lower.includes("look for")) {
-      return "🔍 **Search Help**\n\n**You can search documents by:**\n• File name\n• Category\n• Upload date\n• Status\n• Uploaded by\n\n💡 **Try:** `search for annual report` or `find files from 2024`";
+      return "🔍 **Search Help**\n\n**You can search Cases by:**\n• Evidence  name\n• Category\n• Upload date\n• Status\n• Uploaded by\n\n💡 **Try:** `search for annual report` or `find Evidence  from 2024`";
     }
 
     // Delete/Trash help
     if (lower.includes("delete") || lower.includes("trash") || lower.includes("remove")) {
-      return "🗑️ **Delete Guide**\n\n**To move files to trash:**\n1. Select the file using checkbox\n2. Click 'Move to Trash'\n3. Confirm deletion\n\n💡 **Note:** Only APPROVED files can be deleted\n\n**To restore deleted files:**\n• Go to Trash section\n• Select files to restore\n• Click 'Restore' button";
+      return "🗑️ **Delete Guide**\n\n**To move Evidence  to trash:**\n1. Select the Evidence  using checkbox\n2. Click 'Move to Trash'\n3. Confirm deletion\n\n💡 **Note:** Only APPROVED Evidence  can be deleted\n\n**To restore deleted Evidence :**\n• Go to Trash section\n• Select Evidence  to restore\n• Click 'Restore' button";
     }
 
     // Share help
     if (lower.includes("share")) {
-      return "🔗 **Share Guide**\n\n**To share documents:**\n1. Select files using checkboxes\n2. Click 'Share' button\n3. Enter email addresses\n4. Set permissions\n5. Send invitation\n\n💡 **Tip:** Shared users will receive email notifications";
+      return "🔗 **Share Guide**\n\n**To share Cases:**\n1. Select Evidence  using checkboxes\n2. Click 'Share' button\n3. Enter email addresses\n4. Set permissions\n5. Send invitation\n\n💡 **Tip:** Shared users will receive email notifications";
     }
 
     // Stop voice command
@@ -266,31 +266,31 @@ const ChatBotPopup = () => {
     if (lower.includes("help") || lower.includes("what can you do") || lower === "help" || lower === "commands") {
       return "🤖 **Ari 5.0 Commands**\n\n" +
         "┌─────────────────────────────────────────────┐\n" +
-        "│ 📋 **Document Commands**                     │\n" +
-        "│   • 'Show documents'                        │\n" +
-        "│   • 'Document details [name]'               │\n" +
+        "│ 📋 **Case Commands**                     │\n" +
+        "│   • 'Show Cases'                        │\n" +
+        "│   • 'Case details [name]'               │\n" +
         "│                                             │\n" +
         "│ 📤 **Upload Commands**                       │\n" +
         "│   • 'How to upload'                         │\n" +
-        "│   • 'Upload file'                           │\n" +
+        "│   • 'Upload Evidence '                           │\n" +
         "│                                             │\n" +
         "│ 📥 **Download Commands**                     │\n" +
         "│   • 'How to download'                       │\n" +
-        "│   • 'Download file'                         │\n" +
+        "│   • 'Download Evidence '                         │\n" +
         "│                                             │\n" +
         "│ 📊 **Status Commands**                       │\n" +
-        "│   • 'Document status'                       │\n" +
-        "│   • 'Approved documents'                    │\n" +
+        "│   • 'Case status'                       │\n" +
+        "│   • 'Approved Cases'                    │\n" +
         "│   • 'Pending review'                        │\n" +
-        "│   • 'Rejected files'                        │\n" +
+        "│   • 'Rejected Evidence '                        │\n" +
         "│                                             │\n" +
         "│ 🔍 **Search Commands**                       │\n" +
         "│   • 'Search for [name]'                     │\n" +
-        "│   • 'Find files'                            │\n" +
+        "│   • 'Find Evidence '                            │\n" +
         "│                                             │\n" +
         "│ 🗑️ **Delete Commands**                       │\n" +
         "│   • 'How to delete'                         │\n" +
-        "│   • 'Restore files'                         │\n" +
+        "│   • 'Restore Evidence '                         │\n" +
         "│                                             │\n" +
         "│ 🔗 **Share Commands**                        │\n" +
         "│   • 'How to share'                          │\n" +
@@ -303,7 +303,7 @@ const ChatBotPopup = () => {
 
     // About command
     if (lower.includes("about") || lower.includes("who are you") || lower.includes("what are you")) {
-      return "🤖 **About Ari 5.0**\n\n**Ari 5.0** is your intelligent document management assistant powered by AI.\n\n**Features:**\n• Voice interaction\n• Document search\n• File upload/download\n• Status tracking\n• Smart recommendations\n\n**Version:** 5.0\n**Status:** Online ✅\n\n💡 **Type 'help'** to see all available commands";
+      return "🤖 **About Ari 5.0**\n\n**Ari 5.0** is your intelligent Case management assistant powered by AI.\n\n**Features:**\n• Voice interaction\n• Case search\n• Evidence  upload/download\n• Status tracking\n• Smart recommendations\n\n**Version:** 5.0\n**Status:** Online ✅\n\n💡 **Type 'help'** to see all available commands";
     }
 
     return null;
@@ -352,7 +352,7 @@ const ChatBotPopup = () => {
       } else {
         // Use local fallback
         const localAnswer = getLocalAnswer(userMessage);
-        const reply = localAnswer || "🤖 **I'm Ari 5.0.** I can help with documents, uploads, and file management.\n\n💡 **Try:** 'Help' to see all available commands!";
+        const reply = localAnswer || "🤖 **I'm Ari 5.0.** I can help with Cases, uploads, and Evidence  management.\n\n💡 **Try:** 'Help' to see all available commands!";
         setMessages(prev => [...prev, {
           id: Date.now(),
           text: reply,
@@ -594,7 +594,7 @@ const ChatBotPopup = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask Ari 5.0... (e.g., 'Show documents', 'Help')"
+                placeholder="Ask Ari 5.0... (e.g., 'Show Cases', 'Help')"
                 className="chat-input"
                 style={{ padding: '8px 12px', fontSize: '12px' }}
                 disabled={isSending}

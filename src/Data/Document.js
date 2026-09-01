@@ -1576,6 +1576,22 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
+    const openForwardingLetter = async (documentId) => {
+    try {
+      const fileUrl = `${API_HOST}/api/documents/download-forwarding-letter/${documentId}`;
+      const response = await apiClient.get(fileUrl, { responseType: "blob" });
+
+      const blob = new Blob([response.data], { type: response.headers["content-type"] });
+      const url = URL.createObjectURL(blob);
+
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Error opening forwarding letter:", error);
+      showPopup("Failed to open forwarding letter.", "error");
+    }
+  };
+
+
   // ============ MODAL HANDLERS ============
   const openModal = (doc) => {
     setSelectedDoc(doc);
@@ -1707,8 +1723,11 @@ const DocumentManagement = ({ fieldsDisabled }) => {
           <CaseInformation formData={formData} onChange={handleFieldChange} />
 
           {/* Forwarding Authority Details component */}
-          <ForwardingAuthorityDetails formData={formData} onChange={handleFieldChange} />
-
+          <ForwardingAuthorityDetails
+            formData={formData}
+            onChange={handleFieldChange}
+            onViewForwardingLetter={openForwardingLetter}
+          />
           {/* Evidence Metadata component — category is shared/case-level, rows are per-file */}
           <EvidenceMetadata
             category={formData.category}

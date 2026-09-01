@@ -93,10 +93,10 @@ const ReviewComponent = ({ documentHeaderId, onView, onBack }) => {
               <label><AutoTranslate>Title</AutoTranslate></label>
               <input type="text" value={caseData.title || ''} readOnly />
             </div>
-            <div className="form-group">
+            {/* <div className="form-group">
               <label><AutoTranslate>Subject</AutoTranslate></label>
               <input type="text" value={caseData.subject || ''} readOnly />
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -133,7 +133,8 @@ const ReviewComponent = ({ documentHeaderId, onView, onBack }) => {
           <table>
             <thead>
               <tr>
-                <th><AutoTranslate>Evidence ID</AutoTranslate></th>
+                <th><AutoTranslate>S.No</AutoTranslate></th>
+                {/* <th><AutoTranslate>Evidence ID</AutoTranslate></th> */}
                 <th><AutoTranslate>Evidence Category</AutoTranslate></th>
                 <th><AutoTranslate>Evidence Type</AutoTranslate></th>
                 <th><AutoTranslate>Division</AutoTranslate></th>
@@ -146,14 +147,15 @@ const ReviewComponent = ({ documentHeaderId, onView, onBack }) => {
             <tbody>
               {visibleEvidence.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center">
+                  <td colSpan="9" className="text-center">
                     <span><AutoTranslate>No data found.</AutoTranslate></span>
                   </td>
                 </tr>
               ) : (
-                visibleEvidence.map((item) => (
+                visibleEvidence.map((item, index) => (
                   <tr key={item.documentDetailId}>
-                    <td>{item.evidenceId}</td>
+                    <td>{index + 1}</td>
+                    {/* <td>{item.evidenceId}</td> */}
                     <td>{item.evidenceCategory || '--'}</td>
                     <td>{item.evidenceType || '--'}</td>
                     <td>{item.division || '--'}</td>

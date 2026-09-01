@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AutoTranslate from '../i18n/AutoTranslate';
 import apiClient from '../API/apiClient';
-import { MASTER_API, API_HOST } from '../API/apiConfig';
+import { MASTER_API } from '../API/apiConfig';
 
-const ForwardingAuthorityDetails = ({ formData = {}, onChange }) => {
+const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingLetter }) => {
   const [authorityTypes, setAuthorityTypes] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [modeOptions, setModeOptions] = useState([]);
@@ -128,14 +128,13 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange }) => {
 
           {hasExistingLetter && (
             <div className="mb-1 text-sm">
-              <a
-                href={`${API_HOST}/api/documents/download/${formData.forwardingLetterPath}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => onViewForwardingLetter(formData.id)}
                 className="text-blue-600 underline"
               >
                 📄 <AutoTranslate>View current file</AutoTranslate>
-              </a>
+              </button>
               <span className="text-gray-400 ml-2">
                 <AutoTranslate>Choose a new file below to replace it</AutoTranslate>
               </span>
