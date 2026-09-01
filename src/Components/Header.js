@@ -161,22 +161,22 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
       );
 
       const employeeRole = response.data.employeeRole;
-      
+
       // Set current role from API response
       setCurrentRole(employeeRole);
-      
+
       // Also update localStorage with the current role
       localStorage.setItem("role", employeeRole);
-      
+
       // Store all available roles
       setRoleName(sortedRoles);
-      
+
       console.log("✅ Roles fetched:", {
         currentRole: employeeRole,
         availableRoles: sortedRoles,
         storedRole: localStorage.getItem("role")
       });
-      
+
     } catch (error) {
       console.error("Error fetching user roles", error);
       // Fallback to localStorage if API fails
@@ -211,11 +211,11 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
 
       // Update localStorage with new role
       localStorage.setItem("role", targetRoleName);
-      
+
       // Update state
       setCurrentRole(targetRoleName);
       setRole(targetRoleName);
-      
+
       showPopup("Role switched successfully", "success");
       setShowConfirmationPopup(false);
 
@@ -224,7 +224,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
 
       // Refresh roles list
       await fetchUserRole();
-      
+
     } catch (error) {
       console.error("Error switching role:", error);
       showPopup("Error switching role", "error");
@@ -312,7 +312,7 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
   }, []);
 
   return (
-    <header className="bg-blue-800- text-white- flex- flex-col- md:flex-row- justify-between- items-end- shadow-inner- relative-">
+    <>
       {popupMessage && (
         <Popup
           message={popupMessage.message}
@@ -320,169 +320,172 @@ function Header({ toggleSidebar, userName, triggerMenuRefresh }) {
           onClose={handleClose}
         />
       )}
-      <div className="itemToggleBtn">
-        <button onClick={toggleSidebar} className="menuBtn" >
-          <CgMenuRight />
-        </button>
-        <div className="mainHeading">
-          <AutoTranslate>Forensic Data Management System</AutoTranslate>
-        </div>
-      </div>
 
-      <div className="topRightMenu">
-        {/* Language Dropdown */}
-        <div className="dropdown-toggle">
-          <button className="dropDownIcon" onClick={() => setDropdownLanguageOpen(!dropdownLanguageOpen)}>
-            <span className="iconBg"><FaEarthAmericas /></span>
-            <span>{getCurrentLanguageName()}</span>
+      <header>
+        <div className="itemToggleBtn">
+          <button onClick={toggleSidebar} className="menuBtn" >
+            <CgMenuRight />
           </button>
-          <DropdownMenu 
-            className="max-h-48- overflow-y-auto"
-            items={
-              availableLanguages && availableLanguages.length > 0
-                ? availableLanguages
-                  .filter(lang => lang.isActive !== false)
-                  .map((lang) => ({
-                    label: (
-                      <span className="flex items-center text-sm text-gray-800 hover:bg-gray-100 rounded">
-                        <span className="mr-3 langIcon">{getLanguageIcon(lang.code)}</span>
-                        <span>{getLanguageNativeNameByCode(lang.code)}</span>
-                        {lang.code === currentLanguage && (
-                          <span className="ml-auto text-green-500 font-semibold">✓</span>
-                        )}
-                      </span>
-                    ),
-                    onClick: () => handleLanguageChange(lang.code),
-                  }))
-                : []
-            }
-            onSelect={(item) => item.onClick && item.onClick()}
-            emptyMessage={<AutoTranslate>No languages available</AutoTranslate>}
-          />
-        </div>
-
-        {/* Role Dropdown - Shows actual role, formatted dynamically from API data */}
-        <div className="dropdown-toggle">
-          <button className="dropDownIcon" onClick={() => setDropdownRoleOpen(!dropdownRoleOpen)}>
-            <span className="iconBg">
-              <PiUserSwitchFill />
-            </span>
-            <span>{getDisplayRoleName()}</span>
-          </button>
-
-          <DropdownMenu
-            className="max-h-48- overflow-y-auto autoWidth"
-            items={
-              Array.isArray(roleName) && roleName.length > 0
-                ? roleName
-                  .filter((roleItem) => roleItem !== currentRole)
-                  .map((roleItem) => {
-                    const IconComponent = getRoleIcon(roleItem);
-                    const displayRoleName = formatRoleName(roleItem);
-
-                    return {
-                      label: (
-                        <span className="flex items-center text-sm text-gray-800 hover:bg-gray-100 rounded">
-                          <IconComponent className="h-5 w-5 mr-3" />
-                          <span>{displayRoleName}</span>
-                        </span>
-                      ),
-                      onClick: () => {
-                        handleRoleSwitch(roleItem);
-                        setDropdownRoleOpen(false);
-                      },
-                    };
-                  })
-                : []
-            }
-            onSelect={(item) => item.onClick && item.onClick()}
-            emptyMessage={
-              isLoadingRoles 
-                ? <AutoTranslate>Loading roles...</AutoTranslate> 
-                : <AutoTranslate>No multiple roles available</AutoTranslate>
-            }
-          />
-        </div>
-
-        {/* Notification component */}
-        <div className="dropdown-toggle">
-          <NotificationBell />
-        </div>
-
-        {/* Profile Dropdown */}
-        <div className="dropdown-toggle" ref={dropdownRef}>
-          <button className="dropDownIcon" onClick={() => setDropdownOpen(!dropdownOpen)}>
-            {UserName && <span>{UserName}</span>}
-            <img
-              src={imageSrc || adminPhoto}
-              onError={(e) => (e.currentTarget.src = adminPhoto)}
-              alt={getFallbackTranslation('Profile', currentLanguage)}
-            />
-          </button>
-          <DropdownMenu
-            items={[
-              {
-                label: (
-                  <span className="flex items-center text-gray-800 text-sm">
-                    <PencilIcon className="h-4 w-4 mr-3" />
-                    <AutoTranslate>Edit Profile</AutoTranslate>
-                  </span>
-                ),
-                onClick: handleChangePassword,
-              },
-              {
-                label: (
-                  <span className="flex items-center text-gray-800 text-sm">
-                    <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3" />
-                    <AutoTranslate>Logout</AutoTranslate>
-                  </span>
-                ),
-                onClick: handleLogout,
-              },
-            ]}
-            onSelect={(item) => item.onClick && item.onClick()}
-            emptyMessage={<AutoTranslate>No options available</AutoTranslate>}
-          />
-        </div>
-      </div>
-
-      {/* Confirmation Popup */}
-      {showConfirmationPopup && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative z-60">
-            <h2 className="text-lg font-semibold mb-4">
-              <AutoTranslate>Confirm Role Switch</AutoTranslate>
-            </h2>
-            <p className="text-gray-700 mb-6">
-              <AutoTranslate>Are you sure you want to switch to the role:</AutoTranslate>{" "}
-              <strong>{formatRoleName(targetRoleName)}</strong>?
-            </p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={cancelRoleSwitch}
-                className="btn-cancel"
-              >
-                <AutoTranslate>Cancel</AutoTranslate>
-              </button>
-              <button
-                onClick={confirmRoleSwitch}
-                disabled={isConfSwitch}
-                className={`btn-primary no-print ${isConfSwitch ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-              >
-                {isConfSwitch ? (
-                  <span className="flex items-center">
-                    <ImSpinner2 className="animate-spin mr-2" /> <AutoTranslate>Switching...</AutoTranslate>
-                  </span>
-                ) : (
-                  <AutoTranslate>Confirm</AutoTranslate>
-                )}
-              </button>
-            </div>
+          <div className="mainHeading">
+            <AutoTranslate>Forensic Data Management System</AutoTranslate>
           </div>
         </div>
-      )}
-    </header>
+
+        <div className="topRightMenu">
+          {/* Language Dropdown */}
+          <div className="dropdown-toggle">
+            <button className="dropDownIcon" onClick={() => setDropdownLanguageOpen(!dropdownLanguageOpen)}>
+              <span className="iconBg"><FaEarthAmericas /></span>
+              <span>{getCurrentLanguageName()}</span>
+            </button>
+            <DropdownMenu
+              className="max-h-48- overflow-y-auto"
+              items={
+                availableLanguages && availableLanguages.length > 0
+                  ? availableLanguages
+                    .filter(lang => lang.isActive !== false)
+                    .map((lang) => ({
+                      label: (
+                        <span className="flex items-center text-sm text-gray-800 hover:bg-gray-100 rounded">
+                          <span className="mr-3 langIcon">{getLanguageIcon(lang.code)}</span>
+                          <span>{getLanguageNativeNameByCode(lang.code)}</span>
+                          {lang.code === currentLanguage && (
+                            <span className="ml-auto text-green-500 font-semibold">✓</span>
+                          )}
+                        </span>
+                      ),
+                      onClick: () => handleLanguageChange(lang.code),
+                    }))
+                  : []
+              }
+              onSelect={(item) => item.onClick && item.onClick()}
+              emptyMessage={<AutoTranslate>No languages available</AutoTranslate>}
+            />
+          </div>
+
+          {/* Role Dropdown - Shows actual role, formatted dynamically from API data */}
+          <div className="dropdown-toggle">
+            <button className="dropDownIcon" onClick={() => setDropdownRoleOpen(!dropdownRoleOpen)}>
+              <span className="iconBg">
+                <PiUserSwitchFill />
+              </span>
+              <span>{getDisplayRoleName()}</span>
+            </button>
+
+            <DropdownMenu
+              className="max-h-48- overflow-y-auto autoWidth"
+              items={
+                Array.isArray(roleName) && roleName.length > 0
+                  ? roleName
+                    .filter((roleItem) => roleItem !== currentRole)
+                    .map((roleItem) => {
+                      const IconComponent = getRoleIcon(roleItem);
+                      const displayRoleName = formatRoleName(roleItem);
+
+                      return {
+                        label: (
+                          <span className="flex items-center text-sm text-gray-800 hover:bg-gray-100 rounded">
+                            <IconComponent className="h-5 w-5 mr-3" />
+                            <span>{displayRoleName}</span>
+                          </span>
+                        ),
+                        onClick: () => {
+                          handleRoleSwitch(roleItem);
+                          setDropdownRoleOpen(false);
+                        },
+                      };
+                    })
+                  : []
+              }
+              onSelect={(item) => item.onClick && item.onClick()}
+              emptyMessage={
+                isLoadingRoles
+                  ? <AutoTranslate>Loading roles...</AutoTranslate>
+                  : <AutoTranslate>No multiple roles available</AutoTranslate>
+              }
+            />
+          </div>
+
+          {/* Notification component */}
+          <div className="dropdown-toggle">
+            <NotificationBell />
+          </div>
+
+          {/* Profile Dropdown */}
+          <div className="dropdown-toggle" ref={dropdownRef}>
+            <button className="dropDownIcon" onClick={() => setDropdownOpen(!dropdownOpen)}>
+              {UserName && <span>{UserName}</span>}
+              <img
+                src={imageSrc || adminPhoto}
+                onError={(e) => (e.currentTarget.src = adminPhoto)}
+                alt={getFallbackTranslation('Profile', currentLanguage)}
+              />
+            </button>
+            <DropdownMenu
+              items={[
+                {
+                  label: (
+                    <span className="flex items-center text-gray-800 text-sm">
+                      <PencilIcon className="h-4 w-4 mr-3" />
+                      <AutoTranslate>Edit Profile</AutoTranslate>
+                    </span>
+                  ),
+                  onClick: handleChangePassword,
+                },
+                {
+                  label: (
+                    <span className="flex items-center text-gray-800 text-sm">
+                      <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3" />
+                      <AutoTranslate>Logout</AutoTranslate>
+                    </span>
+                  ),
+                  onClick: handleLogout,
+                },
+              ]}
+              onSelect={(item) => item.onClick && item.onClick()}
+              emptyMessage={<AutoTranslate>No options available</AutoTranslate>}
+            />
+          </div>
+        </div>
+
+        {/* Confirmation Popup */}
+        {showConfirmationPopup && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative z-60">
+              <h2 className="text-lg font-semibold mb-4">
+                <AutoTranslate>Confirm Role Switch</AutoTranslate>
+              </h2>
+              <p className="text-gray-700 mb-6">
+                <AutoTranslate>Are you sure you want to switch to the role:</AutoTranslate>{" "}
+                <strong>{formatRoleName(targetRoleName)}</strong>?
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={cancelRoleSwitch}
+                  className="btn-cancel"
+                >
+                  <AutoTranslate>Cancel</AutoTranslate>
+                </button>
+                <button
+                  onClick={confirmRoleSwitch}
+                  disabled={isConfSwitch}
+                  className={`btn-primary no-print ${isConfSwitch ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                >
+                  {isConfSwitch ? (
+                    <span className="flex items-center">
+                      <ImSpinner2 className="animate-spin mr-2" /> <AutoTranslate>Switching...</AutoTranslate>
+                    </span>
+                  ) : (
+                    <AutoTranslate>Confirm</AutoTranslate>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+    </>
   );
 }
 
