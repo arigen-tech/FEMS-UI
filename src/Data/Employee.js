@@ -418,7 +418,7 @@ const UserAddEmployee = () => {
     }
 
     if (!formData.branch.id) {
-      setError("Branch is required");
+      setError("Laboratory is required");
       isValid = false;
     }
 
@@ -840,7 +840,7 @@ const UserAddEmployee = () => {
         <div className='mb-8'>
           <div ref={formRef} className="cardLight">
             {error && <p className="text-red-500">{error}</p>}
-            <div className="grid grid-col-4 itemEnd">
+            <div className="grid grid-col-4">
               <div className="form-group">
                 <label>
                   <AutoTranslate>Name</AutoTranslate> <span className="text-red-500">*</span>
@@ -950,7 +950,7 @@ const UserAddEmployee = () => {
                   </div>
                 )}
               </div>
-              <div className="form-group">
+              <div className="form-group selfEnd">
               {editingIndex === null ? (
                 <button
                   onClick={handleAddEmployee}
