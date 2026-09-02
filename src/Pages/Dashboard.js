@@ -118,6 +118,14 @@ function Dashboard() {
     trashTotalDocByBranch: 0,
     trashTotalDocByDepartment: 0,
     totalLanguages: 0,
+
+    dispatchedToday: 0,
+    dispatchPending: 0,
+    dispatchedTodayByBranch: 0,
+    dispatchPendingByBranch: 0,
+    dispatchedTodayByDepartment: 0,
+    dispatchPendingByDepartment: 0,
+
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -609,15 +617,14 @@ function Dashboard() {
 
 
 
-              {/* static value */}
               <Link to="/dispatch">
                 <div className="gridItems">
-                  <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+                  <StatBlock title="Dispatched Today" value={stats.dispatchedToday} Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
               <Link to="/dispatch">
                 <div className="gridItems pending">
-                  <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+                  <StatBlock title="Dispatch Pending" value={stats.dispatchPending} Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
               <Link to="/all-documents">
@@ -679,6 +686,17 @@ function Dashboard() {
                 <StatBlock title="Total Evidence" value={totalDocsbyBranch} Icon={IoDocuments} />
               </div>
 
+              <Link to="/dispatch">
+                <div className="gridItems">
+                  <StatBlock title="Dispatched Today" value={stats.dispatchedTodayByBranch} Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+              <Link to="/dispatch">
+                <div className="gridItems pending">
+                  <StatBlock title="Dispatch Pending" value={stats.dispatchPendingByBranch} Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+
               {/* static value */}
               <Link to="/all-documents">
               <div className="gridItems">
@@ -729,6 +747,17 @@ function Dashboard() {
               <div className="gridItems">
                 <StatBlock title="Total Evidence" value={totalDocsbyDep} Icon={IoDocuments} />
               </div>
+
+              <Link to="/dispatch">
+                <div className="gridItems">
+                  <StatBlock title="Dispatched Today" value={stats.dispatchedTodayByDepartment} Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
+              <Link to="/dispatch">
+                <div className="gridItems pending">
+                  <StatBlock title="Dispatch Pending" value={stats.dispatchPendingByDepartment} Icon={AiOutlineDeliveredProcedure} />
+                </div>
+              </Link>
 
               {/* static value */}
               <Link to="/all-documents">
@@ -796,15 +825,14 @@ function Dashboard() {
 
           {role === DISPATCH_OFFICER && (
             <>
-              {/* static value */}
               <Link to="/dispatch">
                 <div className="gridItems">
-                  <StatBlock title="Dispatched Today" value="2" Icon={AiOutlineDeliveredProcedure} />
+                  <StatBlock title="Dispatched Today" value={stats.dispatchedToday} Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
               <Link to="/dispatch">
                 <div className="gridItems pending">
-                  <StatBlock title="Dispatch Pending" value="2" Icon={AiOutlineDeliveredProcedure} />
+                  <StatBlock title="Dispatch Pending" value={stats.dispatchPending} Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
               <div className="gridItems">
