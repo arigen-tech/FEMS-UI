@@ -422,10 +422,7 @@ const UserAddEmployee = () => {
       isValid = false;
     }
 
-    if (!formData.department.id) {
-      setError("Department is required");
-      isValid = false;
-    }
+    // Division/Department is now optional — no validation check for it
 
     return isValid;
   };
@@ -458,7 +455,9 @@ const UserAddEmployee = () => {
         isActive: 0,
         createdBy: { id: userId },
         updatedBy: { id: userId },
-        department: { id: parseInt(formData.department.id, 10) },
+        department: formData.department?.id
+          ? { id: parseInt(formData.department.id, 10) }
+          : null,
         branch: { id: parseInt(formData.branch.id, 10) },
         createdOn: new Date().toISOString(),
         updatedOn: new Date().toISOString(),
@@ -584,10 +583,9 @@ const UserAddEmployee = () => {
         email: formData.email,
         mobile: fullMobileNumber,
         branch: { id: formData.branch.id, name: formData.branch.name },
-        department: {
-          id: formData.department.id,
-          name: formData.department.name,
-        },
+        department: formData.department?.id
+          ? { id: formData.department.id, name: formData.department.name }
+          : null,
         password: formData.password ? formData.password : null,
         updatedOn: new Date().toISOString(),
         enabled: formData.enabled,
@@ -931,14 +929,13 @@ const UserAddEmployee = () => {
 
               <div className="form-group">
                 <label>
-                  <AutoTranslate>Division</AutoTranslate> <span className="text-red-500">*</span>
+                  <AutoTranslate>Division</AutoTranslate>
                 </label>
                 {role === SYSTEM_ADMIN ? (
                   <select
                     name="department"
                     value={formData.department?.id || ""}
                     onChange={(e) => handleSelectChange(e, "department")}
-                    required
                   >
                     <option value=""><AutoTranslate>Select Division</AutoTranslate></option>
                     {departmentOptions.map((department) => (
