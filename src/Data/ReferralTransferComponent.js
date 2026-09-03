@@ -116,7 +116,7 @@ const ReferralTransferComponent = ({ referrals, onView, currentRole }) => {
                             <tr>
                                 <th><AutoTranslate>Case No.</AutoTranslate></th>
                                 <th><AutoTranslate>From Laboratory</AutoTranslate></th>
-                                <th><AutoTranslate>Evidence ID</AutoTranslate></th>
+                                {/* <th><AutoTranslate>Evidence ID</AutoTranslate></th> */}
                                 <th><AutoTranslate>Evidence Type</AutoTranslate></th>
                                 <th><AutoTranslate>Status</AutoTranslate></th>
                                 <th className='text-center'><AutoTranslate>Action</AutoTranslate></th>
@@ -127,7 +127,7 @@ const ReferralTransferComponent = ({ referrals, onView, currentRole }) => {
                                 <tr key={r.documentDetailId}>
                                     <td>{r.caseNo || '--'}</td>
                                     <td>{r.fromLaboratoryName || '--'}</td>
-                                    <td>{r.evidenceId || '--'}</td>
+                                    {/* <td>{r.evidenceId || '--'}</td> */}
                                     <td>{r.evidenceType || '--'}</td>
                                     <td><span className={statusClass(r.referralStatus)}>{statusLabel(r.referralStatus)}</span></td>
                                     <td className="text-center">
@@ -154,7 +154,7 @@ const ReferralTransferComponent = ({ referrals, onView, currentRole }) => {
                         <thead>
                             <tr>
                                 <th><AutoTranslate>Case No.</AutoTranslate></th>
-                                <th><AutoTranslate>Evidence ID</AutoTranslate></th>
+                                {/* <th><AutoTranslate>Evidence ID</AutoTranslate></th> */}
                                 <th><AutoTranslate>Evidence Type</AutoTranslate></th>
                                 <th><AutoTranslate>From Laboratory</AutoTranslate></th>
                                 <th><AutoTranslate>To Laboratory</AutoTranslate></th>
@@ -167,7 +167,7 @@ const ReferralTransferComponent = ({ referrals, onView, currentRole }) => {
                             {visible.length > 0 ? visible.map((r) => (
                                 <tr key={r.documentDetailId}>
                                     <td>{r.caseNo || '--'}</td>
-                                    <td>{r.evidenceId || '--'}</td>
+                                    {/* <td>{r.evidenceId || '--'}</td> */}
                                     <td>{r.evidenceType || '--'}</td>
                                     <td>{r.fromLaboratoryName || '--'}</td>
                                     <td>{r.toLaboratoryName || '--'}</td>
