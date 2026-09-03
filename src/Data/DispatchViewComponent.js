@@ -22,6 +22,11 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
   });
   const [dispatchDocument, setDispatchDocument] = useState(null);
 
+  // Once a report is DISPATCHED, the whole form becomes read-only
+  const isReadOnly =
+    !!dispatchData &&
+    (dispatchData.readOnly === true || dispatchData.dispatchStatus === "DISPATCHED");
+
   const showPopup = (message, type = 'info') => {
     setPopupMessage({ message, type, onClose: () => setPopupMessage(null) });
   };
@@ -55,10 +60,12 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
   };
 
   const handleFieldChange = (field, value) => {
+    if (isReadOnly) return;
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
+    if (isReadOnly) return;
     try {
       setSaving(true);
       const fd = new FormData();
@@ -100,8 +107,13 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
       )}
 
       <div className="cardLight mb-20">
-        <div className='btnBackTop'>
+        <div className='btnBackTop flex items-center justify-between'>
           <button type="button" className="btnBack" onClick={onBack}></button>
+          <span className={`status-badge ${isReadOnly ? "status-dispatched" : "status-pending"}`}>
+            <AutoTranslate>
+              {dispatchData.dispatchStatus === "DISPATCHED" ? "Dispatched" : "Pending"}
+            </AutoTranslate>
+          </span>
         </div>
 
         <div className="grid grid-col-4 mb-4">
@@ -124,6 +136,8 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               type="date"
               value={form.dispatchDate}
               onChange={(e) => handleFieldChange('dispatchDate', e.target.value)}
+              readOnly={isReadOnly}
+              disabled={isReadOnly}
             />
           </div>
 
@@ -133,6 +147,8 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               type="text"
               value={form.dispatchReferenceNo}
               onChange={(e) => handleFieldChange('dispatchReferenceNo', e.target.value)}
+              readOnly={isReadOnly}
+              disabled={isReadOnly}
             />
           </div>
           <div className="form-group">
@@ -141,6 +157,8 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               type="text"
               value={form.recipient}
               onChange={(e) => handleFieldChange('recipient', e.target.value)}
+              readOnly={isReadOnly}
+              disabled={isReadOnly}
             />
           </div>
           <div className="form-group">
@@ -148,6 +166,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
             <select
               value={form.dispatchMode}
               onChange={(e) => handleFieldChange('dispatchMode', e.target.value)}
+              disabled={isReadOnly}
             >
               <option value=""><AutoTranslate>Select</AutoTranslate></option>
               <option value="Courier"><AutoTranslate>Courier</AutoTranslate></option>
@@ -162,10 +181,12 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
                 <AutoTranslate>Current file</AutoTranslate>: {dispatchData.dispatchDocumentPath.split(/[\\/]/).pop()}
               </p>
             )}
-            <input
-              type="file"
-              onChange={(e) => setDispatchDocument(e.target.files?.[0] || null)}
-            />
+            {!isReadOnly && (
+              <input
+                type="file"
+                onChange={(e) => setDispatchDocument(e.target.files?.[0] || null)}
+              />
+            )}
           </div>
 
           <div className="form-group col-span-2">
@@ -174,6 +195,8 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               rows="2"
               value={form.dispatchRemarks}
               onChange={(e) => handleFieldChange('dispatchRemarks', e.target.value)}
+              readOnly={isReadOnly}
+              disabled={isReadOnly}
             ></textarea>
           </div>
 
@@ -186,6 +209,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
                   id="emailId"
                   checked={form.notifyEmail}
                   onChange={(e) => handleFieldChange('notifyEmail', e.target.checked)}
+                  disabled={isReadOnly}
                 />
                 <span>Email</span>
               </label>
@@ -195,6 +219,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
                   id="smsId"
                   checked={form.notifySms}
                   onChange={(e) => handleFieldChange('notifySms', e.target.checked)}
+                  disabled={isReadOnly}
                 />
                 <span>SMS</span>
               </label>
@@ -204,9 +229,11 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
       </div>
 
       <div className="btn-group">
-        <button type="button" className="btn-primary" onClick={handleSave} disabled={saving}>
-          {saving ? <AutoTranslate>Saving...</AutoTranslate> : <AutoTranslate>Save</AutoTranslate>}
-        </button>
+        {!isReadOnly && (
+          <button type="button" className="btn-primary" onClick={handleSave} disabled={saving}>
+            {saving ? <AutoTranslate>Saving...</AutoTranslate> : <AutoTranslate>Save</AutoTranslate>}
+          </button>
+        )}
         <button type="button" className="btn btn-back" onClick={onBack}>
           <AutoTranslate>Back</AutoTranslate>
         </button>

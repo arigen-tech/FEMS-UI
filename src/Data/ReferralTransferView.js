@@ -171,10 +171,10 @@ const ReferralTransferView = ({ documentDetailId, onBack, currentRole }) => {
                             <label><AutoTranslate>Case Number</AutoTranslate></label>
                             <input type="text" value={referral.caseNo || ''} readOnly />
                         </div>
-                        <div className="form-group">
+                        {/* <div className="form-group">
                             <label><AutoTranslate>Evidence ID</AutoTranslate></label>
                             <input type="text" value={referral.evidenceId || ''} readOnly />
-                        </div>
+                        </div> */}
                         <div className="form-group">
                             <label><AutoTranslate>Evidence Type</AutoTranslate></label>
                             <input type="text" value={referral.evidenceType || ''} readOnly />
@@ -324,7 +324,7 @@ const ReferralTransferView = ({ documentDetailId, onBack, currentRole }) => {
                             <div className="grid grid-col-4 mb-4">
                                 <div className="form-group">
                                     <label><AutoTranslate>Report Date</AutoTranslate></label>
-                                    <input type="text" value={reportData.reportDate ? new Date(reportData.reportDate).toLocaleDateString() : '--'} readOnly />
+                                    <input type="text" value={reportData.submittedOn ? new Date(reportData.submittedOn).toLocaleDateString('en-GB') : '--'} readOnly />
                                 </div>
                                 <div className="form-group">
                                     <label><AutoTranslate>Report Title</AutoTranslate></label>
