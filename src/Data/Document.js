@@ -1765,6 +1765,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     <input
                       type="text"
                       placeholder="Key"
+                      maxLength="30"
                       value={item.key || ''}
                       disabled={hasApprovedFile && !!item.id}
                       onChange={(e) => {
@@ -1779,6 +1780,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                     <input
                       type="text"
                       placeholder="Value"
+                      maxLength="30"
                       value={item.value || ''}
                       disabled={hasApprovedFile && !!item.id}
                       onChange={(e) => {

@@ -84,15 +84,15 @@ const CaseInformation = ({ formData = {}, onChange }) => {
         </div> */}
         <div className="form-group">
           <label><AutoTranslate>Case Number</AutoTranslate></label>
-          <input type="text" value={formData.fileNo || ''} onChange={handleChange('fileNo')} />
+          <input type="text" placeholder='Enter case number' value={formData.fileNo || ''} onChange={handleChange('fileNo')} maxLength="30" />
         </div>
         <div className="form-group">
           <label><AutoTranslate>Case Title</AutoTranslate></label>
-          <input type="text" value={formData.title || ''} onChange={handleChange('title')} required />
+          <input type="text" placeholder='Enter case title' value={formData.title || ''} onChange={handleChange('title')} maxLength="30" required />
         </div>
         <div className="form-group">
           <label><AutoTranslate>FIR Number</AutoTranslate></label>
-          <input type="text" value={formData.firNumber || ''} onChange={handleChange('firNumber')} required />
+          <input type="text" placeholder='Enter FIR number' value={formData.firNumber || ''} onChange={handleChange('firNumber')} maxLength="30" required />
         </div>
         <div className="form-group">
           <label><AutoTranslate>FIR Date</AutoTranslate></label>
@@ -146,16 +146,16 @@ const CaseInformation = ({ formData = {}, onChange }) => {
         </div>
         <div className="form-group">
           <label><AutoTranslate>Police Station</AutoTranslate></label>
-          <input type="text" value={formData.policeStation || ''} onChange={handleChange('policeStation')} required />
+          <input type="text" placeholder='Enter police station' value={formData.policeStation || ''} onChange={handleChange('policeStation')} maxLength="30" required />
         </div>
 
         <div className="form-group">
           <label><AutoTranslate>Investigating Officer</AutoTranslate></label>
-          <input type="text" value={formData.investigatingOfficer || ''} onChange={handleChange('investigatingOfficer')} required />
+          <input type="text" placeholder='Enter investigating officer' value={formData.investigatingOfficer || ''} onChange={handleChange('investigatingOfficer')} maxLength="30" required />
         </div>
         <div className="form-group">
           <label><AutoTranslate>Court Reference</AutoTranslate></label>
-          <input type="text" value={formData.courtReference || ''} onChange={handleChange('courtReference')} required />
+          <input type="text" placeholder='Enter court reference' value={formData.courtReference || ''} onChange={handleChange('courtReference')} maxLength="30" required />
         </div>
 
         <div className="form-group">
@@ -175,7 +175,7 @@ const CaseInformation = ({ formData = {}, onChange }) => {
 
         <div className="form-group">
           <label><AutoTranslate>Incident Location</AutoTranslate></label>
-          <input type="text" value={formData.incidentLocation || ''} onChange={handleChange('incidentLocation')} required />
+          <input type="text" placeholder='Enter incident location' value={formData.incidentLocation || ''} onChange={handleChange('incidentLocation')} maxLength="30" required />
         </div>
       </div>
     </div>

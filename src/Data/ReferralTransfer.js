@@ -6,6 +6,7 @@ import apiClient from "../API/apiClient";
 import LoadingComponent from '../Components/LoadingComponent';
 import Popup from '../Components/Popup';
 import { API_HOST, BRANCH_ADMIN, DEPARTMENT_ADMIN } from "../API/apiConfig";
+import Layout from '../Components/Layout';
 
 const ReferralTransfer = () => {
     const [transferView, setTransferView] = useState(false);
@@ -56,29 +57,31 @@ const ReferralTransfer = () => {
     if (loading) return <LoadingComponent />;
 
     return (
-        <div className="">
-            {popupMessage && (
-                <Popup message={popupMessage.message} type={popupMessage.type} onClose={popupMessage.onClose} />
-            )}
-            <div className="title">
-                <h1><AutoTranslate>Referral / Transfer</AutoTranslate></h1>
-            </div>
+        <Layout>
+            <div className="">
+                {popupMessage && (
+                    <Popup message={popupMessage.message} type={popupMessage.type} onClose={popupMessage.onClose} />
+                )}
+                <div className="title">
+                    <h1><AutoTranslate>Referral / Transfer</AutoTranslate></h1>
+                </div>
 
-            {!transferView && (
-                <ReferralTransferComponent
-                    referrals={referrals}
-                    onView={handleView}
-                    currentRole={currentRole}
-                />
-            )}
-            {transferView && (
-                <ReferralTransferView
-                    documentDetailId={selectedDocumentDetailId}
-                    onBack={handleBack}
-                    currentRole={currentRole}
-                />
-            )}
-        </div>
+                {!transferView && (
+                    <ReferralTransferComponent
+                        referrals={referrals}
+                        onView={handleView}
+                        currentRole={currentRole}
+                    />
+                )}
+                {transferView && (
+                    <ReferralTransferView
+                        documentDetailId={selectedDocumentDetailId}
+                        onBack={handleBack}
+                        currentRole={currentRole}
+                    />
+                )}
+            </div>
+        </Layout>
     )
 }
 

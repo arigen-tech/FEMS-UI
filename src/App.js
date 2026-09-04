@@ -10,11 +10,12 @@ import LoginPage from "./Pages/LoginPage";
 import Notification from "./Data/Notification";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import ReportReviewLayout from "./Pages/ReportReviewLayout";
-import ReferralTransferLayout from "./Pages/ReferralTransferLayout";
 import ReferralPreExaminationLayout from "./Pages/ReferralPreExaminationLayout";
 import ReferralReportEntryLayout from "./Pages/ReferralReportEntryLayout";
 import ReferralReportReviewLayout from "./Pages/ReferralReportReviewLayout";
 import ReportReviewApprovedLayout from "./Pages/ReportReviewApprovedLayout";
+import ReferralTransfer from "./Data/ReferralTransfer";
+
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
 const Users = React.lazy(() => import("./Pages/Users"));
@@ -76,7 +77,8 @@ const DocumentRetriveReports = React.lazy(() => import("./Pages/ReportsP/Documen
 const DocumentsTrashedReports = React.lazy(() => import("./Pages/ReportsP/DocumentTrashedReports"));
 const DocumentsAuditReports = React.lazy(() => import("./Pages/ReportsP/DocumentsAuditReports"));
 
-const PreExamLayout = React.lazy(() => import("./Pages/PreExamLayout"));
+
+const PreExaminationModule = React.lazy(() => import("./Data/PreExaminationModule"));
 const ReportEntryLayout = React.lazy(() => import("./Pages/ReportEntryLayout"));
 const ReportUploadLayout = React.lazy(() => import("./Pages/ReportUploadLayout"));
 const DispatchLayout = React.lazy(() => import("./Pages/DispatchLayout"));
@@ -168,12 +170,14 @@ function App() {
                 <Route path="/shared-documents" element={<SharedDocuments />} />
 
                 {/* Examination */}
-                <Route path="/pre-examination" element={<PreExamLayout/>} />
+
+                <Route path="/pre-examination" element={<PreExaminationModule/>} />
+
                 <Route path="/report-entry" element={<ReportEntryLayout/>} />
                 <Route path="/report-upload" element={<ReportUploadLayout/>} />
                 <Route path="/dispatch" element={<DispatchLayout/>} />
                 <Route path="/report-review" element={<ReportReviewLayout />} />
-                <Route path="/referral-transfer" element={<ReferralTransferLayout />} />              
+                <Route path="/referral-transfer" element={<ReferralTransfer />} />              
                 
 
                 {/* reports */}

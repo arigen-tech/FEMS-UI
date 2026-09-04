@@ -53,6 +53,17 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
 
   const hasExistingLetter = Boolean(formData.forwardingLetterPath) && !formData.forwardingLetterFile;
 
+  const validateMobile = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    e.target.value = value.slice(0, 10);
+  };
+
+   const validateEmail = (e) => {
+    const value = e.target.value;
+    // Remove spaces
+    e.target.value = value.replace(/\s/g, "");
+  };
+
   return (
     <div className="cardLight">
       <h2 className="flex align-center gap-2">
@@ -73,17 +84,17 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
 
         <div className="form-group">
           <label><AutoTranslate>Authority Name</AutoTranslate></label>
-          <input type="text" value={formData.authorityName || ''} onChange={handleChange('authorityName')} required />
+          <input type="text" placeholder='Enter your authority name' value={formData.authorityName || ''} onChange={handleChange('authorityName')} maxLength="30" required />
         </div>
 
         <div className="form-group">
           <label><AutoTranslate>Designation</AutoTranslate></label>
-          <input type="text" value={formData.designation || ''} onChange={handleChange('designation')} required />
+          <input type="text" placeholder='Enter your designation' value={formData.designation || ''} onChange={handleChange('designation')} maxLength="30" required />
         </div>
 
         <div className="form-group">
           <label><AutoTranslate>Organisation </AutoTranslate></label>
-          <input type="text" value={formData.organisation || ''} onChange={handleChange('organisation')} required />
+          <input type="text" placeholder='Enter your organisation' value={formData.organisation || ''} onChange={handleChange('organisation')} maxLength="30" required />
         </div>
 
         <div className="form-group">
@@ -100,22 +111,40 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
 
         <div className="form-group">
           <label><AutoTranslate>Address </AutoTranslate></label>
-          <textarea rows="2" value={formData.address || ''} onChange={handleChange('address')}></textarea>
+          <textarea rows="2" placeholder='Enter your address' value={formData.address || ''} onChange={handleChange('address')} maxLength="250"></textarea>
         </div>
 
         <div className="form-group">
           <label><AutoTranslate>Contact Number</AutoTranslate></label>
-          <input type="text" value={formData.contactNumber || ''} onChange={handleChange('contactNumber')} required />
+          <input
+            type="tel"
+            placeholder='Enter your contact number'
+            value={formData.contactNumber || ''}
+            onChange={handleChange('contactNumber')}
+            maxlength="10"
+            inputmode="numeric"
+            pattern="[0-9]{10}"
+            onInput={validateMobile}  
+            required
+          />
         </div>
 
         <div className="form-group">
           <label><AutoTranslate>Email</AutoTranslate></label>
-          <input type="email" value={formData.email || ''} onChange={handleChange('email')} required />
-        </div>
+          <input 
+          type="email"
+          name="email"
+          placeholder='Enter your valid email' 
+          value={formData.email || ''} 
+          onChange={handleChange('email')} 
+          onInput={validateEmail}
+          required
+           />
+        </div> 
 
         <div className="form-group">
           <label><AutoTranslate>Forwarding Letter Number</AutoTranslate></label>
-          <input type="text" value={formData.forwardingLetterNumber || ''} onChange={handleChange('forwardingLetterNumber')} required />
+          <input type="text" placeholder='Enter your forwarding letter number' value={formData.forwardingLetterNumber || ''} onChange={handleChange('forwardingLetterNumber')} maxLength="30" required />
         </div>
 
         <div className="form-group">
@@ -162,12 +191,12 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
           <>
             <div className="form-group">
               <label><AutoTranslate>Courier Agency</AutoTranslate></label>
-              <input type="text" value={formData.courierAgency || ''} onChange={handleChange('courierAgency')} required />
+              <input type="text" placeholder='Enter Courier Agency' value={formData.courierAgency || ''} onChange={handleChange('courierAgency')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>AWB / Consignment Number</AutoTranslate></label>
-              <input type="text" value={formData.awbNumber || ''} onChange={handleChange('awbNumber')} required />
+              <input type="text" placeholder='Enter AWB/consignment number' value={formData.awbNumber || ''} onChange={handleChange('awbNumber')} maxLength="30" required />
             </div>
 
             <div className="form-group">
@@ -192,17 +221,17 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
 
             <div className="form-group">
               <label><AutoTranslate>Parcel ID</AutoTranslate></label>
-              <input type="text" value={formData.parcelId || ''} onChange={handleChange('parcelId')} required />
+              <input type="text" placeholder='Enter parcel ID' value={formData.parcelId || ''} onChange={handleChange('parcelId')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Parcel Number</AutoTranslate></label>
-              <input type="text" value={formData.parcelNumber || ''} onChange={handleChange('parcelNumber')} required />
+              <input type="text" placeholder='Enter parcel number' value={formData.parcelNumber || ''} onChange={handleChange('parcelNumber')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Number of Exhibits</AutoTranslate></label>
-              <input type="text" value={formData.numberOfExhibits || ''} onChange={handleChange('numberOfExhibits')} required />
+              <input type="text" placeholder='Enter number of exhibits' value={formData.numberOfExhibits || ''} onChange={handleChange('numberOfExhibits')} maxLength="30" required />
             </div>
 
             <div className="form-group">
@@ -217,42 +246,42 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
 
             <div className="form-group">
               <label><AutoTranslate>Seal Number </AutoTranslate></label>
-              <input type="text" value={formData.sealNumber || ''} onChange={handleChange('sealNumber')} required />
+              <input type="text" placeholder='Enter seal number' value={formData.sealNumber || ''} onChange={handleChange('sealNumber')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Seal Description</AutoTranslate></label>
-              <textarea rows="2" value={formData.sealDescription || ''} onChange={handleChange('sealDescription')}></textarea>
+              <textarea rows="2" placeholder='Enter seal description' value={formData.sealDescription || ''} onChange={handleChange('sealDescription')} maxLength="250"></textarea>
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Seal Condition </AutoTranslate></label>
-              <input type="text" value={formData.sealCondition || ''} onChange={handleChange('sealCondition')} required />
+              <input type="text" placeholder='Enter seal condition' value={formData.sealCondition || ''} onChange={handleChange('sealCondition')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Package Condition </AutoTranslate></label>
-              <input type="text" value={formData.packageCondition || ''} onChange={handleChange('packageCondition')} required />
+              <input type="text" placeholder='Enter package condition' value={formData.packageCondition || ''} onChange={handleChange('packageCondition')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Received Date </AutoTranslate></label>
-              <input type="date" value={formData.receivedDate || ''} onChange={handleChange('receivedDate')} required />
+              <input type="date" value={formData.receivedDate || ''} onChange={handleChange('receivedDate')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Received Time</AutoTranslate></label>
-              <input type="text" value={formData.receivedTime || ''} onChange={handleChange('receivedTime')} required />
+              <input type="text" placeholder='Enter received time' value={formData.receivedTime || ''} onChange={handleChange('receivedTime')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Received By </AutoTranslate></label>
-              <input type="text" value={formData.receivedBy || ''} onChange={handleChange('receivedBy')} required />
+              <input type="text" placeholder='Enter received by' value={formData.receivedBy || ''} onChange={handleChange('receivedBy')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Remarks</AutoTranslate></label>
-              <textarea rows="2" value={formData.forwardingRemarks || ''} onChange={handleChange('forwardingRemarks')} required></textarea>
+              <textarea rows="2" placeholder='Enter your remarks' value={formData.forwardingRemarks || ''} onChange={handleChange('forwardingRemarks')} maxLength="250" required></textarea>
             </div>
           </>
         )}
@@ -261,22 +290,22 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
           <>
             <div className="form-group">
               <label><AutoTranslate>Messenger Name</AutoTranslate></label>
-              <input type="text" value={formData.messengerName || ''} onChange={handleChange('messengerName')} required />
+              <input type="text" placeholder='Enter messenger name' value={formData.messengerName || ''} onChange={handleChange('messengerName')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Designation</AutoTranslate></label>
-              <input type="text" value={formData.messengerDesignation || ''} onChange={handleChange('messengerDesignation')} required />
+              <input type="text" placeholder='Enter your designation' value={formData.messengerDesignation || ''} onChange={handleChange('messengerDesignation')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>Organization </AutoTranslate></label>
-              <input type="text" value={formData.messengerOrganization || ''} onChange={handleChange('messengerOrganization')} required />
+              <input type="text" placeholder='Enter your organization' value={formData.messengerOrganization || ''} onChange={handleChange('messengerOrganization')} maxLength="30" required />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>ID / Reference Number</AutoTranslate></label>
-              <input type="text" value={formData.messengerIdRef || ''} onChange={handleChange('messengerIdRef')} required />
+              <input type="text" placeholder='Enter ID/reference number' value={formData.messengerIdRef || ''} onChange={handleChange('messengerIdRef')} maxLength="30" required />
             </div>
 
             <div className="form-group">

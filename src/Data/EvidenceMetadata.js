@@ -151,6 +151,7 @@ const EvidenceMetadata = ({
                       placeholder="Enter description"
                       value={row.description || ''}
                       onChange={(e) => updateRow(index, 'description', e.target.value)}
+                      maxLength="70"
                       required
                     />
                   </td>
