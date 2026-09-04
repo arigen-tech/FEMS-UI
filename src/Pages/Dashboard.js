@@ -627,7 +627,7 @@ function Dashboard() {
                   <StatBlock title="Dispatch Pending" value={stats.dispatchPending} Icon={AiOutlineDeliveredProcedure} />
                 </div>
               </Link>
-              <Link to="/all-documents">
+              <Link to="/case-register">
                 <div className="gridItems">
                   <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
                 </div>
@@ -648,7 +648,7 @@ function Dashboard() {
                 </div>
               </Link>
 
-              <Link to="/all-documents">
+              <Link to="/case-register">
                 <div className="gridItems rejected">
                   <StatBlock title="Rejected Case" value={stats.totalRejectedDocuments} Icon={DocumentMinusIcon} />
                 </div>
@@ -698,7 +698,7 @@ function Dashboard() {
               </Link>
 
               {/* static value */}
-              <Link to="/all-documents">
+              <Link to="/case-register">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
@@ -760,7 +760,7 @@ function Dashboard() {
               </Link>
 
               {/* static value */}
-              <Link to="/all-documents">
+              <Link to="/case-register">
               <div className="gridItems">
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>
@@ -803,7 +803,7 @@ function Dashboard() {
                 <StatBlock title="Cases Registered Today" value="2" Icon={FaBriefcase} />
               </div>      
 
-              <Link to="/all-documents">
+              <Link to="/case-register">
                 <div className="gridItems pending">
                   <StatBlock title="Pending Case Approval" value={stats.pendingDocsbyid} Icon={MdPendingActions} />
                 </div>

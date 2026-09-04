@@ -1,9 +1,9 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import Sidebar from '../Components/Sidebar';
 import Layout from '../Components/Layout';
-import Document from '../Data/Document';
+import CaseRegister from '../Data/CaseRegister';
 
-function Documents() {
+function CaseRegisterLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     const toggleSidebar = () => {
@@ -11,9 +11,9 @@ function Documents() {
     };
     return (
         <Layout>
-        <Document/>
-      </Layout>
+            <CaseRegister />
+        </Layout>
     )
 }
 
-export default Documents
+export default CaseRegisterLayout;

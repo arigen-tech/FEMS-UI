@@ -278,6 +278,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
                 value={form.observations}
                 onChange={(e) => handleFieldChange('observations', e.target.value)}
                 disabled={isSubmitted}
+                maxLength="250"
                 required
               ></textarea>
             </div>
@@ -288,6 +289,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
                 value={form.scientificOpinion}
                 onChange={(e) => handleFieldChange('scientificOpinion', e.target.value)}
                 disabled={isSubmitted}
+                maxLength="250"
                 required
               ></textarea>
             </div>
@@ -297,6 +299,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
                 rows="2"
                 value={form.examinationRemarks}
                 onChange={(e) => handleFieldChange('examinationRemarks', e.target.value)}
+                maxLength="250"
                 disabled={isSubmitted}
               ></textarea>
             </div>
@@ -328,6 +331,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
                 value={form.reportTitle}
                 onChange={(e) => handleFieldChange('reportTitle', e.target.value)}
                 disabled={isSubmitted}
+                maxLength="30"
                 required
               />
             </div>
@@ -339,6 +343,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
                 value={form.reportSummary}
                 onChange={(e) => handleFieldChange('reportSummary', e.target.value)}
                 disabled={isSubmitted}
+                maxLength="250"
                 required
               ></textarea>
             </div>
@@ -358,8 +363,7 @@ const ViewExamine = ({ documentHeaderId, onBack }) => {
             </div>
             <div className="form-group">
               <label>
-                <AutoTranslate>Supporting Documents</AutoTranslate>{" "}
-                <span style={{ fontSize: "12px", color: "#861616" }}>Multi Upload</span>
+                <AutoTranslate>Supporting Documents</AutoTranslate>
               </label>
               {(caseData.attachments || []).length > 0 && (
                 <ul className="text-xs text-gray-500 mb-1">

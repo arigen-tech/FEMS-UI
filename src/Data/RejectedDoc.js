@@ -499,7 +499,7 @@ function RejectedDoc() {
 
   // const handleEdit = (docId) => {
   //   const data = documents.find((item) => item.id === docId);
-  //   navigate("/all-documents", { state: data });
+  //   navigate("/case-register", { state: data });
   // };
 
   const handleEdit = async (docId) => {
@@ -509,7 +509,7 @@ function RejectedDoc() {
 
       console.log("Fetched latest document:", latestData);
 
-      navigate("/all-documents", { state: latestData });
+      navigate("/case-register", { state: latestData });
     } catch (error) {
       console.error("Failed to fetch document:", error);
     }

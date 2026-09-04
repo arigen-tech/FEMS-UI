@@ -124,6 +124,7 @@ const ReviewComponent = ({ documentHeaderId, onView, onBack }) => {
               className="searchIcon"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              maxLength="30"
             />
           </div>
         </div>

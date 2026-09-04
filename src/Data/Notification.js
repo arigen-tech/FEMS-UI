@@ -391,12 +391,12 @@ export const Notification = () => {
         }
       case "DOCUMENT_SHARE":
         return {
-          path: `/all-documents?docId=${notification.referenceId}`,
+          path: `/case-register?docId=${notification.referenceId}`,
           label: translatedTexts.viewSharedDocument,
         }
       case "DOCUMENT_SHARE_REVOKE":
         return {
-          path: `/all-documents?docId=${notification.referenceId}`,
+          path: `/case-register?docId=${notification.referenceId}`,
           label: translatedTexts.viewRevokedDocument,
         }
       default:

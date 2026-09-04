@@ -149,6 +149,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               onChange={(e) => handleFieldChange('dispatchReferenceNo', e.target.value)}
               readOnly={isReadOnly}
               disabled={isReadOnly}
+              maxLength="30"
             />
           </div>
           <div className="form-group">
@@ -159,6 +160,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               onChange={(e) => handleFieldChange('recipient', e.target.value)}
               readOnly={isReadOnly}
               disabled={isReadOnly}
+              maxLength="30"
             />
           </div>
           <div className="form-group">
@@ -197,6 +199,7 @@ const DispatchViewComponent = ({ reportEntryId, onBack }) => {
               onChange={(e) => handleFieldChange('dispatchRemarks', e.target.value)}
               readOnly={isReadOnly}
               disabled={isReadOnly}
+              maxLength="250"
             ></textarea>
           </div>
 

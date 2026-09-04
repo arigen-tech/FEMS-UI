@@ -1,4 +1,4 @@
-// DocumentManagement.jsx - Complete Working Version (Fixed)
+// CaseRegister.jsx - Complete Working Version (Fixed)
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import apiClient from "../API/apiClient";
@@ -8,7 +8,7 @@ import { useDropzone } from "react-dropzone";
 import FilePreviewModal from "../Components/FilePreviewModal";
 import LoadingComponent from '../Components/LoadingComponent';
 import { Tooltip } from "react-tooltip";
-import WaitingRoom from '../Data/WaitingRoom';
+import WaitingRoom from './WaitingRoom';
 import { postRequest } from "../API/apiHelper";
 import { FiPlus } from "react-icons/fi";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
@@ -105,7 +105,7 @@ const getInitialFormData = () => ({
   exhibitNumber: "",
 });
 
-const DocumentManagement = ({ fieldsDisabled }) => {
+const CaseRegister = ({ fieldsDisabled }) => {
   // Get language context
   const {
     currentLanguage,
@@ -1576,7 +1576,7 @@ const DocumentManagement = ({ fieldsDisabled }) => {
     }
   };
 
-    const openForwardingLetter = async (documentId) => {
+  const openForwardingLetter = async (documentId) => {
     try {
       const fileUrl = `${API_HOST}/api/documents/download-forwarding-letter/${documentId}`;
       const response = await apiClient.get(fileUrl, { responseType: "blob" });
@@ -1704,187 +1704,187 @@ const DocumentManagement = ({ fieldsDisabled }) => {
 
   // ============ RENDER ============
   return (
-    <div className="">
-      <div className="title">
-        <h1><AutoTranslate>Register Case & Evidence</AutoTranslate></h1>
-      </div>
+      <div className="">
+        <div className="title">
+          <h1><AutoTranslate>Case Register & Evidence</AutoTranslate></h1>
+        </div>
 
-      <div className="card">
-        {popupMessage && (
-          <Popup
-            message={popupMessage.message}
-            type={popupMessage.type}
-            onClose={() => setPopupMessage(null)}
-          />
-        )}
-        <div ref={formSectionRef} className="">
+        <div className="card">
+          {popupMessage && (
+            <Popup
+              message={popupMessage.message}
+              type={popupMessage.type}
+              onClose={() => setPopupMessage(null)}
+            />
+          )}
+          <div ref={formSectionRef} className="">
 
-          {/* Case Information component */}
-          <CaseInformation formData={formData} onChange={handleFieldChange} />
+            {/* Case Information component */}
+            <CaseInformation formData={formData} onChange={handleFieldChange} />
 
-          {/* Forwarding Authority Details component */}
-          <ForwardingAuthorityDetails
-            formData={formData}
-            onChange={handleFieldChange}
-            onViewForwardingLetter={openForwardingLetter}
-          />
-          {/* Evidence Metadata component — category is shared/case-level, rows are per-file */}
-          <EvidenceMetadata
-            category={formData.category}
-            onCategoryChange={handleCategoryChange}
-            categoryOptions={categoryOptions}
-            evidenceRows={evidenceRows}
-            onEvidenceRowsChange={setEvidenceRows}
-          />
+            {/* Forwarding Authority Details component */}
+            <ForwardingAuthorityDetails
+              formData={formData}
+              onChange={handleFieldChange}
+              onViewForwardingLetter={openForwardingLetter}
+            />
+            {/* Evidence Metadata component — category is shared/case-level, rows are per-file */}
+            <EvidenceMetadata
+              category={formData.category}
+              onCategoryChange={handleCategoryChange}
+              categoryOptions={categoryOptions}
+              evidenceRows={evidenceRows}
+              onEvidenceRowsChange={setEvidenceRows}
+            />
 
-          {/* ========== ADDITIONAL METADATA ========== */}
-          <div className="metaDataCard">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="flex align-center gap-2 mb-0">
-                🧩 <AutoTranslate>Evidence Additional Metadata</AutoTranslate>{" "}
-                <span className="text-gray-500">(optional)</span>
+            {/* ========== ADDITIONAL METADATA ========== */}
+            <div className="metaDataCard">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="flex align-center gap-2 mb-0">
+                  🧩 <AutoTranslate>Evidence Additional Metadata</AutoTranslate>{" "}
+                  <span className="text-gray-500">(optional)</span>
+                </h2>
+                {(() => {
+                  const keys = dynamicMetadata.map(item => item.key.trim()).filter(Boolean);
+                  const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
+                  if (duplicates.length > 0) {
+                    return (
+                      <span className="text-red-500 text-sm ml-4 whitespace-nowrap">
+                        ⚠ Duplicate key: {duplicates.join(", ")}
+                      </span>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+
+              <div className='card-wp'>
+                {dynamicMetadata.map((item, index) => (
+                  <div key={index} className="card">
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Key"
+                        maxLength="30"
+                        value={item.key || ''}
+                        disabled={hasApprovedFile && !!item.id}
+                        onChange={(e) => {
+                          const updated = [...dynamicMetadata];
+                          updated[index].key = e.target.value;
+                          setDynamicMetadata(updated);
+                        }}
+                        className="disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Value"
+                        maxLength="30"
+                        value={item.value || ''}
+                        disabled={hasApprovedFile && !!item.id}
+                        onChange={(e) => {
+                          const updated = [...dynamicMetadata];
+                          updated[index].value = e.target.value;
+                          setDynamicMetadata(updated);
+                        }}
+                        className="disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      disabled={hasApprovedFile && !!item.id}
+                      onClick={() => {
+                        const itemToDelete = dynamicMetadata[index];
+                        if (itemToDelete.id) {
+                          setDeletedMetaDataIds(prev => [...prev, itemToDelete.id]);
+                        }
+                        setDynamicMetadata(dynamicMetadata.filter((_, i) => i !== index));
+                      }}
+                      className={`btn-del ${hasApprovedFile && !!item.id ? "bg-gray-400 cursor-not-allowed" : ""}`}>
+                      <TrashIcon />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setDynamicMetadata([...dynamicMetadata, { id: "", key: "", value: "" }])}
+                className="btn-add"
+              >
+                <FiPlus /> <AutoTranslate>Add Metadata</AutoTranslate>
+              </button>
+            </div>
+
+            {/* ========== FILE METADATA ========== */}
+            <div className="cardLight">
+              <h2 className="flex align-center gap-2">
+                📄 <AutoTranslate>Case Metadata</AutoTranslate> <span className="text-red-500">*</span>
+                {uploadedFilePath.length > 0 && (
+                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                    {uploadedFilePath.length} <AutoTranslate>files added</AutoTranslate>
+                  </span>
+                )}
               </h2>
-              {(() => {
-                const keys = dynamicMetadata.map(item => item.key.trim()).filter(Boolean);
-                const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
-                if (duplicates.length > 0) {
-                  return (
-                    <span className="text-red-500 text-sm ml-4 whitespace-nowrap">
-                      ⚠ Duplicate key: {duplicates.join(", ")}
-                    </span>
-                  );
-                }
-                return null;
-              })()}
-            </div>
 
-            <div className='card-wp'>
-              {dynamicMetadata.map((item, index) => (
-                <div key={index} className="card">
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      placeholder="Key"
-                      maxLength="30"
-                      value={item.key || ''}
-                      disabled={hasApprovedFile && !!item.id}
-                      onChange={(e) => {
-                        const updated = [...dynamicMetadata];
-                        updated[index].key = e.target.value;
-                        setDynamicMetadata(updated);
-                      }}
-                      className="disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      placeholder="Value"
-                      maxLength="30"
-                      value={item.value || ''}
-                      disabled={hasApprovedFile && !!item.id}
-                      onChange={(e) => {
-                        const updated = [...dynamicMetadata];
-                        updated[index].value = e.target.value;
-                        setDynamicMetadata(updated);
-                      }}
-                      className="disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    disabled={hasApprovedFile && !!item.id}
-                    onClick={() => {
-                      const itemToDelete = dynamicMetadata[index];
-                      if (itemToDelete.id) {
-                        setDeletedMetaDataIds(prev => [...prev, itemToDelete.id]);
+              <div className="grid grid-col-4">
+                <div className="form-group">
+                  <label>
+                    <AutoTranslate>Case Year</AutoTranslate> <span className="text-red-500">*</span>
+                    {isDocumentSaved && (
+                      <span className="text-xs text-green-600 ml-1">(can change)</span>
+                    )}
+                  </label>
+                  <select
+                    name="year"
+                    value={formData.year?.id || ""}
+                    onChange={(e) => {
+                      const selectedYearId = e.target.value;
+                      const selectedYear = yearOptions.find((y) => y.id === parseInt(selectedYearId));
+                      handleYearChange(e);
+                      if (selectedYear) {
+                        setCurrYear(selectedYear);
+                      } else {
+                        setCurrYear(null);
                       }
-                      setDynamicMetadata(dynamicMetadata.filter((_, i) => i !== index));
                     }}
-                    className={`btn-del ${hasApprovedFile && !!item.id ? "bg-gray-400 cursor-not-allowed" : ""}`}>
-                    <TrashIcon />
-                  </button>
+                    disabled={false}
+                    className="border-2 border-blue-200 focus:border-blue-500"
+                  >
+                    <option value=""><AutoTranslate>Select Year</AutoTranslate></option>
+                    {yearOptions.map((year) => (
+                      <option key={year.id} value={year.id}>
+                        {year.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-400 mt-1">
+                    <AutoTranslate>Select a year for this file</AutoTranslate>
+                  </p>
                 </div>
-              ))}
-            </div>
 
-            <button
-              type="button"
-              onClick={() => setDynamicMetadata([...dynamicMetadata, { id: "", key: "", value: "" }])}
-              className="btn-add"
-            >
-              <FiPlus /> <AutoTranslate>Add Metadata</AutoTranslate>
-            </button>
-          </div>
-
-          {/* ========== FILE METADATA ========== */}
-          <div className="cardLight">
-            <h2 className="flex align-center gap-2">
-              📄 <AutoTranslate>Case Metadata</AutoTranslate> <span className="text-red-500">*</span>
-              {uploadedFilePath.length > 0 && (
-                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                  {uploadedFilePath.length} <AutoTranslate>files added</AutoTranslate>
-                </span>
-              )}
-            </h2>
-
-            <div className="grid grid-col-4">
-              <div className="form-group">
-                <label>
-                  <AutoTranslate>Case Year</AutoTranslate> <span className="text-red-500">*</span>
-                  {isDocumentSaved && (
-                    <span className="text-xs text-green-600 ml-1">(can change)</span>
-                  )}
-                </label>
-                <select
-                  name="year"
-                  value={formData.year?.id || ""}
-                  onChange={(e) => {
-                    const selectedYearId = e.target.value;
-                    const selectedYear = yearOptions.find((y) => y.id === parseInt(selectedYearId));
-                    handleYearChange(e);
-                    if (selectedYear) {
-                      setCurrYear(selectedYear);
-                    } else {
-                      setCurrYear(null);
-                    }
-                  }}
-                  disabled={false}
-                  className="border-2 border-blue-200 focus:border-blue-500"
-                >
-                  <option value=""><AutoTranslate>Select Year</AutoTranslate></option>
-                  {yearOptions.map((year) => (
-                    <option key={year.id} value={year.id}>
-                      {year.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-400 mt-1">
-                  <AutoTranslate>Select a year for this file</AutoTranslate>
-                </p>
-              </div>
-
-              <div className="form-group col-span-2">
-                <VersionInput
-                  editingDoc={editingDoc}
-                  selectedYear={formData.year}
-                  version={formData.version}
-                  setVersion={(newVersion) => setFormData({ ...formData, version: newVersion })}
-                  disabled={false}
-                  uploadedFiles={uploadedFilePath}
-                  showChangeType={true}
-                />
-              </div>
-
-              {unsportFile === true && (
-                <div className="form-group selfEnd">
-                  <button onClick={viewfiletype} className="btn-primary w-full">
-                    <AutoTranslate>Show Supported File Format</AutoTranslate>
-                  </button>
+                <div className="form-group col-span-2">
+                  <VersionInput
+                    editingDoc={editingDoc}
+                    selectedYear={formData.year}
+                    version={formData.version}
+                    setVersion={(newVersion) => setFormData({ ...formData, version: newVersion })}
+                    disabled={false}
+                    uploadedFiles={uploadedFilePath}
+                    showChangeType={true}
+                  />
                 </div>
-              )}
 
-              {/* <div className="form-group">
+                {unsportFile === true && (
+                  <div className="form-group selfEnd">
+                    <button onClick={viewfiletype} className="btn-primary w-full">
+                      <AutoTranslate>Show Supported File Format</AutoTranslate>
+                    </button>
+                  </div>
+                )}
+
+                {/* <div className="form-group">
                 <label className="block text-md font-medium text-gray-700">
                   <AutoTranslate>Bulk Evidence Upload</AutoTranslate>
                 </label>
@@ -1900,9 +1900,9 @@ const DocumentManagement = ({ fieldsDisabled }) => {
                   </span>
                 </div>
               </div> */}
-            </div>
+              </div>
 
-            {/* <div className="col-span-full mt-4">
+              {/* <div className="col-span-full mt-4">
               <div
                 {...getRootProps()}
                 className={`upload-box border-2 border-dashed rounded-lg p-6 cursor-pointer transition inputPosition
@@ -1935,668 +1935,669 @@ const DocumentManagement = ({ fieldsDisabled }) => {
               </div>
             </div> */}
 
-            <div className="col-span-full mt-6">
-              <div className="flex flex-wrap items-end gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsWaitingRoomModalOpen(true)}
-                  disabled={!isMetadataComplete || selectedFiles.length > 0}
-                  className={`px-6 h-14 rounded-xl transition-all ${(!isMetadataComplete || selectedFiles.length > 0)
-                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    : "bg-blue-500 text-white"
-                    }`}
-                >
-                  <AutoTranslate>Choose From Waiting Room</AutoTranslate>
-                </button>
-
-                <div className="flex flex-col">
-                  <label htmlFor="scaleSelect" className="text-sm font-medium mb-1">
-                    Scaling
-                  </label>
-                  <select
-                    id="scaleSelect"
-                    value={scaleValue}
-                    onChange={handleChangeScale}
-                    className="h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              <div className="col-span-full mt-6">
+                <div className="flex flex-wrap items-end gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsWaitingRoomModalOpen(true)}
+                    disabled={!isMetadataComplete || selectedFiles.length > 0}
+                    className={`px-6 h-14 rounded-xl transition-all ${(!isMetadataComplete || selectedFiles.length > 0)
+                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      : "bg-blue-500 text-white"
+                      }`}
                   >
-                    <option value="1">Scale Up</option>
-                    <option value="0">Scale Down</option>
-                    <option value="2">None</option>
-                  </select>
-                </div>
+                    <AutoTranslate>Choose From Waiting Room</AutoTranslate>
+                  </button>
 
-                <button
-                  onClick={handleUploadDocument}
-                  disabled={isUploading || selectedFiles.length === 0 || !formData.version}
-                  className={`flex-1 min-w-[200px] text-white rounded-xl h-14 flex items-center justify-center relative transition-all duration-300 ${isUploading ? "bg-blue-600 cursor-not-allowed" : "bg-blue-900"
-                    }`}
-                >
-                  {isUploading ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      <AutoTranslate>Uploading... {uploadProgress}%</AutoTranslate>
-                    </>
-                  ) : (
-                    <AutoTranslate>Add File</AutoTranslate>
-                  )}
+                  <div className="flex flex-col">
+                    <label htmlFor="scaleSelect" className="text-sm font-medium mb-1">
+                      Scaling
+                    </label>
+                    <select
+                      id="scaleSelect"
+                      value={scaleValue}
+                      onChange={handleChangeScale}
+                      className="h-14 px-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="1">Scale Up</option>
+                      <option value="0">Scale Down</option>
+                      <option value="2">None</option>
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={handleUploadDocument}
+                    disabled={isUploading || selectedFiles.length === 0 || !formData.version}
+                    className={`flex-1 min-w-[200px] text-white rounded-xl h-14 flex items-center justify-center relative transition-all duration-300 ${isUploading ? "bg-blue-600 cursor-not-allowed" : "bg-blue-900"
+                      }`}
+                  >
+                    {isUploading ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        <AutoTranslate>Uploading... {uploadProgress}%</AutoTranslate>
+                      </>
+                    ) : (
+                      <AutoTranslate>Add File</AutoTranslate>
+                    )}
+                    {isUploading && (
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-300">
+                        <div className="h-full bg-green-500 transition-all" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    )}
+                  </button>
+
                   {isUploading && (
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-300">
-                      <div className="h-full bg-green-500 transition-all" style={{ width: `${uploadProgress}%` }} />
-                    </div>
+                    <button
+                      onClick={handleCancelUpload}
+                      className="bg-red-500 text-white h-14 px-6 rounded-xl"
+                    >
+                      <AutoTranslate>Cancel Add Files</AutoTranslate>
+                    </button>
                   )}
-                </button>
-
-                {isUploading && (
-                  <button
-                    onClick={handleCancelUpload}
-                    className="bg-red-500 text-white h-14 px-6 rounded-xl"
-                  >
-                    <AutoTranslate>Cancel Add Files</AutoTranslate>
-                  </button>
-                )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ========== UPLOADED FILES DISPLAY - GROUPED BY YEAR ========== */}
-          {Array.isArray(uploadedFilePath) && uploadedFilePath.length > 0 && (
-            <div className="mt-6 cardLight">
-              <h3 className="flex items-center gap-2 mb-3">
-                📋 <AutoTranslate>Files Added</AutoTranslate>
-                <span className="text-sm text-gray-500">({uploadedFilePath.length} files)</span>
-                {isDocumentSaved && (
-                  <span className="text-xs text-green-600 ml-2">
-                    <AutoTranslate>Document already saved, adding new files</AutoTranslate>
-                  </span>
-                )}
-              </h3>
+            {/* ========== UPLOADED FILES DISPLAY - GROUPED BY YEAR ========== */}
+            {Array.isArray(uploadedFilePath) && uploadedFilePath.length > 0 && (
+              <div className="mt-6 cardLight">
+                <h3 className="flex items-center gap-2 mb-3">
+                  📋 <AutoTranslate>Files Added</AutoTranslate>
+                  <span className="text-sm text-gray-500">({uploadedFilePath.length} files)</span>
+                  {isDocumentSaved && (
+                    <span className="text-xs text-green-600 ml-2">
+                      <AutoTranslate>Document already saved, adding new files</AutoTranslate>
+                    </span>
+                  )}
+                </h3>
 
-              {(() => {
-                const validFiles = uploadedFilePath.filter(file => file !== undefined && file !== null);
+                {(() => {
+                  const validFiles = uploadedFilePath.filter(file => file !== undefined && file !== null);
 
-                if (validFiles.length === 0) {
-                  return (
-                    <div className="text-center py-4 text-gray-500">
-                      <AutoTranslate>No valid files to display</AutoTranslate>
-                    </div>
-                  );
-                }
+                  if (validFiles.length === 0) {
+                    return (
+                      <div className="text-center py-4 text-gray-500">
+                        <AutoTranslate>No valid files to display</AutoTranslate>
+                      </div>
+                    );
+                  }
 
-                const groupedFiles = validFiles.reduce((acc, file, index) => {
-                  if (!file) return acc;
-                  const year = getSafeYear(file);
-                  if (!acc[year]) acc[year] = [];
-                  acc[year].push({ file, index });
-                  return acc;
-                }, {});
+                  const groupedFiles = validFiles.reduce((acc, file, index) => {
+                    if (!file) return acc;
+                    const year = getSafeYear(file);
+                    if (!acc[year]) acc[year] = [];
+                    acc[year].push({ file, index });
+                    return acc;
+                  }, {});
 
-                return Object.entries(groupedFiles).map(([year, files]) => (
-                  <div key={year} className="mb-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                      📅 {year} ({files.length} file{files.length > 1 ? 's' : ''})
-                    </h4>
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full text-sm">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-3 py-2 text-left"><AutoTranslate>#</AutoTranslate></th>
-                            <th className="px-3 py-2 text-left"><AutoTranslate>File Name</AutoTranslate></th>
-                            <th className="px-3 py-2 text-center"><AutoTranslate>Version</AutoTranslate></th>
-                            <th className="px-3 py-2 text-center"><AutoTranslate>Status</AutoTranslate></th>
-                            <th className="px-3 py-2 text-center"><AutoTranslate>Actions</AutoTranslate></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {files.map(({ file, index }) => {
-                            const displayName = getSafeDisplayName(file);
-                            const version = getSafeVersion(file);
-                            const status = getSafeStatus(file);
-                            const filePath = getSafePath(file);
-                            const isWaitingRoomFile = file?.isWaitingRoomFile || false;
+                  return Object.entries(groupedFiles).map(([year, files]) => (
+                    <div key={year} className="mb-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        📅 {year} ({files.length} file{files.length > 1 ? 's' : ''})
+                      </h4>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left"><AutoTranslate>#</AutoTranslate></th>
+                              <th className="px-3 py-2 text-left"><AutoTranslate>File Name</AutoTranslate></th>
+                              <th className="px-3 py-2 text-center"><AutoTranslate>Version</AutoTranslate></th>
+                              <th className="px-3 py-2 text-center"><AutoTranslate>Status</AutoTranslate></th>
+                              <th className="px-3 py-2 text-center"><AutoTranslate>Actions</AutoTranslate></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {files.map(({ file, index }) => {
+                              const displayName = getSafeDisplayName(file);
+                              const version = getSafeVersion(file);
+                              const status = getSafeStatus(file);
+                              const filePath = getSafePath(file);
+                              const isWaitingRoomFile = file?.isWaitingRoomFile || false;
 
-                            return (
-                              <tr key={index} className="border-t hover:bg-gray-50">
-                                <td className="px-3 py-2">{index + 1}</td>
-                                <td className="px-3 py-2">
-                                  {displayName}
-                                  {isWaitingRoomFile && (
-                                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                                      <AutoTranslate>From Waiting Room</AutoTranslate>
-                                    </span>
-                                  )}
-                                </td>
-                                <td className="px-3 py-2 text-center">{version}</td>
-                                <td className="px-3 py-2 text-center">
-                                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium
+                              return (
+                                <tr key={index} className="border-t hover:bg-gray-50">
+                                  <td className="px-3 py-2">{index + 1}</td>
+                                  <td className="px-3 py-2">
+                                    {displayName}
+                                    {isWaitingRoomFile && (
+                                      <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                        <AutoTranslate>From Waiting Room</AutoTranslate>
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="px-3 py-2 text-center">{version}</td>
+                                  <td className="px-3 py-2 text-center">
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium
                                     ${status === 'APPROVED' ? 'bg-green-100 text-green-700' :
-                                      status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                        'bg-yellow-100 text-yellow-700'}`}
-                                  >
-                                    {status}
-                                  </span>
-                                </td>
-                                <td className="px-3 py-2 text-center">
-                                  <button
-                                    onClick={() => {
-                                      if (isWaitingRoomFile) {
-                                        openWaitingRoomFile(file, index);
-                                      } else {
-                                        openFileBeforeSubmit(filePath, index);
-                                      }
-                                    }}
-                                    className="text-blue-600 hover:text-blue-800 mr-2"
-                                    title="View file"
-                                  >
-                                    <EyeIcon className="h-4 w-4 inline" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDiscardFile(index)}
-                                    className="text-red-600 hover:text-red-800"
-                                    title="Remove file"
-                                  >
-                                    <TrashIcon className="h-4 w-4 inline" />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                                        status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                          'bg-yellow-100 text-yellow-700'}`}
+                                    >
+                                      {status}
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-2 text-center">
+                                    <button
+                                      onClick={() => {
+                                        if (isWaitingRoomFile) {
+                                          openWaitingRoomFile(file, index);
+                                        } else {
+                                          openFileBeforeSubmit(filePath, index);
+                                        }
+                                      }}
+                                      className="text-blue-600 hover:text-blue-800 mr-2"
+                                      title="View file"
+                                    >
+                                      <EyeIcon className="h-4 w-4 inline" />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDiscardFile(index)}
+                                      className="text-red-600 hover:text-red-800"
+                                      title="Remove file"
+                                    >
+                                      <TrashIcon className="h-4 w-4 inline" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                ));
-              })()}
+                  ));
+                })()}
 
-              <button
-                onClick={handleDiscardAll}
-                className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-              >
-                <AutoTranslate>Remove All Files</AutoTranslate>
-              </button>
-            </div>
-          )}
-
-          {/* ========== SAVE / UPDATE BUTTONS ========== */}
-          <div className="edit-doc-wrapper mt-6">
-            <div className="flex justify-between items-center">
-              {uploadedFilePath.length > 0 && (
-                <div className="itemBtn">
-                  <button onClick={handleDiscardAll} className="btn-discard">
-                    <AutoTranslate>Discard All</AutoTranslate>
-                  </button>
-                </div>
-              )}
-
-              <div className="itemBtns">
-                {location.state?.fromWaitingRoom ? (
-                  <button
-                    type="button"
-                    onClick={handleAddDocument}
-                    className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
-                  >
-                    <AutoTranslate>Register Case</AutoTranslate>
-                  </button>
-                ) : editingDoc ? (
-                  <button
-                    onClick={handleSaveEdit}
-                    disabled={bProcess}
-                    className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
-                  >
-                    {bProcess ? <AutoTranslate>Registering...</AutoTranslate> : <AutoTranslate>Register Case</AutoTranslate>}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleAddDocument}
-                    className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
-                  >
-                    <AutoTranslate>Register Case</AutoTranslate>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========== SEARCH & TABLE ========== */}
-        <div className="data-search-wrapper">
-          <div className="form-group flex items-center gap-4">
-            <label htmlFor="itemsPerPage"><AutoTranslate>Show:</AutoTranslate></label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              {[5, 10, 15, 20].map((num) => (
-                <option key={num} value={num}>{num}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <input
-              type="text"
-              placeholder={getFallbackTranslation('Search by title, subject, or case no', currentLanguage)}
-              className="searchIcon"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              maxLength={20}
-            />
-          </div>
-        </div>
-
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
-                <th><AutoTranslate>Case No</AutoTranslate></th>
-                <th><AutoTranslate>Case Title</AutoTranslate></th>
-                <th><AutoTranslate>Case Type</AutoTranslate></th>
-                <th><AutoTranslate>Crime Type</AutoTranslate></th>
-                <th><AutoTranslate>Evidence Category</AutoTranslate></th>
-                <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
-                <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
-                <th className="text-center"><AutoTranslate>Edit</AutoTranslate></th>
-                <th className="text-center"><AutoTranslate>View</AutoTranslate></th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedDocuments.map((doc, index) => (
-                <tr key={doc.id}>
-                  <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                  <td>{doc.fileNo || '--'}</td>
-                  <td>{doc.title || '--'}</td>
-                  <td>{getCaseTypeName(doc)}</td>
-                  <td>{getCrimeTypeName(doc)}</td>
-                  <td>{doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}</td>
-                  <td>{doc?.documentDetails?.length || 0}</td>
-                  <td>{formatDate(doc.createdOn)}</td>
-                  <td>
-                    <div className="btn-center">
-                      <button
-                        onClick={() => handleEditDocument(doc)}
-                        disabled={doc.isActive === 0}
-                        className={`viewBtn ${doc.isActive === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        <PencilIcon />
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="btn-center">
-                      <button onClick={() => openModal(doc)} className="viewBtn">
-                        <EyeIcon />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ========== PAGINATION ========== */}
-        <div className="paginationWp">
-          <div className="items">
-            <div className="paginationText">
-              <span className="text-sm text-gray-700">
-                <AutoTranslate>
-                  {`Showing ${totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to ${Math.min(currentPage * itemsPerPage, totalItems)} of ${totalItems} entries.`}
-                </AutoTranslate>
-              </span>
-              <span className="text-sm text-gray-700 mx-2">
-                (<AutoTranslate>Pages</AutoTranslate> {totalPages})
-              </span>
-            </div>
-          </div>
-          <div className="items">
-            <div className="paginationBtn">
-              <button
-                title={`${currentPage === 1 || totalPages === 0 ? "End" : "Previous"}`}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1 || totalPages === 0}
-                className={`${currentPage === 1 || totalPages === 0 ? "cursor-not-allowed" : ""}`}
-              >
-                <IoIosArrowBack />
-              </button>
-              {totalPages > 0 && getPageNumbers().map((page) => (
                 <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`${currentPage === page ? "active" : ""}`}
+                  onClick={handleDiscardAll}
+                  className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                 >
-                  {page}
+                  <AutoTranslate>Remove All Files</AutoTranslate>
                 </button>
-              ))}
-              <button
-                title={`${currentPage === totalPages || totalPages === 0 ? "End" : "Next"}`}
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={`${currentPage === totalPages || totalPages === 0 ? "cursor-not-allowed" : ""}`}
-              >
-                <IoIosArrowForward />
-              </button>
-            </div>
-          </div>
-        </div>
+              </div>
+            )}
 
-        {/* ========== MODALS ========== */}
-        {/* Document Details Modal */}
-        {isOpen && selectedDoc && (
-          <div className="overlayModal">
-            <div className="document-modal">
-              <div className="modal-header">
-                <div className="modal-title">
-                  <div className="bg-indigo-600 text-white rounded-lg p-2">
-                    <span className="text-lg font-bold">D</span>
-                    <span className="text-lg font-bold">MS</span>
+            {/* ========== SAVE / UPDATE BUTTONS ========== */}
+            <div className="edit-doc-wrapper mt-6">
+              <div className="flex justify-between items-center">
+                {uploadedFilePath.length > 0 && (
+                  <div className="itemBtn">
+                    <button onClick={handleDiscardAll} className="btn-discard">
+                      <AutoTranslate>Discard All</AutoTranslate>
+                    </button>
                   </div>
-                  <h2><AutoTranslate>Evidence Details</AutoTranslate></h2>
-                </div>
-                <div className="headerRight">
-                  <button className="printBtn" onClick={() => handlePrintReport(selectedDoc?.id)} title="Print">
-                    <PrinterIcon className="h-6 w-6" />
-                  </button>
-                  <button className="closeBtn" onClick={closeModal} title="Close">
-                    <MdOutlineClose />
-                  </button>
+                )}
+
+                <div className="itemBtns">
+                  {location.state?.fromWaitingRoom ? (
+                    <button
+                      type="button"
+                      onClick={handleAddDocument}
+                      className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    >
+                      <AutoTranslate>Register Case</AutoTranslate>
+                    </button>
+                  ) : editingDoc ? (
+                    <button
+                      onClick={handleSaveEdit}
+                      disabled={bProcess}
+                      className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    >
+                      {bProcess ? <AutoTranslate>Registering...</AutoTranslate> : <AutoTranslate>Register Case</AutoTranslate>}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleAddDocument}
+                      className={`btn-primary ${bProcess ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                    >
+                      <AutoTranslate>Register Case</AutoTranslate>
+                    </button>
+                  )}
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="modal-body">
-                <div className="bodyScroller print:overflow-visible print:max-h-none">
-                  <div className="top-section">
-                    <div className="info-card">
-                      <div className="info-grid">
-                        {[
-                          { label: "Laboratories", value: selectedDoc?.branchMaster?.name },
-                          { label: "Division", value: selectedDoc?.departmentMaster?.name },
-                          { label: "Case No.", value: selectedDoc?.fileNo },
-                          { label: "Case Title", value: selectedDoc?.title },
-                          { label: "Case Description", value: selectedDoc?.subject },
-                          { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
-                          { label: "Upload By", value: selectedDoc?.employee?.name },
-                        ].map((item, idx) => (
-                          <p key={idx} className="text-md text-gray-700">
-                            <AutoTranslate>{item.label}</AutoTranslate>: {item.value || "N/A"}
-                          </p>
-                        ))}
+          {/* ========== SEARCH & TABLE ========== */}
+          <div className="data-search-wrapper">
+            <div className="form-group flex items-center gap-4">
+              <label htmlFor="itemsPerPage"><AutoTranslate>Show:</AutoTranslate></label>
+              <select
+                id="itemsPerPage"
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                {[5, 10, 15, 20].map((num) => (
+                  <option key={num} value={num}>{num}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder={getFallbackTranslation('Search by title, subject, or case no', currentLanguage)}
+                className="searchIcon"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                maxLength={20}
+              />
+            </div>
+          </div>
+
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th className="text-center"><AutoTranslate>SR.</AutoTranslate></th>
+                  <th><AutoTranslate>Case No</AutoTranslate></th>
+                  <th><AutoTranslate>Case Title</AutoTranslate></th>
+                  <th><AutoTranslate>Case Type</AutoTranslate></th>
+                  <th><AutoTranslate>Crime Type</AutoTranslate></th>
+                  <th><AutoTranslate>Evidence Category</AutoTranslate></th>
+                  <th><AutoTranslate>No. Of Attached Files</AutoTranslate></th>
+                  <th><AutoTranslate>Uploaded Date</AutoTranslate></th>
+                  <th className="text-center"><AutoTranslate>Edit</AutoTranslate></th>
+                  <th className="text-center"><AutoTranslate>View</AutoTranslate></th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedDocuments.map((doc, index) => (
+                  <tr key={doc.id}>
+                    <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                    <td>{doc.fileNo || '--'}</td>
+                    <td>{doc.title || '--'}</td>
+                    <td>{getCaseTypeName(doc)}</td>
+                    <td>{getCrimeTypeName(doc)}</td>
+                    <td>{doc.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate>}</td>
+                    <td>{doc?.documentDetails?.length || 0}</td>
+                    <td>{formatDate(doc.createdOn)}</td>
+                    <td>
+                      <div className="btn-center">
+                        <button
+                          onClick={() => handleEditDocument(doc)}
+                          disabled={doc.isActive === 0}
+                          className={`viewBtn ${doc.isActive === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <PencilIcon />
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="btn-center">
+                        <button onClick={() => openModal(doc)} className="viewBtn">
+                          <EyeIcon />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ========== PAGINATION ========== */}
+          <div className="paginationWp">
+            <div className="items">
+              <div className="paginationText">
+                <span className="text-sm text-gray-700">
+                  <AutoTranslate>
+                    {`Showing ${totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to ${Math.min(currentPage * itemsPerPage, totalItems)} of ${totalItems} entries.`}
+                  </AutoTranslate>
+                </span>
+                <span className="text-sm text-gray-700 mx-2">
+                  (<AutoTranslate>Pages</AutoTranslate> {totalPages})
+                </span>
+              </div>
+            </div>
+            <div className="items">
+              <div className="paginationBtn">
+                <button
+                  title={`${currentPage === 1 || totalPages === 0 ? "End" : "Previous"}`}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1 || totalPages === 0}
+                  className={`${currentPage === 1 || totalPages === 0 ? "cursor-not-allowed" : ""}`}
+                >
+                  <IoIosArrowBack />
+                </button>
+                {totalPages > 0 && getPageNumbers().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`${currentPage === page ? "active" : ""}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  title={`${currentPage === totalPages || totalPages === 0 ? "End" : "Next"}`}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={`${currentPage === totalPages || totalPages === 0 ? "cursor-not-allowed" : ""}`}
+                >
+                  <IoIosArrowForward />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ========== MODALS ========== */}
+          {/* Document Details Modal */}
+          {isOpen && selectedDoc && (
+            <div className="overlayModal">
+              <div className="document-modal">
+                <div className="modal-header">
+                  <div className="modal-title">
+                    <div className="bg-indigo-600 text-white rounded-lg p-2">
+                      <span className="text-lg font-bold">D</span>
+                      <span className="text-lg font-bold">MS</span>
+                    </div>
+                    <h2><AutoTranslate>Evidence Details</AutoTranslate></h2>
+                  </div>
+                  <div className="headerRight">
+                    <button className="printBtn" onClick={() => handlePrintReport(selectedDoc?.id)} title="Print">
+                      <PrinterIcon className="h-6 w-6" />
+                    </button>
+                    <button className="closeBtn" onClick={closeModal} title="Close">
+                      <MdOutlineClose />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="modal-body">
+                  <div className="bodyScroller print:overflow-visible print:max-h-none">
+                    <div className="top-section">
+                      <div className="info-card">
+                        <div className="info-grid">
+                          {[
+                            { label: "Laboratories", value: selectedDoc?.branchMaster?.name },
+                            { label: "Division", value: selectedDoc?.departmentMaster?.name },
+                            { label: "Case No.", value: selectedDoc?.fileNo },
+                            { label: "Case Title", value: selectedDoc?.title },
+                            { label: "Case Description", value: selectedDoc?.subject },
+                            { label: "Evidence Category", value: selectedDoc?.categoryMaster?.name || <AutoTranslate>No Evidence Category</AutoTranslate> },
+                            { label: "Upload By", value: selectedDoc?.employee?.name },
+                          ].map((item, idx) => (
+                            <p key={idx} className="text-md text-gray-700">
+                              <AutoTranslate>{item.label}</AutoTranslate>: {item.value || "N/A"}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="qr-card">
+                        <h2 className="mb-4"><AutoTranslate>QR Code:</AutoTranslate></h2>
+                        {selectedDoc?.qrPath ? (
+                          <>
+                            <div className="imgWp">
+                              <img src={qrCodeUrl} alt="QR Code" />
+                            </div>
+                            <button
+                              onClick={downloadQRCode}
+                              className="mt-4 flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                            >
+                              <ArrowDownTrayIcon className="h-4 w-4" />
+                              <AutoTranslate>Download QR</AutoTranslate>
+                            </button>
+                          </>
+                        ) : (
+                          <div className="text-center text-gray-500 py-8">
+                            <QrCodeIcon className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+                            <p><AutoTranslate>No QR code available</AutoTranslate></p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="qr-card">
-                      <h2 className="mb-4"><AutoTranslate>QR Code:</AutoTranslate></h2>
-                      {selectedDoc?.qrPath ? (
-                        <>
-                          <div className="imgWp">
-                            <img src={qrCodeUrl} alt="QR Code" />
-                          </div>
-                          <button
-                            onClick={downloadQRCode}
-                            className="mt-4 flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                    {/* Attached Files Section */}
+                    <div className="mt-8">
+                      <div className="attachedWp relative">
+                        <h2 className="mb-0"><AutoTranslate>Attached Files</AutoTranslate></h2>
+                        <div className="form-group">
+                          <input
+                            type="text"
+                            placeholder={getFallbackTranslation('Search files...', currentLanguage)}
+                            value={searchFileTerm}
+                            onChange={(e) => setSearchFileTerm(e.target.value)}
+                            className="searchIcon"
+                          />
+                        </div>
+                      </div>
+
+                      {loadingFiles ? (
+                        <div className="flex justify-center items-center py-12">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                          <span className="ml-3 text-gray-600"><AutoTranslate>Loading files...</AutoTranslate></span>
+                        </div>
+                      ) : selectedDoc && filteredDocFiles.length > 0 ? (
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                          <div className="hidden md:grid bg-gray-50 text-gray-600 font-medium text-sm px-6 py-3"
+                            style={{ gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(150px, 1.2fr) minmax(80px, 0.8fr)" }}
                           >
-                            <ArrowDownTrayIcon className="h-4 w-4" />
-                            <AutoTranslate>Download QR</AutoTranslate>
-                          </button>
-                        </>
+                            <span className="text-left"><AutoTranslate>File Name</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Case Year</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Version</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Status</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Action By</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Action Date</AutoTranslate></span>
+                            <span className="text-center"><AutoTranslate>Reason</AutoTranslate></span>
+                            <span className="text-center no-print"><AutoTranslate>View</AutoTranslate></span>
+                          </div>
+
+                          <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+                            {filteredDocFiles.map((file, index) => (
+                              <div key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                                <div className="hidden md:grid items-center px-6 py-4 text-sm"
+                                  style={{ gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(150px, 1.2fr) minmax(80px, 0.8fr)" }}
+                                >
+                                  <div className="text-left text-gray-800 break-words">
+                                    <strong>{index + 1}.</strong> {file.docName || 'Unknown'}
+                                  </div>
+                                  <div className="text-center text-gray-700">{file.year || '--'}</div>
+                                  <div className="text-center text-gray-700">{file.version || '--'}</div>
+                                  <div className="text-center">
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
+                                        file.status === "REJECTED" ? "bg-red-100 text-red-800" :
+                                          "bg-yellow-100 text-yellow-800"}`}
+                                    >
+                                      {file.status || <AutoTranslate>PENDING</AutoTranslate>}
+                                    </span>
+                                  </div>
+                                  <div className="text-center text-gray-700 truncate" title={file.approvedBy}>
+                                    {file.approvedBy || "--"}
+                                  </div>
+                                  <div className="text-center text-gray-700">{formatDate(file.approvedOn)}</div>
+                                  <div className="text-center text-gray-700 break-words">{file.rejectionReason || "--"}</div>
+                                  <div className="flex justify-center no-print">
+                                    <button
+                                      onClick={() => {
+                                        setOpeningFileIndex(index);
+                                        setSelectedDocFiles(file);
+                                        openFile(file).finally(() => setOpeningFileIndex(null));
+                                      }}
+                                      disabled={openingFileIndex !== null}
+                                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
+                                      ${openingFileIndex === index ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"} text-white`}
+                                    >
+                                      {openingFileIndex === index ? (
+                                        <>
+                                          <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                                          <AutoTranslate>Opening...</AutoTranslate>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <EyeIcon className="h-3 w-3" />
+                                          <AutoTranslate>View</AutoTranslate>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="md:hidden p-4">
+                                  <div className="flex justify-between items-start mb-2">
+                                    <div className="text-left text-gray-800 break-words flex-1">
+                                      <strong>{index + 1}.</strong> {file.docName || 'Unknown'}
+                                    </div>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2
+                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
+                                        file.status === "REJECTED" ? "bg-red-100 text-red-800" :
+                                          "bg-yellow-100 text-yellow-800"}`}
+                                    >
+                                      {file.status || <AutoTranslate>PENDING</AutoTranslate>}
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2 text-sm mt-3">
+                                    <div>
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
+                                      <p className="text-gray-700">{file.year || '--'}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Version</AutoTranslate></p>
+                                      <p className="text-gray-700">{file.version || '--'}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Action By</AutoTranslate></p>
+                                      <p className="text-gray-700 truncate" title={file.approvedBy}>{file.approvedBy || "--"}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Action Date</AutoTranslate></p>
+                                      <p className="text-gray-700">{formatDate(file.approvedOn)}</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <p className="text-xs text-gray-500"><AutoTranslate>Reason</AutoTranslate></p>
+                                      <p className="text-gray-700 break-words">{file.rejectionReason || "--"}</p>
+                                    </div>
+                                  </div>
+                                  <div className="mt-3 flex justify-end">
+                                    <button
+                                      onClick={() => {
+                                        setOpeningFileIndex(index);
+                                        setSelectedDocFiles(file);
+                                        openFile(file).finally(() => setOpeningFileIndex(null));
+                                      }}
+                                      disabled={openingFileIndex !== null}
+                                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
+                                      ${openingFileIndex === index ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"} text-white`}
+                                    >
+                                      {openingFileIndex === index ? (
+                                        <>
+                                          <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                                          <AutoTranslate>Opening...</AutoTranslate>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <EyeIcon className="h-3 w-3" />
+                                          <AutoTranslate>View File</AutoTranslate>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       ) : (
-                        <div className="text-center text-gray-500 py-8">
-                          <QrCodeIcon className="h-12 w-12 mx-auto text-gray-300 mb-2" />
-                          <p><AutoTranslate>No QR code available</AutoTranslate></p>
+                        <div className="text-center py-12 border border-dashed border-gray-300 rounded-lg">
+                          <DocumentIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                          <p className="text-gray-500"><AutoTranslate>No attached files found</AutoTranslate></p>
+                          {searchFileTerm && (
+                            <p className="text-sm text-gray-400 mt-1">
+                              <AutoTranslate>Try adjusting your search term</AutoTranslate>
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
-
-                  {/* Attached Files Section */}
-                  <div className="mt-8">
-                    <div className="attachedWp relative">
-                      <h2 className="mb-0"><AutoTranslate>Attached Files</AutoTranslate></h2>
-                      <div className="form-group">
-                        <input
-                          type="text"
-                          placeholder={getFallbackTranslation('Search files...', currentLanguage)}
-                          value={searchFileTerm}
-                          onChange={(e) => setSearchFileTerm(e.target.value)}
-                          className="searchIcon"
-                        />
-                      </div>
-                    </div>
-
-                    {loadingFiles ? (
-                      <div className="flex justify-center items-center py-12">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                        <span className="ml-3 text-gray-600"><AutoTranslate>Loading files...</AutoTranslate></span>
-                      </div>
-                    ) : selectedDoc && filteredDocFiles.length > 0 ? (
-                      <div className="border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="hidden md:grid bg-gray-50 text-gray-600 font-medium text-sm px-6 py-3"
-                          style={{ gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(150px, 1.2fr) minmax(80px, 0.8fr)" }}
-                        >
-                          <span className="text-left"><AutoTranslate>File Name</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Case Year</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Version</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Status</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Action By</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Action Date</AutoTranslate></span>
-                          <span className="text-center"><AutoTranslate>Reason</AutoTranslate></span>
-                          <span className="text-center no-print"><AutoTranslate>View</AutoTranslate></span>
-                        </div>
-
-                        <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
-                          {filteredDocFiles.map((file, index) => (
-                            <div key={index} className="hover:bg-gray-50 transition-colors duration-150">
-                              <div className="hidden md:grid items-center px-6 py-4 text-sm"
-                                style={{ gridTemplateColumns: "minmax(200px, 3fr) minmax(80px, 0.8fr) minmax(80px, 0.8fr) minmax(100px, 0.8fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(150px, 1.2fr) minmax(80px, 0.8fr)" }}
-                              >
-                                <div className="text-left text-gray-800 break-words">
-                                  <strong>{index + 1}.</strong> {file.docName || 'Unknown'}
-                                </div>
-                                <div className="text-center text-gray-700">{file.year || '--'}</div>
-                                <div className="text-center text-gray-700">{file.version || '--'}</div>
-                                <div className="text-center">
-                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
-                                      file.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                                        "bg-yellow-100 text-yellow-800"}`}
-                                  >
-                                    {file.status || <AutoTranslate>PENDING</AutoTranslate>}
-                                  </span>
-                                </div>
-                                <div className="text-center text-gray-700 truncate" title={file.approvedBy}>
-                                  {file.approvedBy || "--"}
-                                </div>
-                                <div className="text-center text-gray-700">{formatDate(file.approvedOn)}</div>
-                                <div className="text-center text-gray-700 break-words">{file.rejectionReason || "--"}</div>
-                                <div className="flex justify-center no-print">
-                                  <button
-                                    onClick={() => {
-                                      setOpeningFileIndex(index);
-                                      setSelectedDocFiles(file);
-                                      openFile(file).finally(() => setOpeningFileIndex(null));
-                                    }}
-                                    disabled={openingFileIndex !== null}
-                                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
-                                      ${openingFileIndex === index ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"} text-white`}
-                                  >
-                                    {openingFileIndex === index ? (
-                                      <>
-                                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
-                                        <AutoTranslate>Opening...</AutoTranslate>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <EyeIcon className="h-3 w-3" />
-                                        <AutoTranslate>View</AutoTranslate>
-                                      </>
-                                    )}
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="md:hidden p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div className="text-left text-gray-800 break-words flex-1">
-                                    <strong>{index + 1}.</strong> {file.docName || 'Unknown'}
-                                  </div>
-                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-2
-                                    ${file.status === "APPROVED" ? "bg-green-100 text-green-800" :
-                                      file.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                                        "bg-yellow-100 text-yellow-800"}`}
-                                  >
-                                    {file.status || <AutoTranslate>PENDING</AutoTranslate>}
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 text-sm mt-3">
-                                  <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Case year</AutoTranslate></p>
-                                    <p className="text-gray-700">{file.year || '--'}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Version</AutoTranslate></p>
-                                    <p className="text-gray-700">{file.version || '--'}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Action By</AutoTranslate></p>
-                                    <p className="text-gray-700 truncate" title={file.approvedBy}>{file.approvedBy || "--"}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Action Date</AutoTranslate></p>
-                                    <p className="text-gray-700">{formatDate(file.approvedOn)}</p>
-                                  </div>
-                                  <div className="col-span-2">
-                                    <p className="text-xs text-gray-500"><AutoTranslate>Reason</AutoTranslate></p>
-                                    <p className="text-gray-700 break-words">{file.rejectionReason || "--"}</p>
-                                  </div>
-                                </div>
-                                <div className="mt-3 flex justify-end">
-                                  <button
-                                    onClick={() => {
-                                      setOpeningFileIndex(index);
-                                      setSelectedDocFiles(file);
-                                      openFile(file).finally(() => setOpeningFileIndex(null));
-                                    }}
-                                    disabled={openingFileIndex !== null}
-                                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200
-                                      ${openingFileIndex === index ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"} text-white`}
-                                  >
-                                    {openingFileIndex === index ? (
-                                      <>
-                                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
-                                        <AutoTranslate>Opening...</AutoTranslate>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <EyeIcon className="h-3 w-3" />
-                                        <AutoTranslate>View File</AutoTranslate>
-                                      </>
-                                    )}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-12 border border-dashed border-gray-300 rounded-lg">
-                        <DocumentIcon className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                        <p className="text-gray-500"><AutoTranslate>No attached files found</AutoTranslate></p>
-                        {searchFileTerm && (
-                          <p className="text-sm text-gray-400 mt-1">
-                            <AutoTranslate>Try adjusting your search term</AutoTranslate>
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* File Preview Modal */}
-        <FilePreviewModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onDownload={(file, action = "download") => handleDownload(file, action)}
-          fileType={contentType}
-          fileUrl={blobUrl}
-          fileName={selectedDocFile?.docName}
-          fileData={selectedDocFile}
-        />
+          {/* File Preview Modal */}
+          <FilePreviewModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onDownload={(file, action = "download") => handleDownload(file, action)}
+            fileType={contentType}
+            fileUrl={blobUrl}
+            fileName={selectedDocFile?.docName}
+            fileData={selectedDocFile}
+          />
 
-        {/* Supported File Types Modal */}
-        {viewFileTypeModel && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-            <div className="w-80 sm:w-96 bg-white rounded-xl shadow-xl p-5 border border-gray-200 max-h-[80vh] overflow-y-auto transition-all">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  <AutoTranslate>Supported File Format</AutoTranslate>
-                </h2>
-                <button
-                  onClick={handlecloseFileType}
-                  className="text-gray-400 hover:text-red-500 text-xl focus:outline-none"
-                  aria-label="Close"
-                >
-                  &times;
-                </button>
-              </div>
-              <input
-                type="text"
-                placeholder={getFallbackTranslation('Search file type...', currentLanguage)}
-                value={searchFileTerm}
-                onChange={(e) => setSearchFileTerm(e.target.value)}
-                maxLength={20}
-                className="w-full p-2 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-              <ul className="space-y-2">
-                {filteredFiles.length > 0 ? (
-                  filteredFiles.map((file) => (
-                    <li key={file.id} className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-md hover:bg-blue-50 transition text-sm">
-                      <span className="text-gray-800 font-medium">{file.filetype}</span>
-                      <span className="text-gray-500">{file.extension}</span>
+          {/* Supported File Types Modal */}
+          {viewFileTypeModel && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+              <div className="w-80 sm:w-96 bg-white rounded-xl shadow-xl p-5 border border-gray-200 max-h-[80vh] overflow-y-auto transition-all">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    <AutoTranslate>Supported File Format</AutoTranslate>
+                  </h2>
+                  <button
+                    onClick={handlecloseFileType}
+                    className="text-gray-400 hover:text-red-500 text-xl focus:outline-none"
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder={getFallbackTranslation('Search file type...', currentLanguage)}
+                  value={searchFileTerm}
+                  onChange={(e) => setSearchFileTerm(e.target.value)}
+                  maxLength={20}
+                  className="w-full p-2 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+                <ul className="space-y-2">
+                  {filteredFiles.length > 0 ? (
+                    filteredFiles.map((file) => (
+                      <li key={file.id} className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-md hover:bg-blue-50 transition text-sm">
+                        <span className="text-gray-800 font-medium">{file.filetype}</span>
+                        <span className="text-gray-500">{file.extension}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-center text-gray-500 text-sm">
+                      <AutoTranslate>No matching file types found</AutoTranslate>
                     </li>
-                  ))
-                ) : (
-                  <li className="text-center text-gray-500 text-sm">
-                    <AutoTranslate>No matching file types found</AutoTranslate>
-                  </li>
-                )}
-              </ul>
+                  )}
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Waiting Room Modal */}
-        <WaitingRoom
-          isOpen={isWaitingRoomModalOpen}
-          onClose={() => setIsWaitingRoomModalOpen(false)}
-          onSelectDocuments={handleSelectFromWaitingRoom}
-          metadata={{
-            branch: userBranch,
-            department: userDep,
-            year: formData.year?.name,
-            yearMas: formData.year,
-            category: formData.category?.name,
-            version: formData.version,
-            fileNo: formData.fileNo,
-            title: formData.title,
-            subject: formData.subject,
-          }}
-          token={token}
-          showPopup={showPopup}
-        />
+          {/* Waiting Room Modal */}
+          <WaitingRoom
+            isOpen={isWaitingRoomModalOpen}
+            onClose={() => setIsWaitingRoomModalOpen(false)}
+            onSelectDocuments={handleSelectFromWaitingRoom}
+            metadata={{
+              branch: userBranch,
+              department: userDep,
+              year: formData.year?.name,
+              yearMas: formData.year,
+              category: formData.category?.name,
+              version: formData.version,
+              fileNo: formData.fileNo,
+              title: formData.title,
+              subject: formData.subject,
+            }}
+            token={token}
+            showPopup={showPopup}
+          />
+        </div>
       </div>
-    </div>
   );
 };
 
-export default DocumentManagement;
+{/* export default DocumentManagement; */}
+export default CaseRegister;

@@ -1065,7 +1065,7 @@ const ApprovedDoc = () => {
   // const handleEdit = (docId) => {
   //   const data = documents.find((item) => item.id === docId);
   //   console.log("Editing document:", data);
-  //   navigate("/all-documents", { state: data });
+  //   navigate("/case-register", { state: data });
   // };
 
   const handleEdit = async (docId) => {
@@ -1075,7 +1075,7 @@ const ApprovedDoc = () => {
 
       console.log("Fetched latest document:", latestData);
 
-      navigate("/all-documents", { state: latestData });
+      navigate("/case-register", { state: latestData });
     } catch (error) {
       console.error("Failed to fetch document:", error);
     }

@@ -56,16 +56,16 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
         console.warn("No token found");
         return null;
       }
-      
+
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
-      
+
       const decodedToken = JSON.parse(jsonPayload);
       console.log("Decoded token:", decodedToken);
-      
+
       return decodedToken.employeeId || null;
     } catch (error) {
       console.error("Error decoding token:", error);
@@ -81,17 +81,17 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
         console.warn("No employee ID found in token");
         return null;
       }
-      
+
       console.log("Fetching employee details for ID:", employeeId);
-      
+
       const response = await apiClient.get(`${API_HOST}/employee/findById/${employeeId}`);
-      
+
       if (response.data && response.data.branch) {
         const branchId = response.data.branch.id;
         console.log("Branch ID found:", branchId);
         return branchId;
       }
-      
+
       return null;
     } catch (error) {
       console.error("Error fetching current user branch:", error);
@@ -110,7 +110,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
       fetchParcelConditions();
       await fetchDivisions();
     };
-    
+
     initialize();
   }, [documentHeaderId]);
 
@@ -128,7 +128,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
           employeeId: row.assignedEmployeeId || "",
           remark: row.assignmentRemark || "",
         };
-        
+
         if (row.assignedDivisionId) {
           fetchEmployeesForDivision(row.assignedDivisionId);
         }
@@ -159,15 +159,15 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
   const fetchDivisions = async () => {
     try {
       const branchId = await fetchCurrentUserBranchId();
-      
+
       if (!branchId) {
         console.warn("No branch ID found for current user");
         setDivisions([]);
         return;
       }
-      
+
       console.log("Fetching departments for branch:", branchId);
-      
+
       const response = await apiClient.get(`${DEPAETMENT_API}/findByBranch/${branchId}`);
       setDivisions(response.data || []);
     } catch (error) {
@@ -178,18 +178,18 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
 
   const fetchEmployeesForDivision = useCallback(async (divisionId) => {
     if (!divisionId) return;
-    
+
     try {
       const response = await apiClient.get(`${API_HOST}/api/pre-examination/employees/scientific-officers/${divisionId}`);
       const employeesList = response.data || [];
-      
+
       setEmployees(prev => ({
         ...prev,
         [divisionId]: employeesList
       }));
     } catch (error) {
       console.error(`Error fetching employees for division ${divisionId}:`, error);
-      
+
       try {
         const fallbackResponse = await apiClient.get(`${API_HOST}/employee/department/${divisionId}`);
         if (fallbackResponse.data && fallbackResponse.data.response) {
@@ -307,7 +307,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
 
   const handleFieldChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    
+
     // Validate on change if field was touched
     if (touched[field]) {
       const error = validateField(field, value);
@@ -331,13 +331,13 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
         ? String(selected.defaultParcelConditionId)
         : prev.parcelConditionId,
     }));
-    
+
     // Validate seal status
     if (touched.sealStatusId) {
       const error = validateField('sealStatusId', value);
       setErrors(prev => ({ ...prev, sealStatusId: error }));
     }
-    
+
     // Clear parcel condition error if auto-filled
     if (selected?.defaultParcelConditionId) {
       setErrors(prev => ({ ...prev, parcelConditionId: "" }));
@@ -352,7 +352,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
   );
   const showSealRemarks = !!selectedSealStatus?.requiresVerificationRemarks;
   const showParcelOther = selectedParcelCondition?.name?.trim().toLowerCase() === "other";
-  
+
   // Check if parcel condition was auto-filled from seal status
   const isParcelConditionAutoFilled = !!selectedSealStatus?.defaultParcelConditionId;
 
@@ -373,8 +373,8 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
   const handleDivisionChange = (detailId, divisionId) => {
     setAssignments((prev) => ({
       ...prev,
-      [detailId]: { 
-        ...prev[detailId], 
+      [detailId]: {
+        ...prev[detailId],
         divisionId,
         employeeId: "" // Reset employee when division changes
       },
@@ -392,7 +392,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
       ...prev,
       [detailId]: { ...prev[detailId], employeeId: "" }
     }));
-    
+
     if (divisionId) {
       fetchEmployeesForDivision(divisionId);
     }
@@ -439,23 +439,23 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
       'crimeTypeId',
       'priorityId'
     ];
-    
+
     fieldsToValidate.forEach(field => {
       const error = validateField(field, form[field]);
       if (error) newErrors[field] = error;
     });
-    
+
     // Conditional validations
     if (showSealRemarks) {
       const error = validateField('sealVerificationRemarks', form.sealVerificationRemarks);
       if (error) newErrors.sealVerificationRemarks = error;
     }
-    
+
     if (showParcelOther) {
       const error = validateField('parcelConditionOther', form.parcelConditionOther);
       if (error) newErrors.parcelConditionOther = error;
     }
-    
+
     setErrors(newErrors);
 
     // Validate Assign Division + Assign Employee for every evidence row
@@ -668,7 +668,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                       </td>
                       <td>
                         <input
-                          type="text" style={{width:"240px"}}
+                          type="text" style={{ width: "240px" }}
                           value={assignments[detailId]?.remark || ''}
                           onChange={(e) => handleAssignmentChange(detailId, 'remark', e.target.value)}
                           placeholder="Add remark"
@@ -695,8 +695,8 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
           <div className="grid grid-col-4 mb-4">
             <div className="form-group">
               <label><AutoTranslate>Purpose</AutoTranslate> *</label>
-              <select 
-                value={form.purposeId} 
+              <select
+                value={form.purposeId}
                 onChange={(e) => handleFieldChange('purposeId', e.target.value)}
                 onBlur={() => handleFieldBlur('purposeId')}
                 className={errors.purposeId ? 'error' : ''}
@@ -728,20 +728,30 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
             <div className="form-group">
               <label><AutoTranslate>No. of Parcels</AutoTranslate></label>
               <input
-                type="number"
+                type="text"
                 value={form.noOfParcels}
                 onChange={(e) => handleFieldChange('noOfParcels', e.target.value)}
                 min="0"
+                maxLength="2"
+                placeholder="Enter number"
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                }}
               />
             </div>
 
             <div className="form-group">
               <label><AutoTranslate>No. of Exhibits</AutoTranslate></label>
               <input
-                type="number"
+                type="text"
                 value={form.noOfExhibits}
                 onChange={(e) => handleFieldChange('noOfExhibits', e.target.value)}
                 min="0"
+                maxLength="2"
+                placeholder="Enter number"
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                }}
               />
             </div>
 
@@ -754,6 +764,7 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
                 onChange={(e) => handleFieldChange('natureOfCase', e.target.value)}
                 onBlur={() => handleFieldBlur('natureOfCase')}
                 className={errors.natureOfCase ? 'error' : ''}
+                maxLength="250"
                 required
               ></textarea>
               {errors.natureOfCase && <span style={errorTextStyle}>{errors.natureOfCase}</span>}
@@ -793,8 +804,8 @@ const PreExamineForm = ({ documentHeaderId, onBack }) => {
 
             <div className="form-group">
               <label><AutoTranslate>Seal Status</AutoTranslate> *</label>
-              <select 
-                value={form.sealStatusId} 
+              <select
+                value={form.sealStatusId}
                 onChange={(e) => handleSealStatusChange(e.target.value)}
                 onBlur={() => handleFieldBlur('sealStatusId')}
                 className={errors.sealStatusId ? 'error' : ''}

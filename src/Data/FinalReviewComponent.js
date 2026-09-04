@@ -458,6 +458,7 @@ const FinalReviewComponent = ({ reportEntryId, documentDetailId, onBack }) => {
                                 rows="2"
                                 value={referralForm.reason}
                                 onChange={(e) => handleReferralChange('reason', e.target.value)}
+                                maxLength="250"
                                 className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                             ></textarea>
                         </div>
@@ -486,7 +487,7 @@ const FinalReviewComponent = ({ reportEntryId, documentDetailId, onBack }) => {
             {/* Refer / Transfer Modal */}
             {referTransfer && (
                 <div className="overlayModal">
-                    <div className="document-modal">
+                    <div className="document-modal" style={{maxWidth:"680px"}}>
                         <div className="modal-header">
                             <div className="modal-title">
                                 <h2><AutoTranslate>Refer / Transfer</AutoTranslate></h2>
@@ -501,7 +502,7 @@ const FinalReviewComponent = ({ reportEntryId, documentDetailId, onBack }) => {
                         <div className="modal-body">
                             <div className="bodyScroller print:overflow-visible print:max-h-none">
                                 <div className="mb-4">
-                                    <div className="grid grid-col-4 mb-4">
+                                    <div className="grid grid-col-2 mb-4">
                                         <div className="form-group">
                                             <label><AutoTranslate>From Laboratory</AutoTranslate></label>
                                             <input type="text" value={currentUserBranch.name || ''} readOnly />
@@ -542,6 +543,7 @@ const FinalReviewComponent = ({ reportEntryId, documentDetailId, onBack }) => {
                                                 required
                                                 value={referralForm.reason}
                                                 onChange={(e) => handleReferralChange('reason', e.target.value)}
+                                                maxLength="250"
                                                 className="border border-gray-300 rounded-lg p-2 w-full"
                                             ></textarea>
                                         </div>

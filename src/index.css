@@ -1541,17 +1541,14 @@ h2 {
 
 /* Document Modal css beginning here */
 .overlayModal {
-    background-color: rgb(31 41 55 / 0.75);
+    background-color: rgb(31 41 55 / 0.60);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9990;
     position: fixed;
-    /* left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0; */
     inset: 0px;
+    padding: 20px;
 }
 
 .document-modal {

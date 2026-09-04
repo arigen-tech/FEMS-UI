@@ -14,7 +14,9 @@ import ReferralPreExaminationLayout from "./Pages/ReferralPreExaminationLayout";
 import ReferralReportEntryLayout from "./Pages/ReferralReportEntryLayout";
 import ReferralReportReviewLayout from "./Pages/ReferralReportReviewLayout";
 import ReportReviewApprovedLayout from "./Pages/ReportReviewApprovedLayout";
-import ReferralTransfer from "./Data/ReferralTransfer";
+import CaseRegisterLayout from "./Pages/CaseRegisterLayout";
+import ReferralTransferLayout from "./Pages/ReferralTransferLayout ";
+import PreExamLayout from "./Pages/PreExamLayout";
 
 const Dashboard = React.lazy(() => import("./Pages/Dashboard"));
 const Inbox = React.lazy(() => import("./Pages/Inbox"));
@@ -25,7 +27,6 @@ const Roles = React.lazy(() => import("./Pages/Roles"));
 const Types = React.lazy(() => import("./Pages/Types"));
 const Years = React.lazy(() => import("./Pages/Years"));
 const Categories = React.lazy(() => import("./Pages/Categories"));
-const Documents = React.lazy(() => import("./Pages/Documents"));
 const Approves = React.lazy(() => import("./Pages/Approves"));
 const ApprovedDocs = React.lazy(() => import("./Pages/ApprovedDocs"));
 const RejectedDocs = React.lazy(() => import("./Pages/RejectedDocs"));
@@ -131,7 +132,8 @@ function App() {
                 <Route path="/total-rejected" element={<RejectByAdmin />} />
                 <Route path="/userRoleAssing" element={<UserRoleAssing />} />
                 <Route path="/pendingRole" element={<PendingUsers />} />
-                <Route path="/all-documents" element={<Documents />} />
+                <Route path="/case-register" element={<CaseRegisterLayout />} />
+
                 <Route path="/approvedDocs" element={<ApprovedDocs />} />
                 <Route path="/rejectedDocs" element={<RejectedDocs />} />
                 <Route path="/userReport" element={<UserReports />} />
@@ -167,18 +169,15 @@ function App() {
                 <Route path="/LanguageMaster" element={<LanguageMasters />} />
                 <Route path="/trash-documents" element={<TrashDocs />} />
                 <Route path="/duplicate-files" element={<DuplicateFilesPages />} />
-                <Route path="/shared-documents" element={<SharedDocuments />} />
+                <Route path="/shared-evidence" element={<SharedDocuments />} />
 
                 {/* Examination */}
-
-                <Route path="/pre-examination" element={<PreExaminationModule/>} />
-
+                <Route path="/pre-examination" element={<PreExamLayout />} />
                 <Route path="/report-entry" element={<ReportEntryLayout/>} />
                 <Route path="/report-upload" element={<ReportUploadLayout/>} />
                 <Route path="/dispatch" element={<DispatchLayout/>} />
                 <Route path="/report-review" element={<ReportReviewLayout />} />
-                <Route path="/referral-transfer" element={<ReferralTransfer />} />              
-                
+                <Route path="/referral-transfer" element={<ReferralTransferLayout />} /> 
 
                 {/* reports */}
                 <Route path="/documents-archived-report" element={<DocumentsArchivedReport />} />

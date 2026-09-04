@@ -526,7 +526,7 @@ function Sidebar({ roleChanged }) {
               ? counts.trashTotalDocByDepartment
               : 0,
 
-      "/all-documents": currentRole === USER ? counts.pendingDocsbyid : 0,
+      "/case-register": currentRole === USER ? counts.pendingDocsbyid : 0,
       "/total-approved":
         currentRole === SYSTEM_ADMIN
           ? counts.totalApprovedDocuments
