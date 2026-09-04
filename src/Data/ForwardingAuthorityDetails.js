@@ -8,6 +8,7 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
   const [districts, setDistricts] = useState([]);
   const [modeOptions, setModeOptions] = useState([]);
   const [packageTypes, setPackageTypes] = useState([]);
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
     apiClient.get(`${MASTER_API}/forwarding-authority-type/getAll/1`)
@@ -58,10 +59,29 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
     e.target.value = value.slice(0, 10);
   };
 
-   const validateEmail = (e) => {
-    const value = e.target.value;
-    // Remove spaces
-    e.target.value = value.replace(/\s/g, "");
+  // ✅ Real email format check
+  const isValidEmailFormat = (value) => {
+    if (!value) return true; // let `required` handle empty
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  };
+
+  // ✅ Strip spaces (kept from original) + validate format + set error message
+  const validateEmail = (e) => {
+    const value = e.target.value.replace(/\s/g, "");
+    e.target.value = value;
+
+    if (value && !isValidEmailFormat(value)) {
+      setEmailError('Please enter a valid email address (e.g. name@example.com).');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  // ✅ Extra check on blur (catches pasted values)
+  const handleEmailBlur = (e) => {
+    if (e.target.value && !isValidEmailFormat(e.target.value)) {
+      setEmailError('Please enter a valid email address (e.g. name@example.com).');
+    }
   };
 
   return (
@@ -138,8 +158,13 @@ const ForwardingAuthorityDetails = ({ formData = {}, onChange, onViewForwardingL
           value={formData.email || ''} 
           onChange={handleChange('email')} 
           onInput={validateEmail}
+          onBlur={handleEmailBlur}
+          className={emailError ? 'border-red-500 focus:border-red-500' : ''}
           required
            />
+          {emailError && (
+            <p className="text-xs text-red-500 mt-1">{emailError}</p>
+          )}
         </div> 
 
         <div className="form-group">
